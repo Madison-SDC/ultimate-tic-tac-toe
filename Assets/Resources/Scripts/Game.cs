@@ -16,7 +16,7 @@ public class Game : MonoBehaviour
         p2Color = Color.blue,
         disabledColor = Color.gray,
         enabledColor = Color.white,
-        enabledOffset = Color.gray / 2;
+        enabledOffset = Color.gray / 4; // just a little darker when disabled
 
     static Sprite p1Sprite, p2Sprite;
 
@@ -109,7 +109,6 @@ public class Game : MonoBehaviour
             }
             board.GetComponent<Board>().Reset();
             Enable(board);
-            board.GetComponent<Image>().color = Color.white;
         }
         GameObject.Find("Global Board").GetComponent<Board>().Reset();
         firstTurn = true;
@@ -155,8 +154,8 @@ public class Game : MonoBehaviour
     /// <param name="board"></param>
     public static void Disable(GameObject board)
     {
-        //board.GetComponent<Board>().Active = false;
-        //*
+        board.GetComponent<Board>().Active = false;
+        /*
         if (!board.GetComponent<Board>().GameOver)
         { board.GetComponent<Image>().color = disabledColor; }
         // */
@@ -176,8 +175,8 @@ public class Game : MonoBehaviour
     /// <param name="board"></param>
     public static void Enable(GameObject board)
     {
-        //board.GetComponent<Board>().enabled = true;
-        //*
+        board.GetComponent<Board>().Active = true;
+        /*
         if (!board.GetComponent<Board>().GameOver)
         {
             board.GetComponent<Image>().color = enabledColor;
@@ -187,15 +186,16 @@ public class Game : MonoBehaviour
         for (int i = 0; i < board.transform.childCount; i++)
         {
             Transform spot = board.transform.GetChild(i);
-            if (!spot.GetComponent<BoardSpot>().Clicked) // unclicked spot
+            if (!spot.GetComponent<BoardSpot>().Clicked) // all unclicked spots
             {
                 // blend in to background by default
                 spot.GetComponent<Image>().color = board.GetComponent<Image>().color;
 
+                // can be clicked
                 Button button = spot.GetComponent<Button>();
                 button.interactable = true;
 
-                // when highlighted display player color
+                // show player color when highlighted
                 ColorBlock cb = button.colors;
                 cb.highlightedColor = FirstTurn ? p1Color : p2Color;
                 button.colors = cb;

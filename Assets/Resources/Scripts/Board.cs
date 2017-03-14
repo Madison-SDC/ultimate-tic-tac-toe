@@ -19,10 +19,10 @@ public class Board : MonoBehaviour
             if(active != value) // changing active status
             {
                 Color color = GetComponent<Image>().color;
-                if (GameOver) // simply augment color by an offset
+                if (GameOver) // local game over: simply augment color by an offset
                 {
-                    if(value) { color += Game.enabledOffset; }
-                    else { color -= Game.enabledOffset; }
+                    if(value) { color += Game.enabledOffset; } // enabling makes lighter
+                    else { color -= Game.enabledOffset; } // disabling makes darker
                 }
                 else // set the board to enabled or disabled color
                 {
