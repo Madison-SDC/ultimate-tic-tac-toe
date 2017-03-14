@@ -23,10 +23,10 @@ public class BoardSpot : MonoBehaviour {
     {
         Clicked = false;
         GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/empty");
-        GetComponent<Image>().color = Color.white;
+        GetComponent<Image>().color = Game.enabledColor;
 
         ColorBlock cb = GetComponent<Button>().colors;
-        cb.disabledColor = Color.gray;
+        cb.disabledColor = Game.enabledColor;
         GetComponent<Button>().colors = cb;
     }
 }
