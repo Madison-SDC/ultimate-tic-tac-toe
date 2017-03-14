@@ -16,7 +16,7 @@ public class BoardSpot : MonoBehaviour {
 
     public void OnClick()
     {
-        Game.FillSpot(gameObject);
+        transform.parent.parent.GetComponent<Game>().FillSpot(gameObject);
     }
 
     public void Reset()

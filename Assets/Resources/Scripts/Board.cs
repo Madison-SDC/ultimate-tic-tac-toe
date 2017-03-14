@@ -62,6 +62,7 @@ public class Board : MonoBehaviour
     public void Reset()
     {
         Start();
+        GetComponent<Image>().color = Color.white;
     }
 
     /// <summary>
@@ -81,24 +82,22 @@ public class Board : MonoBehaviour
 
         if(gameEndedNow)
         {
-            Color boardColor;
+            Color boardColor = Color.white;
             switch(winner)
             {
                 case (P1):
-                    boardColor = Color.red;
+                    boardColor = Game.p1Color;
                     break;
                 case (P2):
-                    boardColor = Color.blue;
+                    boardColor = Game.p2Color;
                     break;
                 case (TIE):
-                    boardColor = Color.gray;
-                    break;
-                default:
-                    boardColor = Color.white;
+                    boardColor = Game.disabledColor;
                     break;
             }
             Image image = GetComponent<Image>();
-            image.color = boardColor;
+            image.color = boardColor + Color.gray;
+            // if(GetComponent<Game>()) { image.color -= Color.gray; } // global is darker
 
             Board parent = transform.parent.GetComponent<Board>();
             if (parent) { parent.FillSpot(name, winner); }

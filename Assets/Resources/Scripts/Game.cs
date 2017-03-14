@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class Game : MonoBehaviour {
+public class Game : MonoBehaviour
+{
 
     /// <summary>
     /// All 9 boards on scene
@@ -11,17 +12,24 @@ public class Game : MonoBehaviour {
     static GameObject activeBoard;
     static bool firstTurn;
 
+    public static Color p1Color = Color.red,
+        p2Color = Color.blue,
+        disabledColor = Color.gray,
+        enabledColor = Color.white;
+
+    static Sprite p1Sprite, p2Sprite;
+
     /// <summary>
     /// The current active board
     /// </summary>
-    public static GameObject ActiveBoard
+    public GameObject ActiveBoard
     {
         get { return activeBoard; }
         set
         {
             activeBoard = value;
             SetActiveBoard(activeBoard);
-            Enable(activeBoard);
+            if (!GetComponent<Board>().GameOver) { Enable(activeBoard); }
         }
     }
 
@@ -32,27 +40,55 @@ public class Game : MonoBehaviour {
     {
         get { return firstTurn; }
     }
-    
+
     /// <summary>
     /// The current player's turn (Board.P1 or Board.P2)
     /// </summary>
     public static int CurrentPlayer
     {
+        get { return FirstTurn ? Board.P1 : Board.P2; }
+    }
+
+    /// <summary>
+    /// The color of the active player
+    /// </summary>
+    static Color ActivePlayerColor
+    {
         get
         {
-            return FirstTurn ? Board.P1 : Board.P2;
+            return firstTurn ? p1Color : p2Color;
         }
     }
 
-	void Start () {
+    /// <summary>
+    /// The sprite of the active player's piece
+    /// </summary>
+    static Sprite ActivePlayerSprite
+    {
+        get
+        {
+            return firstTurn ? p1Sprite : p2Sprite;
+        }
+    }
+
+    /// <summary>
+    /// Reset the game
+    /// </summary>
+	void Start()
+    {
         InstantiateBoards();
         activeBoard = null;
         firstTurn = true;
-	}
+        p1Sprite = Resources.Load<Sprite>("Sprites/x");
+        p2Sprite = Resources.Load<Sprite>("Sprites/o");
+    }
 
+    /// <summary>
+    /// Reset upon right click
+    /// </summary>
     private void Update()
     {
-        if(Input.GetMouseButtonDown(1))
+        if (Input.GetMouseButtonDown(1))
         {
             Reset();
         }
@@ -66,7 +102,7 @@ public class Game : MonoBehaviour {
     {
         foreach (GameObject board in boards)
         {
-            foreach(BoardSpot spot in board.GetComponentsInChildren<BoardSpot>())
+            foreach (BoardSpot spot in board.GetComponentsInChildren<BoardSpot>())
             {
                 spot.Reset();
             }
@@ -75,6 +111,7 @@ public class Game : MonoBehaviour {
             board.GetComponent<Board>().Reset();
         }
         GameObject.Find("Global Board").GetComponent<Board>().Reset();
+        firstTurn = true;
     }
 
     /// <summary>
@@ -93,19 +130,20 @@ public class Game : MonoBehaviour {
         boards[7] = GameObject.Find("Bottom Mid Board");
         boards[8] = GameObject.Find("Bottom Right Board");
     }
-    
+
     /// <summary>
     /// Disables all boards except exception
     /// If exception is full, enables all boards
     /// </summary>
     /// <param name="active"></param>
-    public static void SetActiveBoard(GameObject active)
+    public void SetActiveBoard(GameObject active)
     {
-        bool isFull = active.GetComponent<Board>().IsFull;
+        bool activeIsFull = active.GetComponent<Board>().IsFull;
+        bool gameOver = GetComponent<Board>().GameOver;
         foreach (GameObject board in boards)
         {
-            if (!isFull && board != active) { Disable(board); }
-            if(isFull) { Enable(board); }
+            if (gameOver || !activeIsFull && board != active) { Disable(board); }
+            if (activeIsFull) { Enable(board); }
         }
     }
 
@@ -115,9 +153,14 @@ public class Game : MonoBehaviour {
     /// <param name="board"></param>
     public static void Disable(GameObject board)
     {
-        foreach (Button b in board.transform.GetComponentsInChildren<Button>())
+        if (!board.GetComponent<Board>().GameOver)
+        { board.GetComponent<Image>().color = disabledColor; }
+
+        for (int i = 0; i < board.transform.childCount; i++)
         {
-            b.interactable = false;
+            BoardSpot spot = board.transform.GetChild(i).GetComponent<BoardSpot>();
+            spot.GetComponent<Button>().interactable = false;
+            if (!spot.Clicked) { spot.GetComponent<Image>().color = board.GetComponent<Image>().color; }
         }
     }
 
@@ -128,12 +171,26 @@ public class Game : MonoBehaviour {
     /// <param name="board"></param>
     public static void Enable(GameObject board)
     {
-        for(int i = 0; i < board.transform.childCount; i++)
+        if (!board.GetComponent<Board>().GameOver)
+        {
+            board.GetComponent<Image>().color = enabledColor;
+        }
+
+        for (int i = 0; i < board.transform.childCount; i++)
         {
             Transform spot = board.transform.GetChild(i);
-            if(!spot.GetComponent<BoardSpot>().Clicked)
+            if (!spot.GetComponent<BoardSpot>().Clicked) // unclicked spot
             {
-                spot.GetComponent<Button>().interactable = true;
+                // blend in to background by default
+                spot.GetComponent<Image>().color = board.GetComponent<Image>().color;
+
+                Button button = spot.GetComponent<Button>();
+                button.interactable = true;
+
+                // when highlighted display player color
+                ColorBlock cb = button.colors;
+                cb.highlightedColor = FirstTurn ? p1Color : p2Color;
+                button.colors = cb;
             }
         }
     }
@@ -142,7 +199,7 @@ public class Game : MonoBehaviour {
     /// Advances the state of the board
     /// </summary>
     /// <param name="spot"></param>
-    public static void FillSpot(GameObject spot)
+    public void FillSpot(GameObject spot)
     {
         // update visual
         UpdateImage(spot.GetComponent<BoardSpot>(), firstTurn);
@@ -152,8 +209,10 @@ public class Game : MonoBehaviour {
         spot.GetComponent<Button>().interactable = false; // can't use a filled spot
 
         spot.transform.parent.GetComponent<Board>().FillSpot(spot.name, CurrentPlayer);
-        ActiveBoard = GameObject.Find(spot.name + " Board"); // assign the next board
+
         firstTurn = !firstTurn; // toggle turn
+
+        ActiveBoard = GameObject.Find(spot.name + " Board"); // assign the next board
     }
 
     /// <summary>
@@ -165,12 +224,11 @@ public class Game : MonoBehaviour {
     {
         Image image = spot.GetComponent<Image>();
         ColorBlock cb = spot.GetComponent<Button>().colors;
-        Color imageColor = first ? Color.red : Color.blue;
 
-        image.sprite = Resources.Load<Sprite>(first ? "Sprites/x" : "Sprites/o");
-        image.color = imageColor;
+        image.sprite = ActivePlayerSprite;
+        image.color = ActivePlayerColor;
 
-        cb.disabledColor = imageColor;
+        cb.disabledColor = ActivePlayerColor;
         spot.GetComponent<Button>().colors = cb; // weird workaround for struct vs class
     }
 }
