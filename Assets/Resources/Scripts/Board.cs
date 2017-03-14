@@ -5,10 +5,34 @@ public class Board : MonoBehaviour
 {
     int[,] spots;
     int winner;
+    bool active;
     /// <summary>
     /// The 8 combos that win the game
     /// </summary>
     static Location[,] winLines;
+
+    public bool Active
+    {
+        get { return active; }
+        set
+        {
+            if(active != value) // changing active status
+            {
+                Color color = GetComponent<Image>().color;
+                if (GameOver) // simply augment color by an offset
+                {
+                    if(value) { color += Game.enabledOffset; }
+                    else { color -= Game.enabledOffset; }
+                }
+                else // set the board to enabled or disabled color
+                {
+                    color = value ? Game.enabledColor : Game.disabledColor;
+                }
+                GetComponent<Image>().color = color;
+                active = value;
+            }
+        }
+    }
 
     /// <summary>
     /// The possible ownerships of spots
@@ -57,6 +81,7 @@ public class Board : MonoBehaviour
         spots = new int[3, 3];
         winner = NONE;
         PopulateWinLines();
+        active = true;
     }
 
     public void Reset()

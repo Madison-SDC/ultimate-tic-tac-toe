@@ -15,7 +15,8 @@ public class Game : MonoBehaviour
     public static Color p1Color = Color.red,
         p2Color = Color.blue,
         disabledColor = Color.gray,
-        enabledColor = Color.white;
+        enabledColor = Color.white,
+        enabledOffset = Color.gray / 2;
 
     static Sprite p1Sprite, p2Sprite;
 
@@ -106,9 +107,9 @@ public class Game : MonoBehaviour
             {
                 spot.Reset();
             }
+            board.GetComponent<Board>().Reset();
             Enable(board);
             board.GetComponent<Image>().color = Color.white;
-            board.GetComponent<Board>().Reset();
         }
         GameObject.Find("Global Board").GetComponent<Board>().Reset();
         firstTurn = true;
@@ -142,8 +143,9 @@ public class Game : MonoBehaviour
         bool gameOver = GetComponent<Board>().GameOver;
         foreach (GameObject board in boards)
         {
-            if (gameOver || !activeIsFull && board != active) { Disable(board); }
-            if (activeIsFull) { Enable(board); }
+            if(gameOver) { Disable(board); }
+            else if (activeIsFull) { Enable(board); }
+            else if (board != active) { Disable(board); }
         }
     }
 
@@ -153,8 +155,11 @@ public class Game : MonoBehaviour
     /// <param name="board"></param>
     public static void Disable(GameObject board)
     {
+        //board.GetComponent<Board>().Active = false;
+        //*
         if (!board.GetComponent<Board>().GameOver)
         { board.GetComponent<Image>().color = disabledColor; }
+        // */
 
         for (int i = 0; i < board.transform.childCount; i++)
         {
@@ -171,10 +176,13 @@ public class Game : MonoBehaviour
     /// <param name="board"></param>
     public static void Enable(GameObject board)
     {
+        //board.GetComponent<Board>().enabled = true;
+        //*
         if (!board.GetComponent<Board>().GameOver)
         {
             board.GetComponent<Image>().color = enabledColor;
         }
+        //*/
 
         for (int i = 0; i < board.transform.childCount; i++)
         {
