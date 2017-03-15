@@ -35,4 +35,4 @@ sysinfo.txt
 *.unitypackage
 
 # Meta files
-*.meta
+#*.meta
