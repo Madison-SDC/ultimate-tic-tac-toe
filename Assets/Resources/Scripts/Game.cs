@@ -16,6 +16,7 @@ public class Game : MonoBehaviour
         p2Color = Color.blue,
         disabledColor = Color.gray,
         enabledColor = Color.white;
+    // do a thing
 
     static Sprite p1Sprite, p2Sprite;
 

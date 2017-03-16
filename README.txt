@@ -1,4 +1,9 @@
-I've made Ultimate Tic-Tac-Toe! 
+I've made Ultimate Tic-Tac-Toe!
+
+UT_0.2.1 (2017-03-14)
+	All platforms
+		Changed completed board background colors to make pi, make enabled board clearer.
+		
 
 UT_0.2 (Colors update, 2017-03-14)
 
@@ -15,9 +20,6 @@ UT_0.2 (Colors update, 2017-03-14)
 		
 	Bugfixes
 		Fixed #1 (local games can still be played even when global game is over)
-	
-	Found bugs
-		None
 		
 UT_0.1 (Initial build, 2017-03-11)
 
