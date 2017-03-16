@@ -7,7 +7,13 @@ public class BoardSpot : Button {
     /// </summary>
     private bool clicked;
 
-    public bool Clicked { get { return clicked; } set { clicked = value; } }
+    public bool Clicked { get { return clicked; }
+        set
+        {
+            clicked = value;
+            interactable = !clicked;
+        }
+    }
 
     protected override void Start()
     {
@@ -16,7 +22,7 @@ public class BoardSpot : Button {
 
     public void OnClick()
     {
-        transform.parent.parent.GetComponent<Game>().FillSpot(gameObject);
+        transform.parent.parent.GetComponent<Game>().Play(gameObject);
     }
 
     public void Clear()

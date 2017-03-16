@@ -1,9 +1,10 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class Game : MonoBehaviour
 {
-
+    static Stack<Move> history = new Stack<Move>();
     /// <summary>
     /// All 9 boards on scene
     /// </summary>
@@ -207,20 +208,32 @@ public class Game : MonoBehaviour
     /// Advances the state of the board
     /// </summary>
     /// <param name="spot"></param>
-    public void FillSpot(GameObject spot)
+    public void Play(GameObject spot)
     {
+        BoardSpot boardSpot = spot.GetComponent<BoardSpot>();
+        Board board = spot.transform.parent.GetComponent<Board>();
+
         // update visual
-        UpdateImage(spot.GetComponent<BoardSpot>(), firstTurn);
+        UpdateImage(boardSpot, firstTurn);
 
         // update logic
-        spot.GetComponent<BoardSpot>().Clicked = true; // can't re-enable a clicked spot
-        spot.GetComponent<Button>().interactable = false; // can't use a filled spot
-
-        spot.transform.parent.GetComponent<Board>().FillSpot(spot.name, CurrentPlayer);
-
+        boardSpot.Clicked = true; // can't re-enable a clicked spot
+        board.FillSpot(spot.name, CurrentPlayer);
         firstTurn = !firstTurn; // toggle turn
 
         ActiveBoard = GameObject.Find(spot.name + " Board"); // assign the next board
+
+        // record this move
+        history.Push(new Move(board, boardSpot, !firstTurn));
+    }
+
+    /// <summary>
+    /// Undo the most recent move, if there was one
+    /// </summary>
+    public void Undo()
+    {
+        Move move = history.Pop();
+        //Board b = move.Board
     }
 
     /// <summary>
