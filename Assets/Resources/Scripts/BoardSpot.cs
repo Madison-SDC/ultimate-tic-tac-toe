@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class BoardSpot : MonoBehaviour {
+public class BoardSpot : Button {
     /// <summary>
     /// Whether this spot has been clicked
     /// </summary>
