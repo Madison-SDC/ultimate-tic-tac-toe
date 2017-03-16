@@ -10,6 +10,8 @@ public class Board : MonoBehaviour
     /// The 8 combos that win the game
     /// </summary>
     static Location[,] winLines;
+    static Color offset = Color.gray * 1.5f, // very light offset
+        enabledOffset = Color.gray / 3; // darker offset
 
     public bool Active
     {
@@ -21,8 +23,8 @@ public class Board : MonoBehaviour
                 Color color = GetComponent<Image>().color;
                 if (GameOver) // local game over: simply augment color by an offset
                 {
-                    if(value) { color += Game.enabledOffset; } // enabling makes lighter
-                    else { color -= Game.enabledOffset; } // disabling makes darker
+                    if(value) { color += enabledOffset; } // enabling makes lighter
+                    else { color -= enabledOffset; } // disabling makes darker
                 }
                 else // set the board to enabled or disabled color
                 {
@@ -116,13 +118,9 @@ public class Board : MonoBehaviour
                 case (P2):
                     boardColor = Game.p2Color;
                     break;
-                case (TIE):
-                    boardColor = Game.disabledColor;
-                    break;
             }
             Image image = GetComponent<Image>();
-            image.color = boardColor + Color.gray;
-            // if(GetComponent<Game>()) { image.color -= Color.gray; } // global is darker
+            image.color = boardColor + offset;
 
             Board parent = transform.parent.GetComponent<Board>();
             if (parent) { parent.FillSpot(name, winner); }

@@ -9,7 +9,7 @@ public class BoardSpot : Button {
 
     public bool Clicked { get { return clicked; } set { clicked = value; } }
 
-    public void Start()
+    protected override void Start()
     {
         Clicked = false;
     }
@@ -19,7 +19,7 @@ public class BoardSpot : Button {
         transform.parent.parent.GetComponent<Game>().FillSpot(gameObject);
     }
 
-    public void Reset()
+    public void Clear()
     {
         Clicked = false;
         GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/empty");
@@ -27,6 +27,7 @@ public class BoardSpot : Button {
 
         ColorBlock cb = GetComponent<Button>().colors;
         cb.disabledColor = Game.enabledColor;
+        cb.highlightedColor = Game.FirstTurn ? Game.p1Color : Game.p2Color;
         GetComponent<Button>().colors = cb;
     }
 }

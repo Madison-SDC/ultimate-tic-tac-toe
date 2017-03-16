@@ -15,8 +15,7 @@ public class Game : MonoBehaviour
     public static Color p1Color = Color.red,
         p2Color = Color.blue,
         disabledColor = Color.gray,
-        enabledColor = Color.white,
-        enabledOffset = Color.gray / 4; // just a little darker when disabled
+        enabledColor = Color.white;
 
     static Sprite p1Sprite, p2Sprite;
 
@@ -101,17 +100,17 @@ public class Game : MonoBehaviour
     /// </summary>
     public void Reset()
     {
+        firstTurn = true;
         foreach (GameObject board in boards)
         {
             foreach (BoardSpot spot in board.GetComponentsInChildren<BoardSpot>())
             {
-                spot.Reset();
+                spot.Clear();
             }
             board.GetComponent<Board>().Reset();
             Enable(board);
         }
         GameObject.Find("Global Board").GetComponent<Board>().Reset();
-        firstTurn = true;
     }
 
     /// <summary>
