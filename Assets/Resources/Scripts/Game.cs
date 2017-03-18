@@ -156,10 +156,6 @@ public class Game : MonoBehaviour
     public static void Disable(GameObject board)
     {
         board.GetComponent<Board>().Active = false;
-        /*
-        if (!board.GetComponent<Board>().GameOver)
-        { board.GetComponent<Image>().color = disabledColor; }
-        // */
 
         for (int i = 0; i < board.transform.childCount; i++)
         {
@@ -177,19 +173,12 @@ public class Game : MonoBehaviour
     public static void Enable(GameObject board)
     {
         board.GetComponent<Board>().Active = true;
-        /*
-        if (!board.GetComponent<Board>().GameOver)
-        {
-            board.GetComponent<Image>().color = enabledColor;
-        }
-        //*/
 
         for (int i = 0; i < board.transform.childCount; i++)
         {
             Transform spot = board.transform.GetChild(i);
             if (!spot.GetComponent<BoardSpot>().Clicked) // all unclicked spots
             {
-                // blend in to background by default
                 spot.GetComponent<Image>().color = board.GetComponent<Image>().color;
 
                 // can be clicked
@@ -208,7 +197,7 @@ public class Game : MonoBehaviour
     /// Advances the state of the board
     /// </summary>
     /// <param name="spot"></param>
-    public void Play(GameObject spot)
+    public void Play(GameObject spot, bool undo=false)
     {
         BoardSpot boardSpot = spot.GetComponent<BoardSpot>();
         Board board = spot.transform.parent.GetComponent<Board>();
@@ -233,7 +222,7 @@ public class Game : MonoBehaviour
     public void Undo()
     {
         Move move = history.Pop();
-        move.Board.FillSpot(move.Spot.name, Board.EMPTY);
+        //Play(move.Spot.gameObject, true);
     }
 
     /// <summary>

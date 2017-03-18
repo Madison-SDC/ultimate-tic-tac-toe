@@ -13,12 +13,12 @@ public class Board : MonoBehaviour
     /// <summary>
     /// Difference between board and pieces when enabled
     /// </summary>
-    static Color offset = Color.gray / 2; // very light offset
+    static Color offset = Color.gray * 1.2f; // very light offset
 
     /// <summary>
     /// Change in board when enabled/disabled
     /// </summary>
-    static Color enabledOffset = Color.gray / 3; // darker offset
+    static Color enabledOffset = Color.gray / 2; // darker offset
 
     public bool Active
     {

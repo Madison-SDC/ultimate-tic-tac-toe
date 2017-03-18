@@ -29,7 +29,7 @@ public class BoardSpot : Button {
     {
         Clicked = false;
         GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/empty");
-        GetComponent<Image>().color = Game.enabledColor;
+        GetComponent<Image>().color = Color.clear;
 
         ColorBlock cb = GetComponent<Button>().colors;
         cb.disabledColor = Game.enabledColor;
