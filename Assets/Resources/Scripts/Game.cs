@@ -160,8 +160,13 @@ public class Game : MonoBehaviour
         for (int i = 0; i < board.transform.childCount; i++)
         {
             BoardSpot spot = board.transform.GetChild(i).GetComponent<BoardSpot>();
-            spot.GetComponent<Button>().interactable = false;
-            if (!spot.Clicked) { spot.GetComponent<Image>().color = board.GetComponent<Image>().color; }
+            spot.interactable = false;
+            if (!spot.Clicked)
+            {
+                ColorBlock cb = spot.colors;
+                cb.disabledColor = board.GetComponent<Image>().color;
+                spot.colors = cb;
+            }
         }
     }
 
@@ -179,15 +184,14 @@ public class Game : MonoBehaviour
             Transform spot = board.transform.GetChild(i);
             if (!spot.GetComponent<BoardSpot>().Clicked) // all unclicked spots
             {
-                spot.GetComponent<Image>().color = board.GetComponent<Image>().color;
-
                 // can be clicked
                 Button button = spot.GetComponent<Button>();
                 button.interactable = true;
 
-                // show player color when highlighted
+                // show player color when highlighted, blend in when not
                 ColorBlock cb = button.colors;
                 cb.highlightedColor = FirstTurn ? p1Color : p2Color;
+                cb.normalColor = board.GetComponent<Image>().color;
                 button.colors = cb;
             }
         }
