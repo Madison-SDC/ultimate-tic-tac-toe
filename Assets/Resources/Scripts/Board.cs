@@ -10,26 +10,35 @@ public class Board : MonoBehaviour
     /// The 8 combos that win the game
     /// </summary>
     static Location[,] winLines;
-    static Color offset = Color.gray * 1.5f, // very light offset
-        enabledOffset = Color.gray / 3; // darker offset
+    /// <summary>
+    /// Difference between board and pieces when enabled
+    /// </summary>
+    static Color offset = Color.gray / 2; // very light offset
+
+    /// <summary>
+    /// Change in board when enabled/disabled
+    /// </summary>
+    static Color enabledOffset = Color.gray / 3; // darker offset
 
     public bool Active
     {
         get { return active; }
         set
         {
-            if(active != value) // changing active status
+            if (active != value && winner != TIE) // changing active status
             {
                 Color color = GetComponent<Image>().color;
+
                 if (GameOver) // local game over: simply augment color by an offset
                 {
-                    if(value) { color += enabledOffset; } // enabling makes lighter
+                    if (value) { color += enabledOffset; } // enabling makes lighter
                     else { color -= enabledOffset; } // disabling makes darker
                 }
-                else // set the board to enabled or disabled color
+                else // game not over
                 {
                     color = value ? Game.enabledColor : Game.disabledColor;
                 }
+
                 GetComponent<Image>().color = color;
                 active = value;
             }
@@ -37,17 +46,17 @@ public class Board : MonoBehaviour
     }
 
     /// <summary>
-    /// The possible ownerships of spots
+    /// The possible ownerships of spots and winner of the game
     /// </summary>
     public const int EMPTY = 0,
         P1 = 1,
         P2 = 2;
 
     /// <summary>
-    /// The value of winner
-    /// TIE: game over, no winner
-    /// NONE: game not over
-    /// could also be P1 or P2
+    /// The value of winner<para/>
+    /// TIE: game over, no winner<para/>
+    /// NONE: game not over<br/><para/>
+    /// could also be P1 or P2<br/><para/>
     /// </summary>
     const int TIE = 0,
         NONE = -1;
@@ -65,13 +74,15 @@ public class Board : MonoBehaviour
     /// <summary>
     /// Returns whether this board is full
     /// </summary>
-    public bool IsFull { get
+    public bool IsFull
+    {
+        get
         {
-            if(winner == TIE) { return true; }
+            if (winner == TIE) { return true; }
 
-            foreach(int spot in spots)
+            foreach (int spot in spots)
             {
-                if(spot == 0) { return false; }
+                if (spot == 0) { return false; }
             }
             return true;
         }
@@ -100,30 +111,46 @@ public class Board : MonoBehaviour
     void FillSpot(Location loc, int player)
     {
         spots[loc.Row, loc.Col] = player;
-        bool gameEndedNow = false;
-        if (!GameOver)
+        bool gameOverState = GameOver;
+
+        if ((!GameOver && player != EMPTY) || // game may have just ended
+            (GameOver && player == EMPTY)) // game could have been re-opened
         {
-            CheckWinner();
-            gameEndedNow = GameOver;
+            CheckWinner(); // update game over status
         }
 
-        if(gameEndedNow)
+        if (gameOverState != GameOver) // game over state changed
         {
-            Color boardColor = Color.white;
-            switch(winner)
-            {
-                case (P1):
-                    boardColor = Game.p1Color;
-                    break;
-                case (P2):
-                    boardColor = Game.p2Color;
-                    break;
-            }
-            Image image = GetComponent<Image>();
-            image.color = boardColor + offset;
+            UpdateColor();
 
             Board parent = transform.parent.GetComponent<Board>();
             if (parent) { parent.FillSpot(name, winner); }
+        }
+    }
+
+    /// <summary>
+    /// Update the color of the board to reflect the winner of the game
+    /// </summary>
+    internal void UpdateColor()
+    {
+        Color boardColor = Color.white;
+        Image image = GetComponent<Image>();
+        switch (winner)
+        {
+            case (P1):
+                image.color = Game.p1Color + offset; // slightly lighter than pieces
+                if(active) { image.color += enabledOffset; } // much lighter than pieces
+                return;
+            case (P2):
+                image.color = Game.p2Color + offset; // slightly lighter than pieces
+                if(active) { image.color += enabledOffset; } // much lighter than pieces
+                return;
+            case (TIE):
+                image.color = Game.disabledColor;
+                return;
+            case (NONE):
+                image.color = active ? Game.enabledColor : Game.disabledColor;
+                return;
         }
     }
 
@@ -178,7 +205,7 @@ public class Board : MonoBehaviour
 
     internal void PopulateWinLines()
     {
-        if(winLines != null) { return; }
+        if (winLines != null) { return; }
         winLines = new Location[8, 3]; // 8 lines of length 3
 
         // horizontal and vertical lines

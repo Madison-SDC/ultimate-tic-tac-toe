@@ -219,12 +219,12 @@ public class Game : MonoBehaviour
         // update logic
         boardSpot.Clicked = true; // can't re-enable a clicked spot
         board.FillSpot(spot.name, CurrentPlayer);
-        firstTurn = !firstTurn; // toggle turn
-
-        ActiveBoard = GameObject.Find(spot.name + " Board"); // assign the next board
 
         // record this move
-        history.Push(new Move(board, boardSpot, !firstTurn));
+        history.Push(new Move(board, boardSpot, firstTurn ? Board.P1 : Board.P2 ));
+        
+        firstTurn = !firstTurn; // toggle turn
+        ActiveBoard = GameObject.Find(spot.name + " Board"); // assign the next board
     }
 
     /// <summary>
@@ -233,7 +233,7 @@ public class Game : MonoBehaviour
     public void Undo()
     {
         Move move = history.Pop();
-        //Board b = move.Board
+        move.Board.FillSpot(move.Spot.name, Board.EMPTY);
     }
 
     /// <summary>
