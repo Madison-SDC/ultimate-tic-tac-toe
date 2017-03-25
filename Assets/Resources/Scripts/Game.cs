@@ -170,24 +170,20 @@ public class Game : MonoBehaviour
     /// Advances the state of the board
     /// </summary>
     /// <param name="spot"></param>
-    public void Play(BoardSpot spot, bool undo=false)
+    public void Play(BoardSpot spot, bool undo = false)
     {
         Board board = spot.transform.parent.GetComponent<Board>();
 
-        spot.Fill(ActivePlayer.Turn);
-
-        // update visual
-        //UpdateImage(spot, firstTurn);
-
         // update logic
-        //spot.Clicked = true; // can't re-enable a clicked spot
-        board.FillSpot(spot.name, ActivePlayer.Turn); // check winner
+        spot.Fill(undo ? Board.EMPTY : ActivePlayer.Turn);
+        board.FillSpot(spot.name, undo ? Board.EMPTY : ActivePlayer.Turn); // check winner
 
         // record this move
-        history.Push(new Move(board, spot));
+        if(!undo) { history.Push(new Move(board, spot)); }
         
         firstTurn = !firstTurn; // toggle turn
-        ActiveBoard = GameObject.Find(spot.name + " Board"); // assign the next board
+        string boardName = undo ? spot.transform.parent.name : spot.name + " Board";
+        ActiveBoard = GameObject.Find(boardName); // assign the next board
     }
 
     /// <summary>
@@ -195,10 +191,7 @@ public class Game : MonoBehaviour
     /// </summary>
     public void Undo()
     {
-        Move move = history.Pop();
-        move.Board.FillSpot(move.Spot.name, Board.EMPTY); // remove piece
-        ActiveBoard = GameObject.Find(move.Board.name); // go back to old board
-        firstTurn = !firstTurn; // toggle player
+        Play(history.Pop().Spot, true); // remove piece
     }
 
     /// <summary>
