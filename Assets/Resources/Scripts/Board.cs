@@ -58,8 +58,8 @@ public class Board : MonoBehaviour
     /// NONE: game not over<br/><para/>
     /// could also be P1 or P2<br/><para/>
     /// </summary>
-    const int TIE = 0,
-        NONE = -1;
+    const int NONE = 0,
+        TIE = -1;
 
     /// <summary>
     /// The spots on this board
@@ -113,8 +113,8 @@ public class Board : MonoBehaviour
         spots[loc.Row, loc.Col] = player;
         bool gameOverState = GameOver;
 
-        if ((!GameOver && player != EMPTY) || // game may have just ended
-            (GameOver && player == EMPTY)) // game could have been re-opened
+        if ((!GameOver && player != EMPTY) // game may have just ended
+            || (GameOver && player == EMPTY)) // or game could have been re-opened
         {
             CheckWinner(); // update game over status
         }
@@ -122,9 +122,11 @@ public class Board : MonoBehaviour
         if (gameOverState != GameOver) // game over state changed
         {
             UpdateColor();
-
-            Board parent = transform.parent.GetComponent<Board>();
-            if (parent) { parent.FillSpot(name, winner); }
+            Board parentBoard = transform.parent.GetComponent<Board>();
+            if (parentBoard)
+            {
+                parentBoard.FillSpot(name, winner);
+            }
         }
     }
 
@@ -199,7 +201,8 @@ public class Board : MonoBehaviour
                 }
             }
         }
-        if (!emptySpotExists) { winner = TIE; }
+        if (emptySpotExists) { winner = NONE; }
+        else { winner = TIE; }
     }
 
     internal void PopulateWinLines()

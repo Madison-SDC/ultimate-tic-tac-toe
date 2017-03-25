@@ -8,9 +8,9 @@ public class Game : MonoBehaviour
     /// <summary>
     /// All 9 boards on scene
     /// </summary>
-    static GameObject[] boards;
+    static Board[] boards;
 
-    static GameObject activeBoard;
+    static Board activeBoard;
     static bool firstTurn;
 
     public static Player p1, p2;
@@ -23,19 +23,23 @@ public class Game : MonoBehaviour
     /// <summary>
     /// The current active board
     /// </summary>
-    public GameObject ActiveBoard
+    public Board ActiveBoard
     {
         get { return activeBoard; }
         set
         {
             activeBoard = value;
 
-            bool activeIsFull = activeBoard.GetComponent<Board>().IsFull;
+            bool activeIsNull = activeBoard == null;
+            bool activeIsFull = !activeIsNull
+                && activeBoard.GetComponent<Board>().IsFull;
+
             bool gameOver = GetComponent<Board>().GameOver;
-            foreach (GameObject board in boards)
+
+            foreach (Board board in boards)
             {
                 if (gameOver) { Disable(board); }
-                else if (activeIsFull) { Enable(board); }
+                else if (activeIsNull || activeIsFull) { Enable(board); }
                 else if (board != activeBoard) { Disable(board); }
             }
 
@@ -69,6 +73,7 @@ public class Game : MonoBehaviour
         firstTurn = true;
         p1 = new Player(Board.P1, Color.red, Resources.Load<Sprite>("Sprites/x"));
         p2 = new Player(Board.P2, Color.blue, Resources.Load<Sprite>("Sprites/o"));
+        history.Push(new Move(null, null));
     }
 
     /// <summary>
@@ -89,7 +94,7 @@ public class Game : MonoBehaviour
     public void Reset()
     {
         firstTurn = true;
-        foreach (GameObject board in boards)
+        foreach (Board board in boards)
         {
             foreach (BoardSpot spot in board.GetComponentsInChildren<BoardSpot>())
             {
@@ -99,6 +104,11 @@ public class Game : MonoBehaviour
             Enable(board);
         }
         GameObject.Find("Global Board").GetComponent<Board>().Reset();
+        
+        while(history.Count > 2)
+        {
+            history.Pop();
+        }
     }
 
     /// <summary>
@@ -106,25 +116,27 @@ public class Game : MonoBehaviour
     /// </summary>
     internal void InstantiateBoards()
     {
-        boards = new GameObject[9];
-        boards[0] = GameObject.Find("Top Left Board");
-        boards[1] = GameObject.Find("Top Mid Board");
-        boards[2] = GameObject.Find("Top Right Board");
-        boards[3] = GameObject.Find("Center Left Board");
-        boards[4] = GameObject.Find("Center Mid Board");
-        boards[5] = GameObject.Find("Center Right Board");
-        boards[6] = GameObject.Find("Bottom Left Board");
-        boards[7] = GameObject.Find("Bottom Mid Board");
-        boards[8] = GameObject.Find("Bottom Right Board");
+        boards = new Board[9];
+        boards[0] = GameObject.Find("Top Left Board").GetComponent<Board>();
+        boards[1] = GameObject.Find("Top Mid Board").GetComponent<Board>();
+        boards[2] = GameObject.Find("Top Right Board").GetComponent<Board>();
+        boards[3] = GameObject.Find("Center Left Board").GetComponent<Board>();
+        boards[4] = GameObject.Find("Center Mid Board").GetComponent<Board>();
+        boards[5] = GameObject.Find("Center Right Board").GetComponent<Board>();
+        boards[6] = GameObject.Find("Bottom Left Board").GetComponent<Board>();
+        boards[7] = GameObject.Find("Bottom Mid Board").GetComponent<Board>();
+        boards[8] = GameObject.Find("Bottom Right Board").GetComponent<Board>();
     }
     
     /// <summary>
     /// Disables the button for all of the spots of this board
     /// </summary>
     /// <param name="board"></param>
-    public static void Disable(GameObject board)
+    public static void Disable(Board board)
     {
-        board.GetComponent<Board>().Active = false;
+        if(board == null) { return; }
+
+        board.Active = false;
 
         for (int i = 0; i < board.transform.childCount; i++)
         {
@@ -144,9 +156,11 @@ public class Game : MonoBehaviour
     /// if that spot hasn't been taken (clicked before)
     /// </summary>
     /// <param name="board"></param>
-    public static void Enable(GameObject board)
+    public static void Enable(Board board)
     {
-        board.GetComponent<Board>().Active = true;
+        if(board == null) { return; }
+
+        board.Active = true;
 
         for (int i = 0; i < board.transform.childCount; i++)
         {
@@ -170,7 +184,7 @@ public class Game : MonoBehaviour
     /// Advances the state of the board
     /// </summary>
     /// <param name="spot"></param>
-    public void Play(BoardSpot spot, bool undo = false)
+    public void Play(BoardSpot spot, bool undo = false, Move previous = null)
     {
         Board board = spot.transform.parent.GetComponent<Board>();
 
@@ -179,11 +193,15 @@ public class Game : MonoBehaviour
         board.FillSpot(spot.name, undo ? Board.EMPTY : ActivePlayer.Turn); // check winner
 
         // record this move
-        if(!undo) { history.Push(new Move(board, spot)); }
+        if(!undo) { history.Push(new Move(ActiveBoard, spot)); }
         
         firstTurn = !firstTurn; // toggle turn
-        string boardName = undo ? spot.transform.parent.name : spot.name + " Board";
-        ActiveBoard = GameObject.Find(boardName); // assign the next board
+
+        /* On an undo, the new active board is the board
+         * that the previous move pointed to.           
+        */
+        Board localBoard = GameObject.Find(spot.name + " Board").GetComponent<Board>();
+        ActiveBoard = undo ? previous.Board : localBoard; // assign the next board
     }
 
     /// <summary>
@@ -191,7 +209,11 @@ public class Game : MonoBehaviour
     /// </summary>
     public void Undo()
     {
-        Play(history.Pop().Spot, true); // remove piece
+        if (history.Count > 1) // cannot undo original instantiation move
+        {
+            Move move = history.Pop();
+            Play(move.Spot, true, move); // remove piece
+        }
     }
 
     /// <summary>
