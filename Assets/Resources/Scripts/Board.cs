@@ -133,16 +133,15 @@ public class Board : MonoBehaviour
     /// </summary>
     internal void UpdateColor()
     {
-        Color boardColor = Color.white;
         Image image = GetComponent<Image>();
         switch (winner)
         {
             case (P1):
-                image.color = Game.p1Color + offset; // slightly lighter than pieces
+                image.color = Game.p1.Color + offset; // slightly lighter than pieces
                 if(active) { image.color += enabledOffset; } // much lighter than pieces
                 return;
             case (P2):
-                image.color = Game.p2Color + offset; // slightly lighter than pieces
+                image.color = Game.p2.Color + offset; // slightly lighter than pieces
                 if(active) { image.color += enabledOffset; } // much lighter than pieces
                 return;
             case (TIE):
