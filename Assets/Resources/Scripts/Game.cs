@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -64,6 +65,11 @@ public class Game : MonoBehaviour
     }
 
     /// <summary>
+    /// True if the game board is entirely clear (no moves have been made)
+    /// </summary>
+    public static bool IsClear { get { return history.Count == 1; } }
+
+    /// <summary>
     /// Reset the game
     /// </summary>
 	void Start()
@@ -93,21 +99,9 @@ public class Game : MonoBehaviour
     /// </summary>
     public void Reset()
     {
-        firstTurn = true;
-        foreach (Board board in boards)
+        while(history.Count > 1)
         {
-            foreach (BoardSpot spot in board.GetComponentsInChildren<BoardSpot>())
-            {
-                spot.Clear();
-            }
-            board.GetComponent<Board>().Reset();
-            Enable(board);
-        }
-        GameObject.Find("Global Board").GetComponent<Board>().Reset();
-        
-        while(history.Count > 2)
-        {
-            history.Pop();
+            Undo();
         }
     }
 
