@@ -54,31 +54,9 @@ public class Game : MonoBehaviour
     /// <summary>
     /// The current player's turn (Board.P1 or Board.P2)
     /// </summary>
-    public static int CurrentPlayer
+    public static Player ActivePlayer
     {
-        get { return FirstTurn ? p1.Turn : p2.Turn; }
-    }
-
-    /// <summary>
-    /// The color of the active player
-    /// </summary>
-    public static Color ActivePlayerColor
-    {
-        get
-        {
-            return firstTurn ? p1.Color : p2.Color;
-        }
-    }
-
-    /// <summary>
-    /// The sprite of the active player's piece
-    /// </summary>
-    public static Sprite ActivePlayerSprite
-    {
-        get
-        {
-            return firstTurn ? p1.Sprite : p2.Sprite;
-        }
+        get { return FirstTurn ? p1 : p2; }
     }
 
     /// <summary>
@@ -181,7 +159,7 @@ public class Game : MonoBehaviour
 
                 // show player color when highlighted, blend in when not
                 ColorBlock cb = button.colors;
-                cb.highlightedColor = ActivePlayerColor;
+                cb.highlightedColor = ActivePlayer.Color;
                 cb.normalColor = board.GetComponent<Image>().color;
                 button.colors = cb;
             }
@@ -196,12 +174,14 @@ public class Game : MonoBehaviour
     {
         Board board = spot.transform.parent.GetComponent<Board>();
 
+        spot.Fill(ActivePlayer.Turn);
+
         // update visual
-        UpdateImage(spot, firstTurn);
+        //UpdateImage(spot, firstTurn);
 
         // update logic
-        spot.Clicked = true; // can't re-enable a clicked spot
-        board.FillSpot(spot.name, CurrentPlayer); // check winner
+        //spot.Clicked = true; // can't re-enable a clicked spot
+        board.FillSpot(spot.name, ActivePlayer.Turn); // check winner
 
         // record this move
         history.Push(new Move(board, spot));
@@ -231,10 +211,10 @@ public class Game : MonoBehaviour
         Image image = spot.GetComponent<Image>();
         ColorBlock cb = spot.GetComponent<Button>().colors;
 
-        image.sprite = ActivePlayerSprite;
-        image.color = ActivePlayerColor;
+        image.sprite = ActivePlayer.Sprite;
+        image.color = ActivePlayer.Color;
 
-        cb.disabledColor = ActivePlayerColor;
+        cb.disabledColor = ActivePlayer.Color;
         spot.GetComponent<Button>().colors = cb; // weird workaround for struct vs class
     }
 }

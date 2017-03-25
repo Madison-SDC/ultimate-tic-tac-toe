@@ -57,11 +57,11 @@ public class BoardSpot : Button {
         {
             Clicked = true;
             Image image = GetComponent<Image>();
-            image.sprite = Game.ActivePlayerSprite;
-            image.color = Game.ActivePlayerColor;
+            image.sprite = Game.ActivePlayer.Sprite;
+            image.color = Game.ActivePlayer.Color;
 
             ColorBlock cb = colors;
-            cb.disabledColor = Game.ActivePlayerColor;
+            cb.disabledColor = Game.ActivePlayer.Color;
             colors = cb; // weird workaround for struct vs class
         }
 
