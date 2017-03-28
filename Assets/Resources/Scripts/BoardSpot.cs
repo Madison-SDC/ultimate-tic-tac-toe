@@ -29,6 +29,15 @@ public class BoardSpot : Button {
         }
     }
 
+    public Board RelativeBoard
+    {
+        get
+        {
+            return GameObject.Find(name + " Board").GetComponent<Board>();
+        }
+
+    }
+
     /// <summary>
     /// The game this is a part of
     /// </summary>
@@ -48,7 +57,9 @@ public class BoardSpot : Button {
 
     public void OnClick()
     {
-        Game.Play(this);
+        Game.Play(this); // disabled while working on 0.4
+
+
     }
 
     public void Clear()

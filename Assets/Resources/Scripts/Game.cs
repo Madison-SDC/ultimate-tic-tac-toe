@@ -168,23 +168,21 @@ public class Game : MonoBehaviour
     /// </summary>
     /// <param name="spot">The spot to play</param>
     /// <param name="undo">Whether to undo a move</param>
-    /// <param name="previous">The move to undo</param>
-    public void Play(BoardSpot spot, bool undo = false, Move previous = null)
+    /// <param name="prevActiveBoard">The previous active board</param>
+    public void Play(BoardSpot spot, bool undo = false, Board prevActiveBoard = null)
     {
         // update logic
         spot.Fill(undo ? Board.EMPTY : ActivePlayer.Turn);
-        spot.Board.FillSpot(spot.name, undo ? Board.EMPTY : ActivePlayer.Turn); // check winner
+        spot.Board.FillSpot(spot.name, undo ? Board.EMPTY : ActivePlayer.Turn);
 
         // record this move
         if(!undo) { history.Push(new Move(ActiveBoard, spot)); }
         
         firstTurn = !firstTurn; // toggle turn
 
-        /* On an undo, the new active board is the board
-         * that the previous move pointed to.           
-        */
-        Board localBoard = GameObject.Find(spot.name + " Board").GetComponent<Board>();
-        ActiveBoard = undo ? previous.Board : localBoard; // assign the next board
+        // On an undo, the new active board is the board 
+        // that the previous move pointed to.
+        ActiveBoard = undo ? prevActiveBoard : spot.RelativeBoard;
     }
 
     /// <summary>
@@ -195,7 +193,7 @@ public class Game : MonoBehaviour
         if (history.Count > 1) // cannot undo original instantiation move
         {
             Move move = history.Pop();
-            Play(move.Spot, true, move); // remove piece
+            Play(move.Spot, true, move.Board); // remove piece
         }
     }
 
