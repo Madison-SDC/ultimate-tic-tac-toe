@@ -81,18 +81,7 @@ public class Game : MonoBehaviour
         p2 = new Player(Board.P2, Color.blue, Resources.Load<Sprite>("Sprites/o"));
         history.Push(new Move(null, null));
     }
-
-    /// <summary>
-    /// Reset upon right click
-    /// </summary>
-    private void Update()
-    {
-        if (Input.GetMouseButtonDown(1))
-        {
-            Reset();
-        }
-    }
-
+    
     /// <summary>
     /// Resets the game
     /// Empties boards, clears winners

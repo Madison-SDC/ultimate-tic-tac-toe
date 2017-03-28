@@ -52,3 +52,5 @@ desktop: 1920x1080 60Hz; virtual: 1920x1080 at 0,0
 UnloadTime: 0.705629 ms
 Setting up 1 worker threads for Enlighten.
   Thread -> id: 75ac -> priority: 1 
+Setting up 1 worker threads for Enlighten.
+  Thread -> id: 6db4 -> priority: 1 
