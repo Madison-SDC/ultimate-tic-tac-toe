@@ -164,16 +164,16 @@ public class Game : MonoBehaviour
     }
 
     /// <summary>
-    /// Advances the state of the board
+    /// Advances or reverts the state of the board
     /// </summary>
-    /// <param name="spot"></param>
+    /// <param name="spot">The spot to play</param>
+    /// <param name="undo">Whether to undo a move</param>
+    /// <param name="previous">The move to undo</param>
     public void Play(BoardSpot spot, bool undo = false, Move previous = null)
     {
-        Board board = spot.transform.parent.GetComponent<Board>();
-
         // update logic
         spot.Fill(undo ? Board.EMPTY : ActivePlayer.Turn);
-        board.FillSpot(spot.name, undo ? Board.EMPTY : ActivePlayer.Turn); // check winner
+        spot.Board.FillSpot(spot.name, undo ? Board.EMPTY : ActivePlayer.Turn); // check winner
 
         // record this move
         if(!undo) { history.Push(new Move(ActiveBoard, spot)); }

@@ -3,18 +3,40 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class BoardSpot : Button {
-    /// <summary>
-    /// Whether this spot has been clicked
-    /// </summary>
     private bool clicked;
 
     private static Sprite empty;
 
+    /// <summary>
+    /// Whether this has been clicked
+    /// </summary>
     public bool Clicked { get { return clicked; }
         set
         {
             clicked = value;
             interactable = !clicked;
+        }
+    }
+
+    /// <summary>
+    /// The board this is a part of
+    /// </summary>
+    public Board Board
+    {
+        get
+        {
+            return transform.parent.GetComponent<Board>();
+        }
+    }
+
+    /// <summary>
+    /// The game this is a part of
+    /// </summary>
+    public Game Game
+    {
+        get
+        {
+            return transform.parent.parent.GetComponent<Game>();
         }
     }
 
@@ -26,7 +48,7 @@ public class BoardSpot : Button {
 
     public void OnClick()
     {
-        transform.parent.parent.GetComponent<Game>().Play(this);
+        Game.Play(this);
     }
 
     public void Clear()

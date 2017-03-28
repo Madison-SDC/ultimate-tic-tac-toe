@@ -4,7 +4,9 @@
     private BoardSpot spot;
 
     /// <summary>
-    /// The active board at the time of this move
+    /// The active board at the time of this move<para></para>
+    /// Note: this is not necessarily the board on which the move was made 
+    /// <para>(if the active board was full or null)</para>
     /// </summary>
     public Board Board
     {
