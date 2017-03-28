@@ -17,9 +17,10 @@ public class Game : MonoBehaviour
     public static Player p1, p2;
 
     public static Color disabledColor = Color.gray,
-        enabledColor = Color.white;
+        enabledColor = Color.white,
+        highlight = Color.gray / 2;
 
-    //static Sprite p1Sprite, p2Sprite;
+    static BoardSpot nextMove;
 
     /// <summary>
     /// The current active board
@@ -69,6 +70,8 @@ public class Game : MonoBehaviour
     /// </summary>
     public static bool IsClear { get { return history.Count == 1; } }
 
+    public static bool HasNextMove { get { return nextMove != null; } }
+
     /// <summary>
     /// Reset the game
     /// </summary>
@@ -81,14 +84,14 @@ public class Game : MonoBehaviour
         p2 = new Player(Board.P2, Color.blue, Resources.Load<Sprite>("Sprites/o"));
         history.Push(new Move(null, null));
     }
-    
+
     /// <summary>
     /// Resets the game
     /// Empties boards, clears winners
     /// </summary>
     public void Reset()
     {
-        while(history.Count > 1)
+        while (history.Count > 1)
         {
             Undo();
         }
@@ -110,14 +113,14 @@ public class Game : MonoBehaviour
         boards[7] = GameObject.Find("Bottom Mid Board").GetComponent<Board>();
         boards[8] = GameObject.Find("Bottom Right Board").GetComponent<Board>();
     }
-    
+
     /// <summary>
     /// Disables the button for all of the spots of this board
     /// </summary>
     /// <param name="board"></param>
     public static void Disable(Board board)
     {
-        if(board == null) { return; }
+        if (board == null) { return; }
 
         board.Active = false;
 
@@ -127,6 +130,7 @@ public class Game : MonoBehaviour
             spot.interactable = false;
             if (!spot.Clicked)
             {
+                spot.GetComponent<Image>().enabled = false; // hide image so board color is visible
                 ColorBlock cb = spot.colors;
                 cb.disabledColor = board.GetComponent<Image>().color;
                 spot.colors = cb;
@@ -141,7 +145,7 @@ public class Game : MonoBehaviour
     /// <param name="board"></param>
     public static void Enable(Board board)
     {
-        if(board == null) { return; }
+        if (board == null) { return; }
 
         board.Active = true;
 
@@ -150,6 +154,9 @@ public class Game : MonoBehaviour
             Transform spot = board.transform.GetChild(i);
             if (!spot.GetComponent<BoardSpot>().Clicked) // all unclicked spots
             {
+                // show picture so it can be clicked
+                spot.GetComponent<Image>().enabled = true;
+
                 // can be clicked
                 Button button = spot.GetComponent<Button>();
                 button.interactable = true;
@@ -176,13 +183,15 @@ public class Game : MonoBehaviour
         spot.Board.FillSpot(spot.name, undo ? Board.EMPTY : ActivePlayer.Turn);
 
         // record this move
-        if(!undo) { history.Push(new Move(ActiveBoard, spot)); }
-        
+        if (!undo) { history.Push(new Move(ActiveBoard, spot)); }
+
         firstTurn = !firstTurn; // toggle turn
 
         // On an undo, the new active board is the board 
         // that the previous move pointed to.
         ActiveBoard = undo ? prevActiveBoard : spot.RelativeBoard;
+
+        nextMove = null; // no next move chosen as this one has been confirmed
     }
 
     /// <summary>
@@ -190,6 +199,12 @@ public class Game : MonoBehaviour
     /// </summary>
     public void Undo()
     {
+        if(nextMove)
+        {
+            ShowMove(nextMove, true);
+            nextMove = null;
+        }
+
         if (history.Count > 1) // cannot undo original instantiation move
         {
             Move move = history.Pop();
@@ -198,19 +213,84 @@ public class Game : MonoBehaviour
     }
 
     /// <summary>
-    /// Update image of the spot and its disabled color
+    /// Shows the results of making this move, but does not confirm it
     /// </summary>
     /// <param name="spot"></param>
-    /// <param name="first"></param>
-    internal static void UpdateImage(BoardSpot spot, bool first)
+    public void UpdateDisplay(BoardSpot spot)
     {
-        Image image = spot.GetComponent<Image>();
-        ColorBlock cb = spot.GetComponent<Button>().colors;
+        // undo previous move shown (if not confirmed)
+        if (nextMove) { ShowMove(nextMove, true); }
+        nextMove = spot;
+        ShowMove(nextMove);
+    }
 
-        image.sprite = ActivePlayer.Sprite;
-        image.color = ActivePlayer.Color;
+    /// <summary>
+    /// Display the results of making a move at this spot, do not confirm it
+    /// </summary>
+    /// <param name="spot">The spot to play on</param>
+    /// <param name="undo">Whether to undo the shown move</param>
+    private void ShowMove(BoardSpot spot, bool undo = false)
+    {
+        // the owner of the shown move
+        int player = undo ? Board.EMPTY : ActivePlayer.Turn;
+        
+        bool gameOverBefore = GetComponent<Board>().GameOver;
 
-        cb.disabledColor = ActivePlayer.Color;
-        spot.GetComponent<Button>().colors = cb; // weird workaround for struct vs class
+        spot.Fill(undo ? Board.EMPTY : player); // update piece image
+
+        bool gameOverAfter = GetComponent<Board>().GameOver;
+
+        // highlight local and global board
+        spot.Board.FillSpot(spot.name, player);
+
+        // highlight next playable board(s) if game hasn't ended
+        if (!gameOverBefore && !gameOverAfter)
+        {
+            Highlight(spot.RelativeBoard, undo);
+        }
+    }
+
+    /// <summary>
+    /// Highlights the playable boards if <paramref name="board"/> is the 
+    /// active board. Will highlight all boards if <paramref name="board"/> 
+    /// is full
+    /// </summary>
+    /// <param name="board">The next active board</param>
+    /// <param name="undo">True if darken back to original hue, 
+    /// false to lighten</param>
+    private void Highlight(Board board, bool undo)
+    {
+        Color change = (undo ? -1 : 1) * highlight;
+        
+        // only highlight active board if game continues
+        if (!GetComponent<Board>().GameOver)
+        {
+            if (board.IsFull) // highlight all other boards
+            {
+                foreach (Board b in boards)
+                {
+                    if (b != board)
+                    {
+                        b.GetComponent<Image>().color += change;
+                    }
+                }
+            }
+            else // board not full, can be played on
+            {
+                board.GetComponent<Image>().color += change;
+            }
+        } // if game is over, do nothing
+    }
+
+    /// <summary>
+    /// Confirms the next move
+    /// </summary>
+    public void Confirm()
+    {
+        if(nextMove)
+        {
+            ShowMove(nextMove, true); // undo color changes
+            Play(nextMove); // make it official
+        }
     }
 }

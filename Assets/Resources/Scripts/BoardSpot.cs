@@ -57,9 +57,9 @@ public class BoardSpot : Button {
 
     public void OnClick()
     {
-        Game.Play(this); // disabled while working on 0.4
+        //Game.Play(this); // disabled during development of 0.4
 
-
+        Game.UpdateDisplay(this);
     }
 
     public void Clear()
@@ -91,6 +91,7 @@ public class BoardSpot : Button {
         {
             Clicked = true;
             Image image = GetComponent<Image>();
+            image.enabled = true;
             image.sprite = Game.ActivePlayer.Sprite;
             image.color = Game.ActivePlayer.Color;
 
@@ -98,6 +99,5 @@ public class BoardSpot : Button {
             cb.disabledColor = Game.ActivePlayer.Color;
             colors = cb; // weird workaround for struct vs class
         }
-
     }
 }

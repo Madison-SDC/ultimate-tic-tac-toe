@@ -1,4 +1,4 @@
-I've made Ultimate Tic-Tac-Toe! Play the unique strategy game with friends on one device! Easily reset the entire board or simply undo the most recent move with handy dandy buttons!
+I've made Ultimate Tic-Tac-Toe! Play the unique strategy game with friends on one device! Easily reset the entire board, preview your next move, and undo the most recent move!
 
 
 Planned features include:
@@ -12,6 +12,17 @@ Planned features include:
 
 
 Changelog:
+
+UT_0.4(Confirm update, 2017-03-28)
+	All platforms
+		Added confirmation functionality! 
+			Clicking a spot now previews the next move by highlighting the next active board
+			The clicked spot changes image to reflect the active player (as though the player has moved there)
+			The local board of the clicked spot may change color to reflect a new winner (if the previewed move wins the board)
+			The global board may change color to reflect the new winner (if the previewed move wins the entire game)
+			Click confirm to make your move official (don't worry, this can still be undone with "Undo")
+		Rearranged UI for increased useability and readability
+		
 
 UT_0.3 (Undo update, 2017-03-25)
 	All platforms
@@ -41,7 +52,11 @@ UT_0.2 (Colors update, 2017-03-14)
 		
 	Bugfixes
 		Fixed #1 (local games can still be played even when global game is over)
+		
 
+UT_0.1.1 (Android exclusive)
+	Android
+		Minor fixes (honestly not quite sure what)
 
 UT_0.1 (Initial build, 2017-03-11)
 
