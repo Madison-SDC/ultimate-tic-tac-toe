@@ -5,23 +5,15 @@ using UnityEngine.UI;
 
 public class Game : MonoBehaviour
 {
+    /// <summary>
+    /// Previous moves made for this game
+    /// </summary>
     Stack<Move> history = new Stack<Move>();
     
     /// <summary>
     /// All 9 boards on scene
     /// </summary>
     Board[] boards;
-
-    Board activeBoard;
-    bool firstTurn;
-
-    Player p1, p2;
-
-    Color disabledColor, enabledColor;
-
-    BoardSpot nextMove;
-
-    bool resetting;
 
     /// <summary>
     /// Delay between piece removal during reset (in ms)
@@ -32,6 +24,22 @@ public class Game : MonoBehaviour
     /// Current time remaining until next removal (in ms)
     /// </summary>
     float timer;
+
+    /// <summary>
+    /// Whether the board is currently resetting
+    /// </summary>
+    bool resetting;
+
+    /// <summary>
+    /// The spot that contains the next move for this board. 
+    /// Null if no next move
+    /// </summary>
+    BoardSpot nextMove;
+
+    Board activeBoard;
+    bool firstTurn;
+    Player p1, p2;
+    Color disabledColor, enabledColor;
 
     /// <summary>
     /// The current active board
@@ -69,7 +77,7 @@ public class Game : MonoBehaviour
     }
 
     /// <summary>
-    /// The current player's turn (Board.P1 or Board.P2)
+    /// The current player
     /// </summary>
     public Player ActivePlayer
     {
@@ -93,17 +101,18 @@ public class Game : MonoBehaviour
     /// </summary>
 	void Start()
     {
+        history = new Stack<Move>();
+        history.Push(new Move(null, null));
+        InstantiateBoards();
         time = 0.1f;
         timer = time;
-        InstantiateBoards();
+        resetting = false;
         activeBoard = null;
         firstTurn = true;
         disabledColor = Color.gray;
         enabledColor = Color.white;
         p1 = new Player(Board.P1, Color.red, Resources.Load<Sprite>("Sprites/x"));
         p2 = new Player(Board.P2, Color.blue, Resources.Load<Sprite>("Sprites/o"));
-        history.Push(new Move(null, null));
-        resetting = false;
     }
 
     private void Update()
