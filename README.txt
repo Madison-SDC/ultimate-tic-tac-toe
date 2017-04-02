@@ -13,7 +13,7 @@ Planned features include:
 
 Changelog:
 
-UT_0.5 (Intuitive udpate, 2017-04-02)
+UT_0.5 (Intuitive update, 2017-04-02)
 	All platforms
 		Added redo functionality
 			Replay any confirmed move that you undo
