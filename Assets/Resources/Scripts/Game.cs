@@ -8,8 +8,14 @@ public class Game : MonoBehaviour
     /// <summary>
     /// Previous moves made for this game
     /// </summary>
-    Stack<Move> history = new Stack<Move>();
-    
+    Stack<Move> history;
+
+    /// <summary>
+    /// All move that have been undone
+    /// Resets when a "fresh" move is made
+    /// </summary>
+    Stack<Move> future;
+
     /// <summary>
     /// All 9 boards on scene
     /// </summary>
@@ -103,6 +109,7 @@ public class Game : MonoBehaviour
     {
         history = new Stack<Move>();
         history.Push(new Move(null, null));
+        future = new Stack<Move>();
         InstantiateBoards();
         time = 0.1f;
         timer = time;
@@ -223,14 +230,21 @@ public class Game : MonoBehaviour
     /// <param name="spot">The spot to play</param>
     /// <param name="undo">Whether to undo a move</param>
     /// <param name="prevActiveBoard">The previous active board</param>
-    public void Play(BoardSpot spot, bool undo = false, Board prevActiveBoard = null)
+    public void Play(BoardSpot spot, bool undo = false, Board prevActiveBoard = null, bool redo = false)
     {
         // update logic
         spot.Fill(undo ? Board.EMPTY : ActivePlayer.Turn);
         spot.Board.FillSpot(spot.name, undo ? Board.EMPTY : ActivePlayer.Turn);
 
         // record this move
-        if (!undo) { history.Push(new Move(ActiveBoard, spot)); }
+        if (!undo)
+        {
+            history.Push(new Move(ActiveBoard, spot));
+            if(!redo)
+            {
+                future = new Stack<Move>();
+            }
+        }
 
         firstTurn = !firstTurn; // toggle turn
 
@@ -256,8 +270,20 @@ public class Game : MonoBehaviour
         {
             Move move = history.Pop();
             Play(move.Spot, true, move.Board); // remove piece
+            future.Push(move);
         }
     }
+
+    public void Redo()
+    {
+        if(future.Count > 0)
+        {
+            Move move = future.Pop();
+            Play(move.Spot, redo:true); // act as though this is a new move
+        }
+    }
+
+    public bool CanRedo() { return future.Count > 0; }
 
     /// <summary>
     /// Shows the results of making this move, but does not confirm it
