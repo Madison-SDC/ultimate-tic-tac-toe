@@ -13,8 +13,13 @@ Planned features include:
 
 Changelog:
 
-UT_0.4.1 (Intuitive patch, unreleased)
+UT_0.5 (Intuitive udpate, 2017-04-02)
 	All platforms
+		Added redo functionality
+			Replay any confirmed move that you undo
+			Replay any number of moves that are undone
+			Once a new move is played, redo stack is cleared
+				Can only redo up to most recent new move
 		Cleaned up the board image (now symmetrical)
 		Animated reset
 			Pieces are removed every 0.1 seconds
