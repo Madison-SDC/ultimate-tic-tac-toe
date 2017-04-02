@@ -13,8 +13,8 @@ Planned features include:
 
 Changelog:
 
-UT_0.4.1
-	Android
+UT_0.4.1 (Intuitive patch, unreleased)
+	All platforms
 		Cleaned up the board image (now symmetrical)
 		Animated reset
 			Pieces are removed every 0.1 seconds
@@ -22,6 +22,12 @@ UT_0.4.1
 		Reworked undo functionality
 			Clicking undo first undoes "preview" move
 			If no preview move, functions as before
+		Reworked preview functionality
+			No longer highlights the next playable board(s)
+			Instead outlines them in the color of the next player
+			
+	Android
+		Increased default quality to "fantastic" from "simple"
 		
 
 UT_0.4(Confirm update, 2017-03-28)
