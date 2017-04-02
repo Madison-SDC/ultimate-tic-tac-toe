@@ -27,25 +27,7 @@ public class ResetButton : Button {
     // Update is called once per frame
     void Update ()
     {
-        if (Game.IsClear)
-        {
-            isResetting = false;
-            timer = TIME;
-            interactable = false;
-            return;
-        }
-
-        interactable = true;
-
-        if (isResetting)
-        {
-            timer -= Time.deltaTime;
-            if(timer < 0)
-            {
-                game.Undo();
-                timer += TIME;
-            }
-        }
+        interactable = !Game.IsClear;
 	}
 
     public void ToggleReset()
