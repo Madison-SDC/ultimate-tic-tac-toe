@@ -30,14 +30,16 @@ ExportedObj/
 # Unity3D Generated File On Crash Reports
 sysinfo.txt
 
-# Builds
+# Builds and Binary Files
 *.unitypackage
 *.unity
 *.apk
 *.exe
+/ProjectSettings/
 
 # Git merge backup files
 *.orig
 *_BASE_*
 *_LOCAL_*
 *_REMOTE_*
+
