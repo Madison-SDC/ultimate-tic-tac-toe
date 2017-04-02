@@ -29,9 +29,4 @@ public class ResetButton : Button {
     {
         interactable = !Game.IsClear;
 	}
-
-    public void ToggleReset()
-    {
-        isResetting = !isResetting;
-    }
 }
