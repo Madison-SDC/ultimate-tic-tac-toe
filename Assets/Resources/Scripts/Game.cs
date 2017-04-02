@@ -5,22 +5,21 @@ using UnityEngine.UI;
 
 public class Game : MonoBehaviour
 {
-    static Stack<Move> history = new Stack<Move>();
+    Stack<Move> history = new Stack<Move>();
     
     /// <summary>
     /// All 9 boards on scene
     /// </summary>
-    static Board[] boards;
+    Board[] boards;
 
-    static Board activeBoard;
-    static bool firstTurn;
+    Board activeBoard;
+    bool firstTurn;
 
-
-        Player p1, p2;
+    Player p1, p2;
 
     Color disabledColor, enabledColor, highlight;
 
-    static BoardSpot nextMove;
+    BoardSpot nextMove;
 
     bool resetting;
 
@@ -64,7 +63,7 @@ public class Game : MonoBehaviour
     /// <summary>
     /// Whether it is the first player's turn
     /// </summary>
-    public static bool FirstTurn
+    public bool FirstTurn
     {
         get { return firstTurn; }
     }
@@ -72,9 +71,9 @@ public class Game : MonoBehaviour
     /// <summary>
     /// The current player's turn (Board.P1 or Board.P2)
     /// </summary>
-    public static Player ActivePlayer
+    public Player ActivePlayer
     {
-        get { return FirstTurn ? p1 : p2; }
+        get { return FirstTurn ? P1 : P2; }
     }
     public Player P1 { get { return p1; } }
     public Player P2 { get { return p2; } }
@@ -85,9 +84,9 @@ public class Game : MonoBehaviour
     /// <summary>
     /// True if the game board is entirely clear (no moves have been made)
     /// </summary>
-    public static bool IsClear { get { return history.Count == 1; } }
+    public bool IsClear { get { return history.Count == 1; } }
 
-    public static bool HasNextMove { get { return nextMove != null; } }
+    public bool HasNextMove { get { return nextMove != null; } }
 
     /// <summary>
     /// Reset the game
@@ -181,7 +180,7 @@ public class Game : MonoBehaviour
     /// if that spot hasn't been taken (clicked before)
     /// </summary>
     /// <param name="board"></param>
-    public static void Enable(Board board)
+    public void Enable(Board board)
     {
         if (board == null) { return; }
 

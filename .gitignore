@@ -32,3 +32,10 @@ sysinfo.txt
 
 # Builds
 *.unitypackage
+*.unity
+
+# Git merge backup files
+*.orig
+*_BASE_*
+*_LOCAL_*
+*_REMOTE_*

@@ -20,6 +20,8 @@ public class Board : MonoBehaviour
     /// </summary>
     static Color enabledOffset = Color.gray / 2; // darker offset
 
+    Game game;
+
     public bool Active
     {
         get { return active; }
@@ -95,6 +97,7 @@ public class Board : MonoBehaviour
         winner = NONE;
         PopulateWinLines();
         active = true;
+        game = GameObject.Find("Global Board").GetComponent<Game>();
     }
 
     public void Reset()
