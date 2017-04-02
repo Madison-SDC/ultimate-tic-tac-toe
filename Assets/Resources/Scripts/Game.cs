@@ -161,7 +161,8 @@ public class Game : MonoBehaviour
 
         board.Active = false;
 
-        for (int i = 0; i < board.transform.childCount; i++)
+        // ignore first child, is outline
+        for (int i = 1; i < board.transform.childCount; i++)
         {
             BoardSpot spot = board.transform.GetChild(i).GetComponent<BoardSpot>();
             spot.interactable = false;
@@ -186,7 +187,8 @@ public class Game : MonoBehaviour
 
         board.Active = true;
 
-        for (int i = 0; i < board.transform.childCount; i++)
+        // ignore first child: is outline
+        for (int i = 1; i < board.transform.childCount; i++)
         {
             Transform spot = board.transform.GetChild(i);
             if (!spot.GetComponent<BoardSpot>().Clicked) // all unclicked spots
