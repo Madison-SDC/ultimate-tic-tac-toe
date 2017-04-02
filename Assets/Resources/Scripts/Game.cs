@@ -98,7 +98,12 @@ public class Game : MonoBehaviour
     /// <summary>
     /// True if the game board is entirely clear (no moves have been made)
     /// </summary>
-    public bool IsClear { get { return history.Count == 1; } }
+    public bool IsClear {
+        get {
+            return history != null 
+                && history.Count == 1;
+        }
+    }
 
     public bool HasNextMove { get { return nextMove != null; } }
 
@@ -283,7 +288,10 @@ public class Game : MonoBehaviour
         }
     }
 
-    public bool CanRedo() { return future.Count > 0; }
+    public bool CanRedo()
+    {
+        return future != null && future.Count > 0;
+    }
 
     /// <summary>
     /// Shows the results of making this move, but does not confirm it
