@@ -29,6 +29,10 @@ public class BoardSpot : Button {
         }
     }
 
+    /// <summary>
+    /// The board that corresponds to this spot. 
+    /// If this is the bottom right spot, returns the bottom right board
+    /// </summary>
     public Board RelativeBoard
     {
         get
@@ -57,8 +61,6 @@ public class BoardSpot : Button {
 
     public void OnClick()
     {
-        //Game.Play(this); // disabled during development of 0.4
-
         Game.UpdateDisplay(this);
     }
 
