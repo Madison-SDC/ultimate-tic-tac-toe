@@ -17,7 +17,7 @@ public class Game : MonoBehaviour
 
     Player p1, p2;
 
-    Color disabledColor, enabledColor, highlight;
+    Color disabledColor, enabledColor;
 
     BoardSpot nextMove;
 
@@ -100,7 +100,6 @@ public class Game : MonoBehaviour
         firstTurn = true;
         disabledColor = Color.gray;
         enabledColor = Color.white;
-        highlight = Color.gray / 2;
         p1 = new Player(Board.P1, Color.red, Resources.Load<Sprite>("Sprites/x"));
         p2 = new Player(Board.P2, Color.blue, Resources.Load<Sprite>("Sprites/o"));
         history.Push(new Move(null, null));
@@ -285,38 +284,40 @@ public class Game : MonoBehaviour
         // highlight next playable board(s) if game hasn't ended
         if (!gameOverBefore && !gameOverAfter)
         {
-            Highlight(spot.RelativeBoard, undo);
+            Outline(spot.RelativeBoard, undo);
         }
     }
 
     /// <summary>
-    /// Highlights the playable boards if <paramref name="board"/> is the 
-    /// active board. Will highlight all boards if <paramref name="board"/> 
+    /// Outlines the playable boards if <paramref name="board"/> is the 
+    /// active board. Will outline all boards if <paramref name="board"/> 
     /// is full
     /// </summary>
     /// <param name="board">The next active board</param>
-    /// <param name="undo">True if darken back to original hue, 
-    /// false to lighten</param>
-    private void Highlight(Board board, bool undo)
+    /// <param name="remove">True if remove outline</param>
+    private void Outline(Board board, bool remove)
     {
-        Color change = (undo ? -1 : 1) * highlight;
+        // The color of the player who will play next (not currently)
+        Color otherPlayerColor = ActivePlayer == P1 ? P2.Color : P1.Color;
         
-        // only highlight active board if game continues
+        // only highlight active board if global game continues
         if (!GetComponent<Board>().GameOver)
         {
-            if (board.IsFull) // highlight all other boards
+            if (board.IsFull) // outline all other boards
             {
                 foreach (Board b in boards)
                 {
                     if (b != board)
                     {
-                        b.GetComponent<Image>().color += change;
+                        b.Outline.enabled = !remove;
+                        b.Outline.color = otherPlayerColor;
                     }
                 }
             }
             else // board not full, can be played on
             {
-                board.GetComponent<Image>().color += change;
+                board.Outline.enabled = !remove;
+                board.Outline.color = otherPlayerColor;
             }
         } // if game is over, do nothing
     }

@@ -90,6 +90,15 @@ public class Board : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// The outline image child of this board
+    /// </summary>
+    public Image Outline {
+        get {
+            return transform.GetChild(0).GetComponent<Image>();
+        }
+    }
+
     // Use this for initialization
     void Start()
     {
