@@ -1,4 +1,4 @@
-I've made Ultimate Tic-Tac-Toe! Play the unique strategy game with friends on one device! Easily reset the entire board, preview your next move, and undo the most recent move!
+I've made Ultimate Tic-Tac-Toe! Play the unique strategy game with friends on one device! Easily reset the entire board, preview your next move, undo the most recent move, and redo any recent moves just in case you made a mistake! Accidentally reset the entire board? Just hit redo a whole bundle of times!
 
 
 Planned features include:
