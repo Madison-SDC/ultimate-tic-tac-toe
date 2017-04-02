@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class Game : MonoBehaviour
 {
     static Stack<Move> history = new Stack<Move>();
+    
     /// <summary>
     /// All 9 boards on scene
     /// </summary>
@@ -14,13 +15,24 @@ public class Game : MonoBehaviour
     static Board activeBoard;
     static bool firstTurn;
 
-    public static Player p1, p2;
 
-    public static Color disabledColor = Color.gray,
-        enabledColor = Color.white,
-        highlight = Color.gray / 2;
+        Player p1, p2;
+
+    Color disabledColor, enabledColor, highlight;
 
     static BoardSpot nextMove;
+
+    bool resetting;
+
+    /// <summary>
+    /// Delay between piece removal during reset (in ms)
+    /// </summary>
+    float time;
+
+    /// <summary>
+    /// Current time remaining until next removal (in ms)
+    /// </summary>
+    float timer;
 
     /// <summary>
     /// The current active board
@@ -64,6 +76,11 @@ public class Game : MonoBehaviour
     {
         get { return FirstTurn ? p1 : p2; }
     }
+    public Player P1 { get { return p1; } }
+    public Player P2 { get { return p2; } }
+
+    public Color DisabledColor { get { return disabledColor; } }
+    public Color EnabledColor { get { return enabledColor; } }
 
     /// <summary>
     /// True if the game board is entirely clear (no moves have been made)
@@ -77,12 +94,36 @@ public class Game : MonoBehaviour
     /// </summary>
 	void Start()
     {
+        time = 0.1f;
+        timer = time;
         InstantiateBoards();
         activeBoard = null;
         firstTurn = true;
+        disabledColor = Color.gray;
+        enabledColor = Color.white;
+        highlight = Color.gray / 2;
         p1 = new Player(Board.P1, Color.red, Resources.Load<Sprite>("Sprites/x"));
         p2 = new Player(Board.P2, Color.blue, Resources.Load<Sprite>("Sprites/o"));
         history.Push(new Move(null, null));
+        resetting = false;
+    }
+
+    private void Update()
+    {
+        if(IsClear)
+        {
+            resetting = false;
+            timer = time; // reset timer
+        }
+        else if (resetting)
+        {
+            timer -= Time.deltaTime;
+            if (timer < 0)
+            {
+                Undo();
+                timer += time;
+            }
+        }
     }
 
     /// <summary>
@@ -91,10 +132,7 @@ public class Game : MonoBehaviour
     /// </summary>
     public void Reset()
     {
-        while (history.Count > 1)
-        {
-            Undo();
-        }
+        resetting = true;
     }
 
     /// <summary>

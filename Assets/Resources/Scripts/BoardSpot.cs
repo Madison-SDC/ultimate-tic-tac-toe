@@ -68,9 +68,9 @@ public class BoardSpot : Button {
         GetComponent<Image>().sprite = empty;
         GetComponent<Image>().color = Color.white;
 
-        ColorBlock cb = GetComponent<Button>().colors;
-        cb.disabledColor = Game.enabledColor;
-        cb.highlightedColor = Game.FirstTurn ? Game.p1.Color : Game.p2.Color;
+        ColorBlock cb = colors;
+        cb.disabledColor = Game.EnabledColor;
+        cb.highlightedColor = Game.FirstTurn ? Game.P1.Color : Game.P2.Color;
         GetComponent<Button>().colors = cb;
     }
 

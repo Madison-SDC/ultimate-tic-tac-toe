@@ -36,7 +36,7 @@ public class Board : MonoBehaviour
                 }
                 else // game not over
                 {
-                    color = value ? Game.enabledColor : Game.disabledColor;
+                    color = value ? game.EnabledColor : game.DisabledColor;
                 }
 
                 GetComponent<Image>().color = color;
@@ -139,18 +139,18 @@ public class Board : MonoBehaviour
         switch (winner)
         {
             case (P1):
-                image.color = Game.p1.Color + offset; // slightly lighter than pieces
+                image.color = game.P1.Color + offset; // slightly lighter than pieces
                 if(active) { image.color += enabledOffset; } // much lighter than pieces
                 return;
             case (P2):
-                image.color = Game.p2.Color + offset; // slightly lighter than pieces
+                image.color = game.P2.Color + offset; // slightly lighter than pieces
                 if(active) { image.color += enabledOffset; } // much lighter than pieces
                 return;
             case (TIE):
-                image.color = Game.disabledColor;
+                image.color = game.DisabledColor;
                 return;
             case (NONE):
-                image.color = active ? Game.enabledColor : Game.disabledColor;
+                image.color = active ? game.EnabledColor : game.DisabledColor;
                 return;
         }
     }
