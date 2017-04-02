@@ -243,7 +243,7 @@ public class Game : MonoBehaviour
             nextMove = null;
         }
 
-        if (history.Count > 1) // cannot undo original instantiation move
+        else if (history.Count > 1) // cannot undo original instantiation move
         {
             Move move = history.Pop();
             Play(move.Spot, true, move.Board); // remove piece

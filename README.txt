@@ -13,6 +13,17 @@ Planned features include:
 
 Changelog:
 
+UT_0.4.1
+	Android
+		Cleaned up the board image (now symmetrical)
+		Animated reset
+			Pieces are removed every 0.1 seconds
+			Can be stopped by tapping reset again
+		Reworked undo functionality
+			Clicking undo first undoes "preview" move
+			If no preview move, functions as before
+		
+
 UT_0.4(Confirm update, 2017-03-28)
 	All platforms
 		Added confirmation functionality! 
