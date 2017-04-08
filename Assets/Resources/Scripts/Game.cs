@@ -44,7 +44,7 @@ public class Game : MonoBehaviour
 
     Board activeBoard;
     bool firstTurn;
-    Player p1, p2;
+    internal Player p1, p2;
     Color disabledColor, enabledColor;
 
     /// <summary>
@@ -110,7 +110,8 @@ public class Game : MonoBehaviour
     /// <summary>
     /// Reset the game
     /// </summary>
-	void Start()
+    
+	internal virtual void Start()
     {
         history = new Stack<Move>();
         history.Push(new Move(null, null));
@@ -235,7 +236,7 @@ public class Game : MonoBehaviour
     /// <param name="spot">The spot to play</param>
     /// <param name="undo">Whether to undo a move</param>
     /// <param name="prevActiveBoard">The previous active board</param>
-    public void Play(BoardSpot spot, bool undo = false, Board prevActiveBoard = null, bool redo = false)
+    public virtual void Play(BoardSpot spot, bool undo = false, Board prevActiveBoard = null, bool redo = false)
     {
         // update logic
         spot.Fill(undo ? Board.EMPTY : ActivePlayer.Turn);
