@@ -68,6 +68,14 @@ public class Board : MonoBehaviour
     /// </summary>
     public int[,] Spots { get { return spots; } }
 
+    public BoardSpot[] BoardSpots
+    {
+        get
+        {
+            return transform.GetComponentsInChildren<BoardSpot>();
+        }
+    }
+
     /// <summary>
     /// Whether this game is over
     /// </summary>
