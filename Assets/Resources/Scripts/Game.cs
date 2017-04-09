@@ -139,6 +139,7 @@ public class Game : MonoBehaviour
     /// </summary>
     public void Reset()
     {
+        if(HasNextMove) { Undo(); }
         while(history.Count > 1) { Undo(); }
     }
 
