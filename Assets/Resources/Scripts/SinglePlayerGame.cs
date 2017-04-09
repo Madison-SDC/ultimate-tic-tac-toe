@@ -49,9 +49,8 @@ public class SinglePlayerGame : Game {
     /// <summary>
     /// If AI's turn, preview or confirm move
     /// </summary>
-    internal override void Update()
+    void Update()
     {
-        base.Update();
         if (Playing() && ActivePlayer == ai)
         {
             if (HasNextMove)

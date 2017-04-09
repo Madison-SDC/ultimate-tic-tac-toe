@@ -130,24 +130,6 @@ public class Game : MonoBehaviour
         p1 = new Player(Board.P1, Color.red, Resources.Load<Sprite>("Sprites/x"));
         p2 = new Player(Board.P2, Color.blue, Resources.Load<Sprite>("Sprites/o"));
     }
-
-    internal virtual void Update()
-    {
-        if(IsClear)
-        {
-            resetting = false;
-            timer = time; // reset timer
-        }
-        else if (resetting)
-        {
-            timer -= Time.deltaTime;
-            if (timer < 0)
-            {
-                Undo();
-                timer += time;
-            }
-        }
-    }
     
     public bool GameOver() { return GetComponent<Board>().GameOver; }
 
@@ -157,7 +139,7 @@ public class Game : MonoBehaviour
     /// </summary>
     public void Reset()
     {
-        resetting = true;
+        while(history.Count > 1) { Undo(); }
     }
 
     /// <summary>
