@@ -294,11 +294,6 @@ public class Game : MonoBehaviour
         }
     }
 
-    public bool CanRedo()
-    {
-        return future != null && future.Count > 0;
-    }
-
     /// <summary>
     /// Shows the results of making this move, but does not confirm it
     /// </summary>
@@ -381,5 +376,24 @@ public class Game : MonoBehaviour
             ShowMove(nextMove, true); // undo color changes
             Play(nextMove); // make it official
         }
+    }
+
+    public bool CanUndo()
+    {
+        return !(ActivePlayer is AI) // not AI's turn
+            && (history.Count > 1 // and has a move to undo
+            || HasNextMove); // or has a preview move
+    }
+
+    public bool CanRedo()
+    {
+        return !(ActivePlayer is AI) // not AI turn
+            && future.Count > 0; // has move to redo
+    }
+
+    public bool CanConfirm()
+    {
+        return !(ActivePlayer is AI) // not AI turn
+            && HasNextMove; // has move to redo
     }
 }

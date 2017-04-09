@@ -12,9 +12,6 @@ public class UndoButton : Button {
 
     // Update is called once per frame
     void Update () {
-        if (game)
-        {
-            interactable = !game.IsClear || game.HasNextMove;
-        } else { interactable = false; }
+        interactable = game.CanUndo();
 	}
 }

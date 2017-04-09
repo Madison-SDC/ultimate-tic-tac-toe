@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEngine.UI;
 
 public class ConfirmButton : Button {
@@ -13,6 +12,6 @@ public class ConfirmButton : Button {
 	
 	// Update is called once per frame
 	void Update () {
-        interactable = game.HasNextMove;
+        interactable = game.CanConfirm();
 	}
 }
