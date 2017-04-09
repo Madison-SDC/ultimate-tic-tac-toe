@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class Game : MonoBehaviour
 {
+    static Game currentGame;
+
     /// <summary>
     /// Previous moves made for this game
     /// </summary>
@@ -43,6 +45,11 @@ public class Game : MonoBehaviour
     internal Player p1, p2;
     Color disabledColor, enabledColor;
 
+    /// <summary>
+    /// The current game on the screen
+    /// </summary>
+    public static Game CurrentGame { get { return currentGame; } }
+    
     /// <summary>
     /// All 9 boards on scene
     /// </summary>
@@ -129,6 +136,8 @@ public class Game : MonoBehaviour
         enabledColor = Color.white;
         p1 = new Player(Board.P1, Color.red, Resources.Load<Sprite>("Sprites/x"));
         p2 = new Player(Board.P2, Color.blue, Resources.Load<Sprite>("Sprites/o"));
+        
+        currentGame = this; // most recent game is the current game
     }
     
     public bool GameOver() { return GetComponent<Board>().GameOver; }
