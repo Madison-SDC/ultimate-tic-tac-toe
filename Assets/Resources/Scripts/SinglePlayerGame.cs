@@ -38,47 +38,52 @@ public class SinglePlayerGame : Game {
 	}
 
     /// <summary>
+    /// Playing if not resetting and not game over
+    /// </summary>
+    /// <returns></returns>
+    bool Playing()
+    {
+        return !resetting && !GameOver();
+    }
+
+    /// <summary>
     /// If AI's turn, preview or confirm move
     /// </summary>
     internal override void Update()
     {
         base.Update();
-        if (!resetting)
+        if (Playing() && ActivePlayer == ai)
         {
-            if (ActivePlayer == ai)
+            if (HasNextMove)
             {
-                if (HasNextMove)
+                if (confirmTime <= 0)
                 {
-                    if (confirmTime <= 0)
-                    {
-                        // play AI move
-                        Confirm();
-                    }
-                    else
-                    {
-                        confirmTime -= Time.deltaTime;
-                    }
+                    Confirm();
                 }
                 else
                 {
-                    if (previewTime <= 0)
-                    {
-                        // preview AI move
-                        UpdateDisplay(ai.BestMove(this));
-                    }
-                    else
-                    {
-                        previewTime -= Time.deltaTime;
-                    }
+                    confirmTime -= Time.deltaTime;
                 }
             }
             else
             {
-                // not AI turn, reset timers
-                confirmTime = confirmTimer;
-                previewTime = previewTimer;
+                if (previewTime <= 0)
+                {
+                    UpdateDisplay(ai.BestMove(this));
+                }
+                else
+                {
+                    previewTime -= Time.deltaTime;
+                }
             }
         }
+        else
+        {
+            // not AI turn, reset timers
+            confirmTime = confirmTimer;
+            previewTime = previewTimer;
+        }
+    
     }
 
     /// <summary>

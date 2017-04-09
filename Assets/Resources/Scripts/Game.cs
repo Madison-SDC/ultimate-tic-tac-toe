@@ -17,11 +17,6 @@ public class Game : MonoBehaviour
     Stack<Move> future;
 
     /// <summary>
-    /// All 9 boards on scene
-    /// </summary>
-    Board[] boards;
-
-    /// <summary>
     /// Delay between piece removal during reset (in ms)
     /// </summary>
     float time;
@@ -41,11 +36,17 @@ public class Game : MonoBehaviour
     /// Null if no next move
     /// </summary>
     internal BoardSpot nextMove;
-
+    
+    Board[] boards;
     Board activeBoard;
     bool firstTurn;
     internal Player p1, p2;
     Color disabledColor, enabledColor;
+
+    /// <summary>
+    /// All 9 boards on scene
+    /// </summary>
+    public Board[] Boards { get { return boards; } }
 
     /// <summary>
     /// The current active board
@@ -66,7 +67,10 @@ public class Game : MonoBehaviour
             foreach (Board board in boards)
             {
                 if (gameOver) { Disable(board); }
+
+                // initialize all boards at first
                 else if (activeIsNull || activeIsFull) { Enable(board); }
+
                 else if (board != activeBoard) { Disable(board); }
             }
 
@@ -110,8 +114,7 @@ public class Game : MonoBehaviour
     /// <summary>
     /// Reset the game
     /// </summary>
-    
-	internal virtual void Start()
+    internal virtual void Start()
     {
         history = new Stack<Move>();
         history.Push(new Move(null, null));
@@ -145,6 +148,8 @@ public class Game : MonoBehaviour
             }
         }
     }
+    
+    public bool GameOver() { return GetComponent<Board>().GameOver; }
 
     /// <summary>
     /// Resets the game
