@@ -34,13 +34,13 @@ public class Game : MonoBehaviour
     /// <summary>
     /// Whether the board is currently resetting
     /// </summary>
-    bool resetting;
+    internal bool resetting;
 
     /// <summary>
     /// The spot that contains the next move for this board. 
     /// Null if no next move
     /// </summary>
-    BoardSpot nextMove;
+    internal BoardSpot nextMove;
 
     Board activeBoard;
     bool firstTurn;
@@ -128,7 +128,7 @@ public class Game : MonoBehaviour
         p2 = new Player(Board.P2, Color.blue, Resources.Load<Sprite>("Sprites/o"));
     }
 
-    private void Update()
+    internal virtual void Update()
     {
         if(IsClear)
         {
@@ -219,7 +219,7 @@ public class Game : MonoBehaviour
 
                 // can be clicked
                 Button button = spot.GetComponent<Button>();
-                button.interactable = true;
+                button.interactable = !(ActivePlayer is AI);
 
                 // show player color when highlighted, blend in when not
                 ColorBlock cb = button.colors;
@@ -231,12 +231,12 @@ public class Game : MonoBehaviour
     }
 
     /// <summary>
-    /// Advances or reverts the state of the board
+    /// Advances or reverts the state of the board by one turn
     /// </summary>
     /// <param name="spot">The spot to play</param>
     /// <param name="undo">Whether to undo a move</param>
     /// <param name="prevActiveBoard">The previous active board</param>
-    public virtual void Play(BoardSpot spot, bool undo = false, Board prevActiveBoard = null, bool redo = false)
+    public void Play(BoardSpot spot, bool undo = false, Board prevActiveBoard = null, bool redo = false)
     {
         // update logic
         spot.Fill(undo ? Board.EMPTY : ActivePlayer.Turn);
@@ -264,7 +264,7 @@ public class Game : MonoBehaviour
     /// <summary>
     /// Undo the most recent move, if there was one
     /// </summary>
-    public void Undo()
+    public virtual void Undo()
     {
         if(nextMove)
         {
@@ -280,7 +280,7 @@ public class Game : MonoBehaviour
         }
     }
 
-    public void Redo()
+    public virtual void Redo()
     {
         if(future.Count > 0)
         {
