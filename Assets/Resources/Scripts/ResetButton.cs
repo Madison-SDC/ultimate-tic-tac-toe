@@ -8,4 +8,9 @@ public class ResetButton : Button {
     {
         interactable = !Game.CurrentGame.IsClear;
 	}
+
+    public void OnClick()
+    {
+        if (interactable) { Game.CurrentGame.Reset(); }
+    }
 }

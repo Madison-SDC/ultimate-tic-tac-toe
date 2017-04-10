@@ -8,4 +8,9 @@ public class UndoButton : Button {
     {
         interactable = Game.CurrentGame.CanUndo();
 	}
+
+    public void OnClick()
+    {
+        if (interactable) { Game.CurrentGame.Undo(); }
+    }
 }

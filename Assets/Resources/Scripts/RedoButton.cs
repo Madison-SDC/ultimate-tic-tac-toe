@@ -8,4 +8,9 @@ public class RedoButton : Button {
     {
         interactable = Game.CurrentGame.CanRedo();
 	}
+
+    public void OnClick()
+    {
+        if (interactable) { Game.CurrentGame.Redo(); }
+    }
 }

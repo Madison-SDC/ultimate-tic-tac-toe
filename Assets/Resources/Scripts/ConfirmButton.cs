@@ -8,4 +8,9 @@ public class ConfirmButton : Button {
     {
         interactable = Game.CurrentGame.CanConfirm();
 	}
+
+    public void OnClick()
+    {
+        if(interactable) { Game.CurrentGame.Confirm(); }
+    }
 }
