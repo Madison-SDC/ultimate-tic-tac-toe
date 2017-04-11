@@ -4,8 +4,9 @@ using UnityEngine.UI;
 
 public class BoardSpot : Button {
     private bool clicked;
-
     private static Sprite empty;
+    private Location loc;
+    private Player owner;
 
     /// <summary>
     /// Whether this has been clicked
@@ -53,10 +54,57 @@ public class BoardSpot : Button {
         }
     }
 
+    public Location Loc { get { return loc; } }
+
+    public Player Owner
+    {
+        get
+        {
+            return owner;
+        }
+
+        set
+        {
+            owner = value;
+            if(owner != null)
+            {
+                Clicked = true;
+                Image image = GetComponent<Image>();
+                image.enabled = true;
+                image.sprite = Game.ActivePlayer.Sprite;
+                image.color = Game.ActivePlayer.Color;
+
+                ColorBlock cb = colors;
+                cb.disabledColor = Game.ActivePlayer.Color;
+                colors = cb; // weird workaround for struct vs class
+            }
+            else
+            {
+                Clear();
+            }
+        }
+    }
+
     protected override void Start()
     {
         Clicked = false;
         empty = Resources.Load<Sprite>("Sprites/empty");
+        loc = StringToLoc(tag);
+    }
+
+    public static Location StringToLoc(string str)
+    {
+        int r = -1, c = -1;
+
+        if(str.Contains("Top")) { r = 0; }
+        else if(str.Contains("Center")) { r = 1; }
+        else if(str.Contains("Bottom")) { r = 2; }
+
+        if(str.Contains("Left")) { c = 0; }
+        else if(str.Contains("Mid")) { c = 1; }
+        else if(str.Contains("Right")) { c = 2; }
+
+        return new Location(r, c);
     }
 
     public void OnClick()
@@ -68,32 +116,5 @@ public class BoardSpot : Button {
     {
         Clicked = false;
         GetComponent<Image>().sprite = empty;
-    }
-
-    /// <summary>
-    /// Update piece to reflect being occupied by 'player'
-    /// If empty, be active and whatnot
-    /// Else show the image and don't change
-    /// Does not affect the board this belongs to
-    /// </summary>
-    /// <param name="turn"></param>
-    public void Fill(int player)
-    {
-        if(player == Board.EMPTY)
-        {
-            Clear();
-        }
-        else
-        {
-            Clicked = true;
-            Image image = GetComponent<Image>();
-            image.enabled = true;
-            image.sprite = Game.ActivePlayer.Sprite;
-            image.color = Game.ActivePlayer.Color;
-
-            ColorBlock cb = colors;
-            cb.disabledColor = Game.ActivePlayer.Color;
-            colors = cb; // weird workaround for struct vs class
-        }
     }
 }

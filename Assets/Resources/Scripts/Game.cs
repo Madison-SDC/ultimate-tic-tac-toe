@@ -224,7 +224,7 @@ public class Game : MonoBehaviour
     public void Play(BoardSpot spot, bool undo = false, Board prevActiveBoard = null, bool redo = false)
     {
         // update logic
-        spot.Fill(undo ? Board.EMPTY : ActivePlayer.Turn);
+        spot.Owner = undo ? null : ActivePlayer;
         spot.Board.FillSpot(spot.name, undo ? Board.EMPTY : ActivePlayer.Turn);
 
         // record this move
@@ -294,16 +294,16 @@ public class Game : MonoBehaviour
     private void ShowMove(BoardSpot spot, bool undo = false)
     {
         // the owner of the shown move
-        int player = undo ? Board.EMPTY : ActivePlayer.Turn;
+        Player player = undo ? null : ActivePlayer;
         
         bool gameOverBefore = GetComponent<Board>().GameOver;
 
-        spot.Fill(undo ? Board.EMPTY : player); // update piece image
+        spot.Owner = player; // update piece image
 
         bool gameOverAfter = GetComponent<Board>().GameOver;
 
         // highlight local and global board
-        spot.Board.FillSpot(spot.name, player);
+        spot.Board.FillSpot(spot.name, player == null ? Board.EMPTY: player.Turn);
 
         // highlight next playable board(s) if game hasn't ended
         if (!gameOverBefore && !gameOverAfter)
