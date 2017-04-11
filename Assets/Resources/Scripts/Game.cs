@@ -19,16 +19,6 @@ public class Game : MonoBehaviour
     Stack<Move> future;
 
     /// <summary>
-    /// Delay between piece removal during reset (in ms)
-    /// </summary>
-    float time;
-
-    /// <summary>
-    /// Current time remaining until next removal (in ms)
-    /// </summary>
-    float timer;
-
-    /// <summary>
     /// Whether the board is currently resetting
     /// </summary>
     internal bool resetting;
@@ -127,8 +117,6 @@ public class Game : MonoBehaviour
         history.Push(new Move(null, null));
         future = new Stack<Move>();
         InstantiateBoards();
-        time = 0.1f;
-        timer = time;
         resetting = false;
         activeBoard = null;
         firstTurn = true;
