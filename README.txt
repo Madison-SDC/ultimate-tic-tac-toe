@@ -1,4 +1,4 @@
-I've made Ultimate Tic-Tac-Toe! Play the unique strategy game with friends on one device! Easily reset the entire board, preview your next move, undo the most recent move, and redo any recent moves just in case you made a mistake! Accidentally reset the entire board? Just hit redo a whole bundle of times!
+I've made Ultimate Tic-Tac-Toe! Play the unique strategy game with friends or an AI on one device! Easily reset the entire board, preview your next move, undo the most recent move, and redo any recent moves just in case you made a mistake! Accidentally reset the entire board? Just hit redo a whole bundle of times!
 
 
 Planned features include:
@@ -18,8 +18,8 @@ UT_0.6 (AI framework update, 2017-04-10)
 		Added Artificial Intelligence player!
 			Its working name is "Hug" (as its symbol is an 'O')
 			It moves randomly as of right now
-			Hug waits a certain amount of time to preview his move
-			Hug waits a bit more to confirm his move.
+			Hug waits a certain amount of time to preview its move
+			Hug waits a bit more to confirm its move.
 		Added Menu
 			Access One Player or Two Player game modes from the new simple menu
 			Access the Menu from the Game using the new "Menu" button
