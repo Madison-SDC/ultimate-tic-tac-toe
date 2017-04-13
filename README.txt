@@ -13,6 +13,17 @@ Planned features include:
 
 Changelog:
 
+UT_0.6 (AI framework update, 2017-04-10)
+	All platforms
+		Added Artificial Intelligence player!
+			Its working name is "Hug" (as its symbol is an 'O')
+			It moves randomly as of right now
+			Hug waits a certain amount of time to preview his move
+			Hug waits a bit more to confirm his move.
+		Added Menu
+			Access One Player or Two Player game modes from the new simple menu
+			Access the Menu from the Game using the new "Menu" button
+
 UT_0.5 (Intuitive update, 2017-04-02)
 	All platforms
 		Added redo functionality
