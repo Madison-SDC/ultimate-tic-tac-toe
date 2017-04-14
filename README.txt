@@ -3,10 +3,8 @@ I've made Ultimate Tic-Tac-Toe! Play the unique strategy game with friends or an
 
 Planned features include:
 	Instructions! Learn how to play the game with a short, interactive tutorial.
-	A menu screen! Make the game feel more complete with a simple menu.
 	Sounds and animation! For added immersion.
 	Custom pieces! Change colors and shapes to make the game match you.
-	Artificial intelligence! This is a bit of a stretch goal, but now you can play the game even if no friends are around.
 	Online functionality! A real stretch goal as I've never done anything with networks, but it'd be a great learning experience!
 	
 
