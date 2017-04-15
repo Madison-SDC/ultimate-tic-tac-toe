@@ -29,7 +29,7 @@ public class Game : MonoBehaviour
     /// </summary>
     internal BoardSpot nextMove;
     
-    Board[] boards;
+    Board[,] boards;
     Board activeBoard;
     bool firstTurn;
     internal Player p1, p2;
@@ -43,7 +43,7 @@ public class Game : MonoBehaviour
     /// <summary>
     /// All 9 boards on scene
     /// </summary>
-    public Board[] Boards { get { return boards; } }
+    public Board[,] Boards { get { return boards; } }
 
     /// <summary>
     /// The current active board
@@ -145,16 +145,16 @@ public class Game : MonoBehaviour
     /// </summary>
     internal void InstantiateBoards()
     {
-        boards = new Board[9];
-        boards[0] = GameObject.Find("Top Left Board").GetComponent<Board>();
-        boards[1] = GameObject.Find("Top Mid Board").GetComponent<Board>();
-        boards[2] = GameObject.Find("Top Right Board").GetComponent<Board>();
-        boards[3] = GameObject.Find("Center Left Board").GetComponent<Board>();
-        boards[4] = GameObject.Find("Center Mid Board").GetComponent<Board>();
-        boards[5] = GameObject.Find("Center Right Board").GetComponent<Board>();
-        boards[6] = GameObject.Find("Bottom Left Board").GetComponent<Board>();
-        boards[7] = GameObject.Find("Bottom Mid Board").GetComponent<Board>();
-        boards[8] = GameObject.Find("Bottom Right Board").GetComponent<Board>();
+        boards = new Board[3,3];
+        boards[0,0] = GameObject.Find("Top Left Board").GetComponent<Board>();
+        boards[0,1] = GameObject.Find("Top Mid Board").GetComponent<Board>();
+        boards[0,2] = GameObject.Find("Top Right Board").GetComponent<Board>();
+        boards[1,0] = GameObject.Find("Center Left Board").GetComponent<Board>();
+        boards[1,1] = GameObject.Find("Center Mid Board").GetComponent<Board>();
+        boards[1,2] = GameObject.Find("Center Right Board").GetComponent<Board>();
+        boards[2,0] = GameObject.Find("Bottom Left Board").GetComponent<Board>();
+        boards[2,1] = GameObject.Find("Bottom Mid Board").GetComponent<Board>();
+        boards[2,2] = GameObject.Find("Bottom Right Board").GetComponent<Board>();
     }
 
     /// <summary>
