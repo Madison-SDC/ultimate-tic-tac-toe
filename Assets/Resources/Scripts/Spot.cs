@@ -85,7 +85,7 @@ public class Spot : Button {
         }
     }
 
-    protected override void Start()
+    protected override void Awake()
     {
         Clicked = false;
         empty = Resources.Load<Sprite>("Sprites/empty");
