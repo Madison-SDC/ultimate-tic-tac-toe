@@ -12,15 +12,15 @@ public class RandomAI : AI {
     /// </summary>
     /// <param name="game"></param>
     /// <returns></returns>
-    public override BoardSpot BestMove(Game game)
+    public override Spot BestMove(Game game)
     {
-        List<BoardSpot> openSpots = new List<BoardSpot>();
+        List<Spot> openSpots = new List<Spot>();
 
         foreach(Board board in game.Boards)
         {
             if(board.Active)
             {
-                foreach(BoardSpot spot in board.BoardSpots)
+                foreach(Spot spot in board.BoardSpots)
                 {
                     if (!spot.Clicked) { openSpots.Add(spot); }
                 }

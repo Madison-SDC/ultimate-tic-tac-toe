@@ -27,7 +27,7 @@ public class Game : MonoBehaviour
     /// The spot that contains the next move for this board. 
     /// Null if no next move
     /// </summary>
-    internal BoardSpot nextMove;
+    internal Spot nextMove;
     
     Board[,] boards;
     Board activeBoard;
@@ -170,7 +170,7 @@ public class Game : MonoBehaviour
         // ignore first child, is outline
         for (int i = 1; i < board.transform.childCount; i++)
         {
-            BoardSpot spot = board.transform.GetChild(i).GetComponent<BoardSpot>();
+            Spot spot = board.transform.GetChild(i).GetComponent<Spot>();
             spot.interactable = false;
             if (!spot.Clicked)
             {
@@ -197,7 +197,7 @@ public class Game : MonoBehaviour
         for (int i = 1; i < board.transform.childCount; i++)
         {
             Transform spot = board.transform.GetChild(i);
-            if (!spot.GetComponent<BoardSpot>().Clicked) // all unclicked spots
+            if (!spot.GetComponent<Spot>().Clicked) // all unclicked spots
             {
                 // show picture so it can be clicked
                 spot.GetComponent<Image>().enabled = true;
@@ -221,7 +221,7 @@ public class Game : MonoBehaviour
     /// <param name="spot">The spot to play</param>
     /// <param name="undo">Whether to undo a move</param>
     /// <param name="prevActiveBoard">The previous active board</param>
-    public void Play(BoardSpot spot, bool undo = false, Board prevActiveBoard = null, bool redo = false)
+    public void Play(Spot spot, bool undo = false, Board prevActiveBoard = null, bool redo = false)
     {
         // update logic
         spot.Owner = undo ? null : ActivePlayer;
@@ -279,7 +279,7 @@ public class Game : MonoBehaviour
     /// Shows the results of making this move, but does not confirm it
     /// </summary>
     /// <param name="spot"></param>
-    public void UpdateDisplay(BoardSpot spot)
+    public void UpdateDisplay(Spot spot)
     {
         // undo previous move shown (if not confirmed)
         if (nextMove) { ShowMove(nextMove, true); }
@@ -292,7 +292,7 @@ public class Game : MonoBehaviour
     /// </summary>
     /// <param name="spot">The spot to play on</param>
     /// <param name="undo">Whether to undo the shown move</param>
-    private void ShowMove(BoardSpot spot, bool undo = false)
+    private void ShowMove(Spot spot, bool undo = false)
     {
         // the owner of the shown move
         Player player = undo ? null : ActivePlayer;

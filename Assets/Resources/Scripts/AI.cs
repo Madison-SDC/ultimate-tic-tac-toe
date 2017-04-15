@@ -13,6 +13,6 @@ public abstract class AI : Player
     /// </summary>
     /// <param name="game"></param>
     /// <returns></returns>
-    public abstract BoardSpot BestMove(Game game);
+    public abstract Spot BestMove(Game game);
 
 }

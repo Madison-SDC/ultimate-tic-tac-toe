@@ -2,7 +2,7 @@
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class BoardSpot : Button {
+public class Spot : Button {
     private bool clicked;
     private static Sprite empty;
     private Location loc;
