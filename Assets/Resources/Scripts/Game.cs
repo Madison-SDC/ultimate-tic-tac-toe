@@ -269,6 +269,7 @@ public class Game : MonoBehaviour
     {
         if(future.Count > 0)
         {
+            if (nextMove) { ShowMove(nextMove, true); }
             Move move = future.Pop();
             Play(move.Spot, redo:true); // act as though this is a new move
         }
