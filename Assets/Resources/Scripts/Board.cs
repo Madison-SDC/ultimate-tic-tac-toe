@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class Board : MonoBehaviour
+public class Board : Spot
 {
     int[,] spots;
     int winner;

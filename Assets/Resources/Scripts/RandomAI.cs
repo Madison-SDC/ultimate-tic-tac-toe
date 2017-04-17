@@ -22,7 +22,9 @@ public class RandomAI : AI {
             {
                 foreach(Spot spot in board.BoardSpots)
                 {
-                    if (!spot.Clicked) { openSpots.Add(spot); }
+                    if (spot != board // change now that board itself is a spot
+                        && !spot.Clicked)
+                    { openSpots.Add(spot); }
                 }
             }
         }
