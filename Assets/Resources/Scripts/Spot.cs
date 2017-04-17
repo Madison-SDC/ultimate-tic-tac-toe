@@ -104,6 +104,9 @@ public class Spot : Button {
         else if(str.Contains("Mid")) { c = 1; }
         else if(str.Contains("Right")) { c = 2; }
 
+        // invalid string
+        if(r == -1 || c == -1) { return null; }
+
         return new Location(r, c);
     }
 

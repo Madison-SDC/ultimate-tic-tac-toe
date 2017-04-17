@@ -177,7 +177,7 @@ public class Board : MonoBehaviour
 
     public void FillSpot(string name, int player)
     {
-        FillSpot(NameToLoc(name), player);
+        FillSpot(Spot.StringToLoc(name), player);
     }
 
     int Get(Location loc)
@@ -246,33 +246,5 @@ public class Board : MonoBehaviour
             winLines[6, i] = new Location(i, i); // top-right to bottom-left
             winLines[7, i] = new Location(2 - i, i); // bottom-left to top-right
         }
-    }
-
-    /// <summary>
-    /// Converts the given string to a location
-    /// 
-    /// Name contains:
-    /// "Top", "Center", "Bottom" determines row 0-2
-    /// "Left", "Mid", "Right" determines col 0-2
-    /// 
-    /// If either remains uninstantiated, returns null
-    /// </summary>
-    /// <param name="name"></param>
-    /// <returns></returns>
-    public static Location NameToLoc(string name)
-    {
-        int r = -1, c = -1;
-
-        if (name.Contains("Top")) { r = 0; }
-        else if (name.Contains("Center")) { r = 1; }
-        else if (name.Contains("Bottom")) { r = 2; }
-
-        if (name.Contains("Left")) { c = 0; }
-        else if (name.Contains("Mid")) { c = 1; }
-        else if (name.Contains("Right")) { c = 2; }
-
-        if (r == -1 || c == -1) { return null; }
-
-        return new Location(r, c);
     }
 }
