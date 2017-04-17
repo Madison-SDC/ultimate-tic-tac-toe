@@ -6,7 +6,7 @@ public class Spot : Button {
     private bool clicked;
     private static Sprite empty;
     private Location loc;
-    private Player owner;
+    internal Player owner;
 
     /// <summary>
     /// Whether this has been clicked
@@ -56,7 +56,7 @@ public class Spot : Button {
 
     public Location Loc { get { return loc; } }
 
-    public Player Owner
+    public virtual Player Owner
     {
         get
         {

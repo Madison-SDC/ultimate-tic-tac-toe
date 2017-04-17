@@ -122,8 +122,8 @@ public class Game : MonoBehaviour
         firstTurn = true;
         disabledColor = Color.gray;
         enabledColor = Color.white;
-        p1 = new Player(Board.P1, Color.red, Resources.Load<Sprite>("Sprites/x"));
-        p2 = new Player(Board.P2, Color.blue, Resources.Load<Sprite>("Sprites/o"));
+        p1 = new Player(1, Color.red, Resources.Load<Sprite>("Sprites/x"));
+        p2 = new Player(2, Color.blue, Resources.Load<Sprite>("Sprites/o"));
         
         currentGame = this; // most recent game is the current game
     }

@@ -31,7 +31,7 @@ public class SinglePlayerGame : Game {
 	// Use this for initialization
 	internal override void Start () {
         base.Start();
-        ai = new RandomAI(Board.P2, Color.blue, Resources.Load<Sprite>("Sprites/o"));
+        ai = new RandomAI(2, Color.blue, Resources.Load<Sprite>("Sprites/o"));
         p2 = ai; // for active player reference
         previewTimer = 0.5f;
         confirmTimer = 1f;

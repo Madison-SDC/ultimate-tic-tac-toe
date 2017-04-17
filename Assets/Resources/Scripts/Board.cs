@@ -4,7 +4,6 @@ using UnityEngine.UI;
 public class Board : Spot
 {
     int[,] spots;
-    int winner;
     bool active;
     /// <summary>
     /// The 8 combos that win the game
@@ -27,7 +26,7 @@ public class Board : Spot
         get { return active; }
         set
         {
-            if (active != value && winner != TIE) // changing active status
+            if (active != value && !IsFull) // changing active status
             {
                 Color color = GetComponent<Image>().color;
 
@@ -50,18 +49,7 @@ public class Board : Spot
     /// <summary>
     /// The possible ownerships of spots and winner of the game
     /// </summary>
-    public const int EMPTY = 0,
-        P1 = 1,
-        P2 = 2;
-
-    /// <summary>
-    /// The value of winner<para/>
-    /// TIE: game over, no winner<para/>
-    /// NONE: game not over<br/><para/>
-    /// could also be P1 or P2<br/><para/>
-    /// </summary>
-    const int NONE = 0,
-        TIE = -1;
+    public const int EMPTY = 0;
 
     /// <summary>
     /// The spots on this board
@@ -79,7 +67,7 @@ public class Board : Spot
     /// <summary>
     /// Whether this game is over
     /// </summary>
-    public bool GameOver { get { return winner != NONE; } }
+    public bool GameOver { get { return IsFull || Owner != null; } }
 
     /// <summary>
     /// Returns whether this board is full
@@ -88,13 +76,24 @@ public class Board : Spot
     {
         get
         {
-            if (winner == TIE) { return true; }
-
             foreach (int spot in spots)
             {
                 if (spot == 0) { return false; }
             }
             return true;
+        }
+    }
+
+    public override Player Owner
+    {
+        get
+        {
+            return base.Owner;
+        }
+
+        set
+        {
+            owner = value;
         }
     }
 
@@ -111,7 +110,6 @@ public class Board : Spot
     void Start()
     {
         spots = new int[3, 3];
-        winner = NONE;
         PopulateWinLines();
         active = true;
         game = GameObject.Find("Global Board").GetComponent<Game>();
@@ -130,8 +128,8 @@ public class Board : Spot
     /// <param name="player"></param>
     void FillSpot(Location loc, int player)
     {
-        spots[loc.Row, loc.Col] = player;
         bool gameOverState = GameOver;
+        spots[loc.Row, loc.Col] = player;
 
         if ((!GameOver && player != EMPTY) // game may have just ended
             || (GameOver && player == EMPTY)) // or game could have been re-opened
@@ -145,7 +143,7 @@ public class Board : Spot
             Board parentBoard = transform.parent.GetComponent<Board>();
             if (parentBoard)
             {
-                parentBoard.FillSpot(name, winner);
+                parentBoard.FillSpot(Loc, Owner == null ? EMPTY : Owner.Turn);
             }
         }
     }
@@ -156,22 +154,16 @@ public class Board : Spot
     internal void UpdateColor()
     {
         Image image = GetComponent<Image>();
-        switch (winner)
+        if(Owner != null)
         {
-            case (P1):
-                image.color = game.P1.Color + offset; // slightly lighter than pieces
-                if(active) { image.color += enabledOffset; } // much lighter than pieces
-                return;
-            case (P2):
-                image.color = game.P2.Color + offset; // slightly lighter than pieces
-                if(active) { image.color += enabledOffset; } // much lighter than pieces
-                return;
-            case (TIE):
-                image.color = game.DisabledColor;
-                return;
-            case (NONE):
-                image.color = active ? game.EnabledColor : game.DisabledColor;
-                return;
+            image.color = Owner.Color + offset;
+            if(active) { image.color += enabledOffset; }
+        }
+        else if(IsFull)
+        { image.color = game.DisabledColor; } // tie game
+        else
+        {
+            image.color = active ? game.EnabledColor : game.DisabledColor;
         }
     }
 
@@ -216,13 +208,12 @@ public class Board : Spot
 
                 if (spot == 2) // p has matched player all 3 spots
                 {
-                    winner = player;
+                    Owner = player == 1 ? game.P1 : game.P2;
                     return;
                 }
             }
         }
-        if (emptySpotExists) { winner = NONE; }
-        else { winner = TIE; }
+        if (emptySpotExists) { Owner = null; }
     }
 
     internal void PopulateWinLines()
