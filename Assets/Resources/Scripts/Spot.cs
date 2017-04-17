@@ -56,32 +56,11 @@ public class Spot : Button {
 
     public Location Loc { get { return loc; } }
 
-    public virtual Player Owner
+    public Player Owner
     {
         get
         {
             return owner;
-        }
-
-        set
-        {
-            owner = value;
-            if(owner != null)
-            {
-                Clicked = true;
-                Image image = GetComponent<Image>();
-                image.enabled = true;
-                image.sprite = Game.ActivePlayer.Sprite;
-                image.color = Game.ActivePlayer.Color;
-
-                ColorBlock cb = colors;
-                cb.disabledColor = Game.ActivePlayer.Color;
-                colors = cb; // weird workaround for struct vs class
-            }
-            else
-            {
-                Clear();
-            }
         }
     }
 
@@ -119,5 +98,26 @@ public class Spot : Button {
     {
         Clicked = false;
         GetComponent<Image>().sprite = empty;
+    }
+
+    public void Fill(Player player)
+    {
+        owner = player;
+        if (Owner != null)
+        {
+            Clicked = true;
+            Image image = GetComponent<Image>();
+            image.enabled = true;
+            image.sprite = Game.ActivePlayer.Sprite;
+            image.color = Game.ActivePlayer.Color;
+
+            ColorBlock cb = colors;
+            cb.disabledColor = Game.ActivePlayer.Color;
+            colors = cb; // weird workaround for struct vs class
+        }
+        else
+        {
+            Clear();
+        }
     }
 }

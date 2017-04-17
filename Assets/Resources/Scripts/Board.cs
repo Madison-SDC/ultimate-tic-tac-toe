@@ -83,20 +83,7 @@ public class Board : Spot
             return true;
         }
     }
-
-    public override Player Owner
-    {
-        get
-        {
-            return base.Owner;
-        }
-
-        set
-        {
-            owner = value;
-        }
-    }
-
+    
     /// <summary>
     /// The outline image child of this board
     /// </summary>
@@ -208,12 +195,12 @@ public class Board : Spot
 
                 if (spot == 2) // p has matched player all 3 spots
                 {
-                    Owner = player == 1 ? game.P1 : game.P2;
+                    owner = player == 1 ? game.P1 : game.P2;
                     return;
                 }
             }
         }
-        if (emptySpotExists) { Owner = null; }
+        if (emptySpotExists) { owner = null; }
     }
 
     internal void PopulateWinLines()
