@@ -113,13 +113,13 @@ public class Board : Spot
     /// </summary>
     /// <param name="loc"></param>
     /// <param name="player"></param>
-    void FillSpot(Location loc, int player)
+    void FillSpot(Location loc, Player player)
     {
         bool gameOverState = GameOver;
-        spots[loc.Row, loc.Col] = player;
+        spots[loc.Row, loc.Col] = player == null ? EMPTY : player.Turn;
 
-        if ((!GameOver && player != EMPTY) // game may have just ended
-            || (GameOver && player == EMPTY)) // or game could have been re-opened
+        if ((!GameOver && player != null) // game may have just ended
+            || (GameOver && player == null)) // or game could have been re-opened
         {
             CheckWinner(); // update game over status
         }
@@ -130,7 +130,7 @@ public class Board : Spot
             Board parentBoard = transform.parent.GetComponent<Board>();
             if (parentBoard)
             {
-                parentBoard.FillSpot(Loc, Owner == null ? EMPTY : Owner.Turn);
+                parentBoard.FillSpot(Loc, Owner);
             }
         }
     }
@@ -154,9 +154,9 @@ public class Board : Spot
         }
     }
 
-    public void FillSpot(string name, int player)
+    public void FillSpot(string name, Player player)
     {
-        FillSpot(Spot.StringToLoc(name), player);
+        FillSpot(StringToLoc(name), player);
     }
 
     int Get(Location loc)

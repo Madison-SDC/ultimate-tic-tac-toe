@@ -225,7 +225,7 @@ public class Game : MonoBehaviour
     {
         // update logic
         spot.Fill(undo ? null : ActivePlayer);
-        spot.Board.FillSpot(spot.name, undo ? Board.EMPTY : ActivePlayer.Turn);
+        spot.Board.FillSpot(spot.name, undo ? null : ActivePlayer);
 
         // record this move
         if (!undo)
@@ -304,7 +304,7 @@ public class Game : MonoBehaviour
         bool gameOverAfter = GetComponent<Board>().GameOver;
 
         // highlight local and global board
-        spot.Board.FillSpot(spot.name, player == null ? Board.EMPTY: player.Turn);
+        spot.Board.FillSpot(spot.name, player);
 
         // highlight next playable board(s) if game hasn't ended
         if (!gameOverBefore && !gameOverAfter)
