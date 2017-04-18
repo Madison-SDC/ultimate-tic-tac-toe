@@ -11,6 +11,12 @@ Planned features include:
 
 Changelog:
 
+UT_0.6.1 (Heuristic patch, 2017-04-17)
+	All platforms
+		Improved artificial intelligence
+			I've changed the working name of Hug to Little Hug. Little because it doesn't think ahead, and its mind is little.
+			Little Hug now considers its moves based on an heuristic that weighs whether each spot is a local corner, side, or center.
+
 UT_0.6 (AI framework update, 2017-04-10)
 	All platforms
 		Added Artificial Intelligence player!
