@@ -14,20 +14,7 @@ public class RandomAI : AI {
     /// <returns></returns>
     public override Spot BestMove(Game game)
     {
-        List<Spot> openSpots = new List<Spot>();
-
-        foreach(Board board in game.Boards)
-        {
-            if(board.Active)
-            {
-                foreach(Spot spot in board.Spots)
-                {
-                    if (!spot.Clicked)
-                    { openSpots.Add(spot); }
-                }
-            }
-        }
-
+        List<Spot> openSpots = OpenSpots(game); 
         return openSpots[Random.Range(0, openSpots.Count)];
     }
 }

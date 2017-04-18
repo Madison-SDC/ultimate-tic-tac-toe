@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using System.Collections.Generic;
 
 public abstract class AI : Player
 {
@@ -15,4 +16,27 @@ public abstract class AI : Player
     /// <returns></returns>
     public abstract Spot BestMove(Game game);
 
+    /// <summary>
+    /// All the open spots in the game
+    /// </summary>
+    /// <param name="game"></param>
+    /// <returns></returns>
+    internal List<Spot> OpenSpots(Game game)
+    {
+        List<Spot> openSpots = new List<Spot>();
+
+        foreach (Board board in game.Boards)
+        {
+            if (board.Active)
+            {
+                foreach (Spot spot in board.Spots)
+                {
+                    if (!spot.Clicked)
+                    { openSpots.Add(spot); }
+                }
+            }
+        }
+
+        return openSpots;
+    }
 }
