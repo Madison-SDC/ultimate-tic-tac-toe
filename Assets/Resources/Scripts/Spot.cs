@@ -45,12 +45,20 @@ public class Spot : Button {
 
     /// <summary>
     /// The game this is a part of
+    /// Cycle upward through transforms
     /// </summary>
     public Game Game
     {
         get
         {
-            return transform.parent.parent.GetComponent<Game>();
+            Transform t = transform;
+            Game g = t.GetComponent<Game>();
+            while(g == null)
+            {
+                t = t.parent;
+                g = t.GetComponent<Game>();
+            }
+            return g;
         }
     }
 
@@ -100,7 +108,7 @@ public class Spot : Button {
         GetComponent<Image>().sprite = empty;
     }
 
-    public void Fill(Player player)
+    public virtual void Fill(Player player)
     {
         owner = player;
         if (Owner != null)

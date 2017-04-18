@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 public class Board : Spot
 {
-    int[,] spots;
+    Spot[,] spots;
     bool active;
     /// <summary>
     /// The 8 combos that win the game
@@ -54,16 +54,8 @@ public class Board : Spot
     /// <summary>
     /// The spots on this board
     /// </summary>
-    public int[,] Spots { get { return spots; } }
-
-    public Spot[] BoardSpots
-    {
-        get
-        {
-            return transform.GetComponentsInChildren<Spot>();
-        }
-    }
-
+    public Spot[,] Spots { get { return spots; } }
+    
     /// <summary>
     /// Whether this game is over
     /// </summary>
@@ -76,9 +68,9 @@ public class Board : Spot
     {
         get
         {
-            foreach (int spot in spots)
+            foreach (Spot spot in spots)
             {
-                if (spot == 0) { return false; }
+                if (spot.Owner == null) { return false; }
             }
             return true;
         }
@@ -96,10 +88,25 @@ public class Board : Spot
     // Use this for initialization
     void Start()
     {
-        spots = new int[3, 3];
+        InitializeSpots();
         PopulateWinLines();
         active = true;
         game = GameObject.Find("Global Board").GetComponent<Game>();
+    }
+
+    internal virtual void InitializeSpots()
+    {
+        if(spots == null)
+        {
+            spots = new Spot[3, 3];
+            foreach(Spot spot in GetComponentsInChildren<Spot>())
+            {
+                if(spot.transform.parent == transform) // direct children only
+                {
+                    spots[spot.Loc.Row, spot.Loc.Col] = spot;
+                }
+            }
+        }
     }
 
     public void Reset()
@@ -116,7 +123,7 @@ public class Board : Spot
     void FillSpot(Location loc, Player player)
     {
         bool gameOverState = GameOver;
-        spots[loc.Row, loc.Col] = player == null ? EMPTY : player.Turn;
+        spots[loc.Row, loc.Col].Fill(player);
 
         if ((!GameOver && player != null) // game may have just ended
             || (GameOver && player == null)) // or game could have been re-opened
@@ -159,7 +166,7 @@ public class Board : Spot
         FillSpot(StringToLoc(name), player);
     }
 
-    int Get(Location loc)
+    Spot Get(Location loc)
     {
         return spots[loc.Row, loc.Col];
     }
@@ -174,13 +181,13 @@ public class Board : Spot
 
         for (int line = 0; line < 8; line++)
         {
-            int p = 0; // the player that has a chance of winning on this line
+            Player p = null; // the player that has a chance of winning on this line
             firstSpot = true;
             for (int spot = 0; spot < 3; spot++)
             {
-                int player = Get(winLines[line, spot]);
+                Player player = Get(winLines[line, spot]).Owner;
 
-                if (player == EMPTY)
+                if (player == null)
                 {
                     emptySpotExists = true;
                     break;
@@ -195,7 +202,7 @@ public class Board : Spot
 
                 if (spot == 2) // p has matched player all 3 spots
                 {
-                    owner = player == 1 ? game.P1 : game.P2;
+                    owner = player; // player wins this board
                     return;
                 }
             }
@@ -224,5 +231,10 @@ public class Board : Spot
             winLines[6, i] = new Location(i, i); // top-right to bottom-left
             winLines[7, i] = new Location(2 - i, i); // bottom-left to top-right
         }
+    }
+
+    public override void Fill(Player player)
+    {
+        UpdateColor();
     }
 }

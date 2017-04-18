@@ -20,10 +20,9 @@ public class RandomAI : AI {
         {
             if(board.Active)
             {
-                foreach(Spot spot in board.BoardSpots)
+                foreach(Spot spot in board.Spots)
                 {
-                    if (spot != board // change now that board itself is a spot
-                        && !spot.Clicked)
+                    if (!spot.Clicked)
                     { openSpots.Add(spot); }
                 }
             }
