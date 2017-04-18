@@ -22,7 +22,7 @@ public class Spot : Button {
     /// <summary>
     /// The board this is a part of
     /// </summary>
-    public Board Board
+    public Board ParentBoard
     {
         get
         {

@@ -3,7 +3,7 @@ using System.Threading;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Game : MonoBehaviour
+public class Game : Board
 {
     static Game currentGame;
 
@@ -117,6 +117,7 @@ public class Game : MonoBehaviour
         history.Push(new Move(null, null));
         future = new Stack<Move>();
         InstantiateBoards();
+        InitializeSpots();
         resetting = false;
         activeBoard = null;
         firstTurn = true;
@@ -124,11 +125,10 @@ public class Game : MonoBehaviour
         enabledColor = Color.white;
         p1 = new Player(1, Color.red, Resources.Load<Sprite>("Sprites/x"));
         p2 = new Player(2, Color.blue, Resources.Load<Sprite>("Sprites/o"));
-        
+
+        game = this;
         currentGame = this; // most recent game is the current game
     }
-    
-    public bool GameOver() { return GetComponent<Board>().GameOver; }
 
     /// <summary>
     /// Resets the game
@@ -225,7 +225,7 @@ public class Game : MonoBehaviour
     {
         // update logic
         spot.Fill(undo ? null : ActivePlayer);
-        spot.Board.FillSpot(spot.name, undo ? null : ActivePlayer);
+        spot.ParentBoard.FillSpot(spot.name, undo ? null : ActivePlayer);
 
         // record this move
         if (!undo)
@@ -304,7 +304,7 @@ public class Game : MonoBehaviour
         bool gameOverAfter = GetComponent<Board>().GameOver;
 
         // highlight local and global board
-        spot.Board.FillSpot(spot.name, player);
+        spot.ParentBoard.FillSpot(spot.name, player);
 
         // highlight next playable board(s) if game hasn't ended
         if (!gameOverBefore && !gameOverAfter)

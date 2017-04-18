@@ -43,7 +43,7 @@ public class SinglePlayerGame : Game {
     /// <returns></returns>
     bool Playing()
     {
-        return !resetting && !GameOver();
+        return !resetting && !GameOver;
     }
 
     /// <summary>

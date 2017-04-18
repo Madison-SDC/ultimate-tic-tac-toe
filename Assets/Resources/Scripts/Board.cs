@@ -19,7 +19,7 @@ public class Board : Spot
     /// </summary>
     static Color enabledOffset = Color.gray / 2; // darker offset
 
-    Game game;
+    internal Game game;
 
     public bool Active
     {
@@ -134,11 +134,7 @@ public class Board : Spot
         if (gameOverState != GameOver) // game over state changed
         {
             UpdateColor();
-            Board parentBoard = transform.parent.GetComponent<Board>();
-            if (parentBoard)
-            {
-                parentBoard.FillSpot(Loc, Owner);
-            }
+            if (ParentBoard) { ParentBoard.FillSpot(Loc, Owner); }
         }
     }
 
