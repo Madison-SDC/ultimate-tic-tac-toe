@@ -120,10 +120,10 @@ public class Board : Spot
     /// </summary>
     /// <param name="loc"></param>
     /// <param name="player"></param>
-    void FillSpot(Location loc, Player player)
+    public void FillSpot(Spot spot, Player player)
     {
         bool gameOverState = GameOver;
-        spots[loc.Row, loc.Col].Fill(player);
+        spot.Fill(player);
 
         if ((!GameOver && player != null) // game may have just ended
             || (GameOver && player == null)) // or game could have been re-opened
@@ -134,7 +134,7 @@ public class Board : Spot
         if (gameOverState != GameOver) // game over state changed
         {
             UpdateColor();
-            if (ParentBoard) { ParentBoard.FillSpot(Loc, Owner); }
+            if (ParentBoard) { ParentBoard.FillSpot(spot, Owner); }
         }
     }
 
@@ -157,12 +157,7 @@ public class Board : Spot
         }
     }
 
-    public void FillSpot(string name, Player player)
-    {
-        FillSpot(StringToLoc(name), player);
-    }
-
-    Spot Get(Location loc)
+    public Spot Get(Location loc)
     {
         return spots[loc.Row, loc.Col];
     }
@@ -229,8 +224,9 @@ public class Board : Spot
         }
     }
 
-    public override void Fill(Player player)
-    {
-        UpdateColor();
-    }
+    /// <summary>
+    /// You cannot directly fill a board with one player, so this method is overridden to do nothing.
+    /// </summary>
+    /// <param name="player"></param>
+    public override void Fill(Player player) { }
 }

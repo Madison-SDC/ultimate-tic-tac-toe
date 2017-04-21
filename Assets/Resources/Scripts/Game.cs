@@ -225,7 +225,7 @@ public class Game : Board
     {
         // update logic
         spot.Fill(undo ? null : ActivePlayer);
-        spot.ParentBoard.FillSpot(spot.name, undo ? null : ActivePlayer);
+        spot.ParentBoard.FillSpot(spot, undo ? null : ActivePlayer);
 
         // record this move
         if (!undo)
@@ -304,7 +304,7 @@ public class Game : Board
         bool gameOverAfter = GetComponent<Board>().GameOver;
 
         // highlight local and global board
-        spot.ParentBoard.FillSpot(spot.name, player);
+        spot.ParentBoard.FillSpot(spot, player);
 
         // highlight next playable board(s) if game hasn't ended
         if (!gameOverBefore && !gameOverAfter)
