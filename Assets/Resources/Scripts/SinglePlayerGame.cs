@@ -31,7 +31,7 @@ public class SinglePlayerGame : Game {
 	// Use this for initialization
 	internal override void Start () {
         base.Start();
-        ai = new HeuristicAI(2, Color.blue, Resources.Load<Sprite>("Sprites/o"), 3, 1, 2);
+        ai = new HeuristicAI(2, Color.blue, Resources.Load<Sprite>("Sprites/o"), p1, 3, 1, 2, 10);
         p2 = ai; // for active player reference
         previewTimer = 0.5f;
         confirmTimer = 1f;
