@@ -9,10 +9,30 @@ public class HeuristicAI : AI {
     /// </summary>
     Player opponent;
 
+    /// <summary>
+    /// Value of going in the corner of a local board
+    /// </summary>
     int cornerWeight;
+
+    /// <summary>
+    /// Value of going in the side of a local board
+    /// </summary>
     int sideWeight;
+
+    /// <summary>
+    /// Value of going in the center of a local board
+    /// </summary>
     int centerWeight;
+
+    /// <summary>
+    /// Value of winning a local board
+    /// </summary>
     int localWinWeight;
+
+    /// <summary>
+    /// Value of blocking other player on a local board
+    /// </summary>
+    int localBlockWeight;
 
     public HeuristicAI(
         int turn, 
@@ -22,7 +42,8 @@ public class HeuristicAI : AI {
         int corner, 
         int side, 
         int center,
-        int local
+        int localWin,
+        int localBlock
         ) 
         : base(turn, color, sprite)
     {
@@ -30,7 +51,8 @@ public class HeuristicAI : AI {
         cornerWeight = corner;
         sideWeight = side;
         centerWeight = center;
-        localWinWeight = local;
+        localWinWeight = localWin;
+        localBlockWeight = localBlock;
     }
     
     bool IsCorner(Location loc)
@@ -103,7 +125,8 @@ public class HeuristicAI : AI {
         else if(IsSide(loc)) { score += sideWeight; }
 
         bool myTurn = game.ActivePlayer == this;
-        if(WinsLocal(spot, myTurn)) { score += (myTurn ? 1 : -1) * localWinWeight; }
+        if(WinsLocal(spot, true)) { score += localWinWeight; }
+        if(WinsLocal(spot, false)) { score += localBlockWeight; }
         return score; // just to satisfy code paths
     }
 }
