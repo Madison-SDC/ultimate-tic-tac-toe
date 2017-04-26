@@ -176,19 +176,10 @@ public class Game : Board
         if (board == null) { return; }
 
         board.Active = false;
-
-        // ignore first child, is outline
-        for (int i = 1; i < board.transform.childCount; i++)
+        
+        foreach (Spot spot in board.Spots)
         {
-            Spot spot = board.transform.GetChild(i).GetComponent<Spot>();
             spot.interactable = false;
-            if (spot.Owner == null) // all empty spots
-            {
-                spot.GetComponent<Image>().enabled = false; // hide image so board color is visible
-                ColorBlock cb = spot.colors;
-                cb.disabledColor = board.GetComponent<Image>().color;
-                spot.colors = cb;
-            }
         }
     }
 
@@ -202,25 +193,13 @@ public class Game : Board
         if (board == null) { return; }
 
         board.Active = true;
-
-        // ignore first child: is outline
-        for (int i = 1; i < board.transform.childCount; i++)
+        
+        foreach (Spot spot in board.Spots)
         {
-            Transform spot = board.transform.GetChild(i);
-            if (spot.GetComponent<Spot>().Owner == null) // all unclicked spots
+            if (spot.Owner == null) // all unclicked spots
             {
-                // show picture so it can be clicked
-                spot.GetComponent<Image>().enabled = true;
-
                 // can be clicked
-                Button button = spot.GetComponent<Button>();
-                button.interactable = !(ActivePlayer is AI);
-
-                // show player color when highlighted, blend in when not
-                ColorBlock cb = button.colors;
-                cb.highlightedColor = ActivePlayer.Color;
-                cb.normalColor = board.GetComponent<Image>().color;
-                button.colors = cb;
+                spot.GetComponent<Button>().interactable = true;
             }
         }
     }
