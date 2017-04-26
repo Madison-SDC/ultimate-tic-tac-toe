@@ -124,9 +124,8 @@ public class HeuristicAI : AI {
         else if(IsCorner(loc)) { score += cornerWeight; }
         else if(IsSide(loc)) { score += sideWeight; }
 
-        bool myTurn = game.ActivePlayer == this;
-        if(WinsLocal(spot, true)) { score += localWinWeight; }
-        if(WinsLocal(spot, false)) { score += localBlockWeight; }
+        if (WinsLocal(spot, true)) { score += localWinWeight; } // can win
+        if (WinsLocal(spot, false)) { score += localBlockWeight; } // can block
         return score; // just to satisfy code paths
     }
 }
