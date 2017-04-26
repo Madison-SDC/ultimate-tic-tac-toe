@@ -26,11 +26,11 @@ public class Board : Spot
         get { return active; }
         set
         {
-            if (active != value && !IsFull) // changing active status
+            if (active != value) // changing active status
             {
                 Color color = GetComponent<Image>().color;
 
-                if (GameOver) // local game over: simply augment color by an offset
+                if (Owner != null) // has a winner: simply augment color by an offset
                 {
                     if (value) { color += enabledOffset; } // enabling makes lighter
                     else { color -= enabledOffset; } // disabling makes darker
@@ -59,12 +59,12 @@ public class Board : Spot
     /// <summary>
     /// Whether this game is over
     /// </summary>
-    public bool GameOver { get { return IsFull || Owner != null; } }
+    public bool GameOver { get { return Owner != null || IsFull; } }
 
     /// <summary>
     /// Returns whether this board is full
     /// </summary>
-    public bool IsFull
+    public virtual bool IsFull
     {
         get
         {
@@ -144,10 +144,10 @@ public class Board : Spot
     internal void UpdateColor()
     {
         Image image = GetComponent<Image>();
-        if(Owner != null)
+        if(Owner != null) // game is over, has a winner
         {
-            image.color = Owner.Color + offset;
-            if(active) { image.color += enabledOffset; }
+            image.color = Owner.Color + offset; // reflect board winner
+            if(active) { image.color += enabledOffset; } // reflect active status
         }
         else if(IsFull)
         { image.color = game.DisabledColor; } // tie game

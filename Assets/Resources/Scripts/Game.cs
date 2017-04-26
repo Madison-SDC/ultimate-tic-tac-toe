@@ -57,21 +57,17 @@ public class Game : Board
 
             bool activeIsNull = activeBoard == null;
             bool activeIsFull = !activeIsNull
-                && activeBoard.GetComponent<Board>().IsFull;
+                && activeBoard.IsFull;
 
-            bool gameOver = GetComponent<Board>().GameOver;
+            bool gameOver = GameOver;
 
             foreach (Board board in boards)
             {
-                if (gameOver) { Disable(board); }
-
-                // initialize all boards at first
+                if (gameOver || board.IsFull) { Disable(board); }
                 else if (activeIsNull || activeIsFull) { Enable(board); }
-
                 else if (board != activeBoard) { Disable(board); }
+                else { Enable(board); }
             }
-
-            if (!GetComponent<Board>().GameOver) { Enable(activeBoard); }
         }
     }
 
@@ -107,6 +103,18 @@ public class Game : Board
     }
 
     public bool HasNextMove { get { return nextMove != null; } }
+
+    public override bool IsFull
+    {
+        get
+        {
+            foreach(Board board in boards)
+            {
+                if(!board.GameOver) { return false; }
+            }
+            return true;
+        }
+    }
 
     /// <summary>
     /// Reset the game
@@ -253,7 +261,7 @@ public class Game : Board
     {
         if(nextMove)
         {
-            ShowMove(nextMove, true);
+            ShowMove(nextMove, true); // undo preview only
             nextMove = null;
         }
 
@@ -269,7 +277,7 @@ public class Game : Board
     {
         if(future.Count > 0)
         {
-            if (nextMove) { ShowMove(nextMove, true); }
+            if (nextMove) { ShowMove(nextMove, true); } // undo the preview move
             Move move = future.Pop();
             Play(move.Spot, redo:true); // act as though this is a new move
         }
@@ -297,11 +305,11 @@ public class Game : Board
         // the owner of the shown move
         Player player = undo ? null : ActivePlayer;
         
-        bool gameOverBefore = GetComponent<Board>().GameOver;
+        bool gameOverBefore = GameOver;
 
         spot.Fill(player); // update piece image
 
-        bool gameOverAfter = GetComponent<Board>().GameOver;
+        bool gameOverAfter = GameOver;
 
         // highlight local and global board
         spot.ParentBoard.FillSpot(spot, player);
