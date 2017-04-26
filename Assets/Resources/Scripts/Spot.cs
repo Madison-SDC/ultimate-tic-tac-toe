@@ -99,7 +99,8 @@ public class Spot : Button {
 
     public void OnClick()
     {
-        Game.UpdateDisplay(this);
+        if(!(Game.ActivePlayer is AI))
+            Game.UpdateDisplay(this);
     }
 
     public void Clear()
