@@ -136,6 +136,8 @@ public class Game : Board
 
         game = this;
         currentGame = this; // most recent game is the current game
+
+        Active = true;
     }
 
     /// <summary>
@@ -180,7 +182,7 @@ public class Game : Board
         {
             Spot spot = board.transform.GetChild(i).GetComponent<Spot>();
             spot.interactable = false;
-            if (!spot.Clicked)
+            if (spot.Owner == null) // all empty spots
             {
                 spot.GetComponent<Image>().enabled = false; // hide image so board color is visible
                 ColorBlock cb = spot.colors;
@@ -205,7 +207,7 @@ public class Game : Board
         for (int i = 1; i < board.transform.childCount; i++)
         {
             Transform spot = board.transform.GetChild(i);
-            if (!spot.GetComponent<Spot>().Clicked) // all unclicked spots
+            if (spot.GetComponent<Spot>().Owner == null) // all unclicked spots
             {
                 // show picture so it can be clicked
                 spot.GetComponent<Image>().enabled = true;
@@ -232,7 +234,6 @@ public class Game : Board
     public void Play(Spot spot, bool undo = false, Board prevActiveBoard = null, bool redo = false)
     {
         // update logic
-        spot.Fill(undo ? null : ActivePlayer);
         spot.ParentBoard.FillSpot(spot, undo ? null : ActivePlayer);
 
         // record this move

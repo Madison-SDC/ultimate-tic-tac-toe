@@ -35,7 +35,7 @@ public class Board : Spot
                     if (value) { color += enabledOffset; } // enabling makes lighter
                     else { color -= enabledOffset; } // disabling makes darker
                 }
-                else // game not over
+                else // no winner (could be tie or game not over)
                 {
                     color = value ? game.EnabledColor : game.DisabledColor;
                 }
@@ -122,8 +122,10 @@ public class Board : Spot
     /// <param name="player"></param>
     public void FillSpot(Spot spot, Player player)
     {
-        bool gameOverState = GameOver;
-        spot.Fill(player);
+        // whether the game was over before the move was made
+        bool gameOverState = GameOver; 
+
+        spot.Fill(player); // make the move
 
         if ((!GameOver && player != null) // game may have just ended
             || (GameOver && player == null)) // or game could have been re-opened
@@ -134,8 +136,11 @@ public class Board : Spot
         if (gameOverState != GameOver) // game over state changed
         {
             UpdateColor();
-            if(IsFull && Owner == null) { active = false; }
             if (ParentBoard) { ParentBoard.FillSpot(this, Owner); }
+            else // game over
+            {
+                Active = !GameOver; // game over -> not active
+            }
         }
     }
 

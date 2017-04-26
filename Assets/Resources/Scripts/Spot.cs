@@ -9,17 +9,6 @@ public class Spot : Button {
     internal Player owner;
 
     /// <summary>
-    /// Whether this has been clicked
-    /// </summary>
-    public bool Clicked { get { return clicked; }
-        set
-        {
-            clicked = value;
-            interactable = !clicked;
-        }
-    }
-
-    /// <summary>
     /// The board this is a part of
     /// </summary>
     public Board ParentBoard
@@ -74,7 +63,6 @@ public class Spot : Button {
 
     protected override void Awake()
     {
-        Clicked = false;
         empty = Resources.Load<Sprite>("Sprites/empty");
         loc = StringToLoc(tag);
     }
@@ -102,20 +90,14 @@ public class Spot : Button {
         if(!(Game.ActivePlayer is AI))
             Game.UpdateDisplay(this);
     }
-
-    public void Clear()
-    {
-        Clicked = false;
-        GetComponent<Image>().sprite = empty;
-    }
+    
 
     public virtual void Fill(Player player)
     {
         owner = player;
-        if (Owner != null)
+        Image image = GetComponent<Image>();
+        if (owner != null)
         {
-            Clicked = true;
-            Image image = GetComponent<Image>();
             image.enabled = true;
             image.sprite = Game.ActivePlayer.Sprite;
             image.color = Game.ActivePlayer.Color;
@@ -123,10 +105,12 @@ public class Spot : Button {
             ColorBlock cb = colors;
             cb.disabledColor = Game.ActivePlayer.Color;
             colors = cb; // weird workaround for struct vs class
+            interactable = false;
         }
-        else
+        else // clear spot
         {
-            Clear();
+            image.sprite = empty;
+            interactable = true;
         }
     }
 }

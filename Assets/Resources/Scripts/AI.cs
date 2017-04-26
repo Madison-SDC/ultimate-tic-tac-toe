@@ -31,7 +31,7 @@ public abstract class AI : Player
             {
                 foreach (Spot spot in board.Spots)
                 {
-                    if (!spot.Clicked)
+                    if (spot.Owner == null)
                     { openSpots.Add(spot); }
                 }
             }
