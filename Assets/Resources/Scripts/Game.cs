@@ -177,10 +177,7 @@ public class Game : Board
 
         board.Active = false;
         
-        foreach (Spot spot in board.Spots)
-        {
-            spot.interactable = false;
-        }
+        foreach (Spot spot in board.Spots) { spot.interactable = false; }
     }
 
     /// <summary>
@@ -196,11 +193,8 @@ public class Game : Board
         
         foreach (Spot spot in board.Spots)
         {
-            if (spot.Owner == null) // all unclicked spots
-            {
-                // can be clicked
-                spot.GetComponent<Button>().interactable = true;
-            }
+            // all empty spots
+            if (spot.Owner == null) { spot.interactable = true; }
         }
     }
 
