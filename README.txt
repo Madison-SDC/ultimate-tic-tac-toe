@@ -11,6 +11,17 @@ Planned features include:
 
 Changelog:
 
+UT_0.6.2 (Bugfix patch, 2017-04-26)
+	All platforms
+		AI now weighs value of winning a local board
+		AI now weighs value of blocking opponent from winning local board
+	
+		Bugfixes
+			Fix for game not recoloring when a tie occurred
+			Fix for game not allowing undo when game was ended in single player
+			Fix for undo being possible after AI previewed its move
+			Other misc. bugfixes probably
+
 UT_0.6.1 (Heuristic patch, 2017-04-17)
 	All platforms
 		Improved artificial intelligence
