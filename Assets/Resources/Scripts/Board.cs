@@ -136,11 +136,9 @@ public class Board : Spot
         if (gameOverState != GameOver) // game over state changed
         {
             UpdateColor();
-            if (ParentBoard) { ParentBoard.FillSpot(this, Owner); }
-            else // game over
-            {
-                Active = !GameOver; // game over -> not active
-            }
+            game.CheckWinner();
+            game.Active = !game.GameOver;
+            game.UpdateColor();
         }
     }
 
