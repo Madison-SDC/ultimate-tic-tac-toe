@@ -38,12 +38,19 @@ public class SinglePlayerGame : Game {
 	}
 
     /// <summary>
-    /// Playing if not resetting and not game over
+    /// Playing if the game is not over, or if the AI is making a move
     /// </summary>
     /// <returns></returns>
     bool Playing()
     {
-        return !resetting && !GameOver;
+        bool gameOver = GameOver;
+
+        if(gameOver)
+        {
+            // game isn't really over, just next move ends it
+            return ActivePlayer is AI && HasNextMove;
+        }
+        return true;
     }
 
     /// <summary>
@@ -91,9 +98,8 @@ public class SinglePlayerGame : Game {
     /// </summary>
     public override void Undo()
     {
-        bool undoTwice = !HasNextMove; // track, may change
         base.Undo();
-        if (undoTwice) { base.Undo(); }
+        if (ActivePlayer is AI) { base.Undo(); }
     }
 
     /// <summary>
@@ -104,5 +110,23 @@ public class SinglePlayerGame : Game {
     {
         base.Redo();
         base.Redo();
+    }
+
+    public override bool CanConfirm()
+    {
+        if (!(ActivePlayer is AI)) { return base.CanConfirm(); }
+        return false;
+    }
+
+    public override bool CanRedo()
+    {
+        if (!(ActivePlayer is AI)) { base.CanRedo(); }
+        return false;
+    }
+
+    public override bool CanUndo()
+    {
+        if(!(ActivePlayer is AI)) { return base.CanUndo(); }
+        return GameOver;
     }
 }

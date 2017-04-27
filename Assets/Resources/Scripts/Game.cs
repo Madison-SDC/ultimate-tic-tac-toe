@@ -341,22 +341,19 @@ public class Game : Board
         }
     }
 
-    public bool CanUndo()
+    public virtual bool CanUndo()
     {
-        return !(ActivePlayer is AI) // not AI's turn
-            && (history.Count > 1 // and has a move to undo
-            || HasNextMove); // or has a preview move
+        return history.Count > 1 // and has a move to undo
+            || HasNextMove; // or has a preview move
     }
 
-    public bool CanRedo()
+    public virtual bool CanRedo()
     {
-        return !(ActivePlayer is AI) // not AI turn
-            && future.Count > 0; // has move to redo
+        return future.Count > 0; // has move to redo
     }
 
-    public bool CanConfirm()
+    public virtual bool CanConfirm()
     {
-        return !(ActivePlayer is AI) // not AI turn
-            && HasNextMove; // has move to redo
+        return HasNextMove; // has move to redo
     }
 }
