@@ -55,6 +55,7 @@ public class Game : Board
         {
             activeBoard = value;
 
+            // active is null on opening move
             bool activeIsNull = activeBoard == null;
             bool activeIsFull = !activeIsNull
                 && activeBoard.IsFull;
@@ -63,7 +64,7 @@ public class Game : Board
 
             foreach (Board board in boards)
             {
-                if (gameOver || board.IsFull) { Disable(board); }
+                if (gameOver || board.GameOver) { Disable(board); }
                 else if (activeIsNull || activeIsFull) { Enable(board); }
                 else if (board != activeBoard) { Disable(board); }
                 else { Enable(board); }
@@ -308,9 +309,9 @@ public class Game : Board
         Color otherPlayerColor = ActivePlayer == P1 ? P2.Color : P1.Color;
         
         // only highlight active board if global game continues
-        if (!GetComponent<Board>().GameOver)
+        if (!GameOver)
         {
-            if (board.IsFull) // outline all other boards
+            if (board.GameOver) // outline all other boards
             {
                 foreach (Board b in boards)
                 {
