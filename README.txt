@@ -11,6 +11,12 @@ Planned features include:
 
 Changelog:
 
+UT_?
+	All platforms
+		Changed rules: 
+			If a local game is over, that board is always disabled.
+			Sending a player to a game-over board activates all other valid boards.
+
 UT_0.6.2 (Bugfix patch, 2017-04-26)
 	All platforms
 		AI now weighs value of winning a local board
