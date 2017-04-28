@@ -57,18 +57,26 @@ public class Game : Board
 
             // active is null on opening move
             bool activeIsNull = activeBoard == null;
-            bool activeIsFull = !activeIsNull
-                && activeBoard.IsFull;
+            bool activeIsOver = !activeIsNull
+                && activeBoard.GameOver;
 
             bool gameOver = GameOver;
 
             foreach (Board board in boards)
             {
                 if (gameOver || board.GameOver) { Disable(board); }
-                else if (activeIsNull || activeIsFull) { Enable(board); }
+                else if (activeIsNull || activeIsOver) { Enable(board); }
                 else if (board != activeBoard) { Disable(board); }
                 else { Enable(board); }
             }
+        }
+    }
+
+    public Move PreviousMove
+    {
+        get
+        {
+            return history.Peek();
         }
     }
 
