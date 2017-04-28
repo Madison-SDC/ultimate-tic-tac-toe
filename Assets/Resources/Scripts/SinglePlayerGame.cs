@@ -120,7 +120,7 @@ public class SinglePlayerGame : Game {
 
     public override bool CanRedo()
     {
-        if (!(ActivePlayer is AI)) { base.CanRedo(); }
+        if (!(ActivePlayer is AI)) { return base.CanRedo(); }
         return false;
     }
 
