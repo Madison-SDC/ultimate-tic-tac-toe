@@ -10,7 +10,7 @@ public class Game : Board
     /// <summary>
     /// Previous moves made for this game
     /// </summary>
-    Stack<Move> history;
+    internal Stack<Move> history;
 
     /// <summary>
     /// All move that have been undone
@@ -290,12 +290,10 @@ public class Game : Board
         
         bool gameOverBefore = GameOver;
 
-        spot.Fill(player); // update piece image
-
-        bool gameOverAfter = GameOver;
-
         // highlight local and global board
         spot.ParentBoard.FillSpot(spot, player);
+
+        bool gameOverAfter = GameOver;
 
         // highlight next playable board(s) if game hasn't ended
         if (!gameOverBefore && !gameOverAfter)
@@ -316,6 +314,15 @@ public class Game : Board
         // The color of the player who will play next (not currently)
         Color otherPlayerColor = ActivePlayer == P1 ? P2.Color : P1.Color;
         
+        // simply remove the outline for all boards
+        if(remove)
+        {
+            foreach (Board b in boards)
+            {
+                b.Outline.enabled = false;
+            }
+        }
+
         // only highlight active board if global game continues
         if (!GameOver)
         {
