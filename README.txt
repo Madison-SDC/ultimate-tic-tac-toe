@@ -16,6 +16,10 @@ UT_?
 		Changed rules: 
 			If a local game is over, that board is always disabled.
 			Sending a player to a game-over board activates all other valid boards.
+		Added status bar
+			Gives info on the last turn (who made it, where it was)
+			Gives info on whose turn it is (X or O, AI or human)
+			
 
 UT_0.6.2 (Bugfix patch, 2017-04-26)
 	All platforms

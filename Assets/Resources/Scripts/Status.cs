@@ -7,6 +7,7 @@ public class Status : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         Game game = Game.CurrentGame;
+        if(game is InstructionGame) { return; } // Instructions take care of their own status info
         Move previousMove = game.PreviousMove;
         Spot spot = previousMove.Spot;
 
@@ -18,15 +19,20 @@ public class Status : MonoBehaviour {
             SetText(
                 Name(previousPlayer) + " went in the " +
                 LocToName(spot.Loc) + " spot of the " +
-                LocToName(spot.ParentBoard.Loc) + " board.\n\n"
+                LocToName(spot.ParentBoard.Loc) + " board. "
             );
         }
         else { SetText(""); }
         
-        if(game.GameOver)
+        if(game.GameOver && !game.HasNextMove)
         {
             Player winner = game.Owner;
-            if (winner != null) { AppendText(Name(winner) + " wins!"); }
+            if (winner != null)
+            {
+                string name = Name(winner);
+                if (name.Equals("You")) { AppendText(name + " win!"); }
+                else { AppendText(name + " wins!"); }
+                }
             else { AppendText("Tie game."); }
             return;
         }
@@ -90,8 +96,9 @@ public class Status : MonoBehaviour {
     string Name(Player p)
     {
         if(p is AI) { return "AI"; }
-        if(p.Turn == 1) { return "X"; }
-        if(p.Turn == 2) { return "O"; }
+        bool onePlayer = Game.CurrentGame is SinglePlayerGame;
+        if(p.Turn == 1) { return onePlayer ? "You" : "X"; }
+        if(p.Turn == 2) { return onePlayer ? "You" : "O"; }
         return null;
     }
 
