@@ -321,6 +321,7 @@ public class Game : Board
             {
                 b.Outline.enabled = false;
             }
+            return;
         }
 
         // only highlight active board if global game continues
@@ -330,16 +331,16 @@ public class Game : Board
             {
                 foreach (Board b in boards)
                 {
-                    if (b != board)
+                    if (!b.GameOver)
                     {
-                        b.Outline.enabled = !remove;
+                        b.Outline.enabled = true;
                         b.Outline.color = otherPlayerColor;
                     }
                 }
             }
             else // board not full, can be played on
             {
-                board.Outline.enabled = !remove;
+                board.Outline.enabled = true;
                 board.Outline.color = otherPlayerColor;
             }
         } // if game is over, do nothing
