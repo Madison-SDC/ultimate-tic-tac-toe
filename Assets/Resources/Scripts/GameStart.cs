@@ -2,8 +2,9 @@
 using System.Collections;
 
 public class GameStart : MonoBehaviour {
-    static int gameMode = ONE_PLAYER;
+    static int gameMode = INSTRUCTION;
 
+    const int INSTRUCTION = -1;
     const int ONE_PLAYER = 1;
     const int TWO_PLAYER = 2;
 
@@ -15,7 +16,7 @@ public class GameStart : MonoBehaviour {
         get { return gameMode; }
         set
         {
-            if(value == ONE_PLAYER || value == TWO_PLAYER)
+            if(value == ONE_PLAYER || value == TWO_PLAYER || value == INSTRUCTION)
             {
                 gameMode = value;
             }
@@ -34,6 +35,10 @@ public class GameStart : MonoBehaviour {
         else if (GameMode == TWO_PLAYER)
         {
             gameObject.AddComponent<Game>();
+        }
+        else if (GameMode == INSTRUCTION)
+        {
+            gameObject.AddComponent<InstructionGame>();
         }
         Destroy(this);
     }

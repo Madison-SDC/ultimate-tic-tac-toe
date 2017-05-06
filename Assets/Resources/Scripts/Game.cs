@@ -35,6 +35,11 @@ public class Game : Board
     internal Player p1, p2;
     Color disabledColor, enabledColor;
 
+    public const int REGULAR = 0,
+        UNDO = 1,
+        REDO = 2,
+        PREVIEW = 3;
+
     /// <summary>
     /// The current game on the screen
     /// </summary>
@@ -213,16 +218,16 @@ public class Game : Board
     /// <param name="spot">The spot to play</param>
     /// <param name="undo">Whether to undo a move</param>
     /// <param name="prevActiveBoard">The previous active board</param>
-    public void Play(Spot spot, bool undo = false, Board prevActiveBoard = null, bool redo = false)
+    public void Play(Spot spot, int moveType = REGULAR, Board prevActiveBoard = null)
     {
         // update logic
-        spot.ParentBoard.FillSpot(spot, undo ? null : ActivePlayer);
+        spot.ParentBoard.FillSpot(spot, moveType == UNDO ? null : ActivePlayer);
 
         // record this move
-        if (!undo)
+        if (moveType != UNDO && moveType != PREVIEW)
         {
             history.Push(new Move(ActiveBoard, spot));
-            if(!redo)
+            if(moveType != REDO)
             {
                 future = new Stack<Move>();
             }
@@ -232,7 +237,7 @@ public class Game : Board
 
         // On an undo, the new active board is the board 
         // that the previous move pointed to.
-        ActiveBoard = undo ? prevActiveBoard : spot.RelativeBoard;
+        ActiveBoard = moveType == UNDO ? prevActiveBoard : spot.RelativeBoard;
 
         nextMove = null; // no next move chosen as this one has been confirmed
     }
@@ -251,7 +256,7 @@ public class Game : Board
         else if (history.Count > 1) // cannot undo original instantiation move
         {
             Move move = history.Pop();
-            Play(move.Spot, true, move.Board); // remove piece
+            Play(move.Spot, UNDO, move.Board); // remove piece
             future.Push(move);
         }
     }
@@ -262,7 +267,7 @@ public class Game : Board
         {
             if (nextMove) { ShowMove(nextMove, true); } // undo the preview move
             Move move = future.Pop();
-            Play(move.Spot, redo:true); // act as though this is a new move
+            Play(move.Spot, REDO); // act as though this is a new move
         }
     }
 

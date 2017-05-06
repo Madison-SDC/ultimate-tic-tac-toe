@@ -7,10 +7,7 @@ public class Test : UnityEngine.UI.Button {
 
 	public void AllTests()
     {
-        Game game = TestGame();
-
         PlaySimpleGame();
-        
     }
 
     /// <summary>

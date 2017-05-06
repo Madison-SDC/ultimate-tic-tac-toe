@@ -11,4 +11,15 @@
         row = r;
         col = c;
     }
+
+    public override bool Equals(object obj)
+    {
+        if(obj is Location)
+        {
+            Location other = (Location)obj;
+            return Row == other.Row
+                && Col == other.Col;
+        }
+        return false;
+    }
 }
