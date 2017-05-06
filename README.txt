@@ -11,15 +11,17 @@ Planned features include:
 
 Changelog:
 
-UT_?
+UT_0.7 (Gameplay update, 2017-05-06)
 	All platforms
-		Changed rules: 
-			If a local game is over, that board is always disabled.
-			Sending a player to a game-over board activates all other valid boards.
+		Rule change
+			If a local game is over, that board is always disabled
+			Sending a player to a game-over board activates all other valid boards
 		Added status bar
 			Gives info on the last turn (who made it, where it was)
 			Gives info on whose turn it is (X or O, AI or human)
-			
+		AI improvements
+			AI now looks some number of moves into the future (currently 5 by default)
+			AI now weighs sending its opponent to a completed board, allowing its opponent to play on any board
 
 UT_0.6.2 (Bugfix patch, 2017-04-26)
 	All platforms
