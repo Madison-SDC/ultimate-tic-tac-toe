@@ -7,6 +7,7 @@ public class Board : Spot
     bool active;
     /// <summary>
     /// The 8 combos that win the game
+    /// 2D array, 8x3
     /// </summary>
     static Location[,] winLines;
     /// <summary>
@@ -233,4 +234,36 @@ public class Board : Spot
     /// </summary>
     /// <param name="player"></param>
     public override void Fill(Player player) { }
+
+    public override bool CanBeOwnedBy(Player p)
+    {
+        if(Owner == p) { return true; }
+        if(Owner != null) { return false; } // owned by someone else
+
+        int lineCount = winLines.GetLength(0);
+        int lineLength = winLines.GetLength(1);
+
+        for (int r = 0; r < lineCount; r++)
+        {
+            // instantiate the line
+            Location[] line = new Location[lineLength];
+            for(int c = 0; c < lineLength; c++)
+            {
+                line[c] = winLines[r,c];
+            }
+
+            // find out if it can be owned
+            bool canOwn = true;
+            foreach(Location loc in line)
+            {
+                if(!Get(loc).CanBeOwnedBy(p))
+                {
+                    canOwn = false;
+                    break;
+                }
+            }
+            if(canOwn) { return true; }
+        }
+        return false;
+    }
 }

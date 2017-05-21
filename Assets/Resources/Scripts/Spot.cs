@@ -113,4 +113,16 @@ public class Spot : Button {
             interactable = true;
         }
     }
+
+    /// <summary>
+    /// Whether this spot can be owned by <paramref name="p"/>. 
+    /// True if there's a chance, false if definitely not possible
+    /// </summary>
+    /// <param name="p"></param>
+    /// <returns></returns>
+    public virtual bool CanBeOwnedBy(Player p)
+    {
+        return Owner == null 
+            || Owner == p;
+    }
 }
