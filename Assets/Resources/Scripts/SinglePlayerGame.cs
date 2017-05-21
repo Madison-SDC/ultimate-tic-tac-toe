@@ -32,7 +32,7 @@ public class SinglePlayerGame : Game {
 	internal override void Start () {
         base.Start();
         ai = new HeuristicAI(
-            1, // depth
+            2, // depth
             Color.blue,
             Resources.Load<Sprite>("Sprites/o"),
             p1, // opponent
