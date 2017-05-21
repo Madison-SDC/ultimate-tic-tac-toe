@@ -177,7 +177,7 @@ public class HeuristicAI : AI {
     /// According to the given heuristic weights
     /// For player <paramref name="p"/>
     /// </summary>
-    /// <param name="spot">The spot to evaluate, can be played, not null</param>
+    /// <param name="spot">The spot to evaluate, can be played</param>
     /// <param name="game">The game to evaluate</param>
     /// <param name="d">The depth of the search</param>
     /// <param name="p">The player to score</param>
@@ -188,7 +188,10 @@ public class HeuristicAI : AI {
         Location loc = spot.Loc;
         int score = 0;
 
-        if(d != 0)
+        // always go for the win, duh. arbitrary large magic number for now 
+        if (WinsGlobal(spot, p == this)) { return 1000000; }
+
+        if (d != 0)
         {
             score = ScoreOf(spot, 0, p); // find score without looking ahead
             Player previousOwner = spot.Owner;
@@ -209,15 +212,12 @@ public class HeuristicAI : AI {
             return score;
         }
 
-        // always go for the win, duh
-        if(WinsGlobal(spot, true)) { return Int32.MaxValue; }
-
         if(IsCenter(loc)) { score += centerWeight; }
         else if(IsCorner(loc)) { score += cornerWeight; }
         else if(IsSide(loc)) { score += sideWeight; }
 
-        if (WinsLocal(spot, true)) { score += localWinWeight; } // can win
-        if (WinsLocal(spot, false)) { score += localBlockWeight; } // can block
+        if (WinsLocal(spot, p == this)) { score += localWinWeight; } // can win
+        if (WinsLocal(spot, p != this)) { score += localBlockWeight; } // can block
         if(spot.RelativeBoard.GameOver) { score += relativeOverWeight; }
         
         return score;
