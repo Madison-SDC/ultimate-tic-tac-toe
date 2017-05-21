@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class GameStart : MonoBehaviour {
-    static int gameMode = INSTRUCTION;
+    static int gameMode = ONE_PLAYER;
 
     const int INSTRUCTION = -1;
     const int ONE_PLAYER = 1;
