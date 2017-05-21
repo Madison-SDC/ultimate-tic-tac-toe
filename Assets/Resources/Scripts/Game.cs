@@ -145,8 +145,8 @@ public class Game : Board
         firstTurn = true;
         disabledColor = Color.gray;
         enabledColor = Color.white;
-        p1 = new Player(1, Color.red, Resources.Load<Sprite>("Sprites/x"));
-        p2 = new Player(2, Color.blue, Resources.Load<Sprite>("Sprites/o"));
+        p1 = new Player(1, Color.red, Resources.Load<Sprite>("Sprites/x"), "X");
+        p2 = new Player(2, Color.blue, Resources.Load<Sprite>("Sprites/o"), "O");
 
         game = this;
         currentGame = this; // most recent game is the current game

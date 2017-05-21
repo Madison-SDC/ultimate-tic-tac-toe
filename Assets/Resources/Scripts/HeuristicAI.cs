@@ -48,7 +48,7 @@ public class HeuristicAI : AI {
     public HeuristicAI(
         int turn, 
         Color color, 
-        Sprite sprite, 
+        Sprite sprite,
         Player opponent, 
         int depth,
         int corner, 
@@ -58,7 +58,7 @@ public class HeuristicAI : AI {
         int localBlock,
         int relativeOver
         ) 
-        : base(turn, color, sprite)
+        : base(turn, color, sprite, "AI")
     {
         this.opponent = opponent;
         this.depth = depth;

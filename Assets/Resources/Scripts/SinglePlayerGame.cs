@@ -44,6 +44,7 @@ public class SinglePlayerGame : Game {
             10, // local block
             -25 // relative over
         );
+        p1.Name = "You"; // instead of "X"
         p2 = ai; // for active player reference
         previewTimer = 0.5f;
         confirmTimer = 1f;

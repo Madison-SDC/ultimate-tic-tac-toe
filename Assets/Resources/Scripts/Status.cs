@@ -17,19 +17,20 @@ public class Status : MonoBehaviour {
             Player previousPlayer = game.ActivePlayer == game.P1 ? game.P2 : game.P1;
 
             SetText(
-                Name(previousPlayer) + " went in the " +
+                previousPlayer.Name + " went in the " +
                 LocToName(spot.Loc) + " spot of the " +
                 LocToName(spot.ParentBoard.Loc) + " board. "
             );
         }
         else { SetText(""); }
         
-        if(game.GameOver && !game.HasNextMove)
+        if(game.GameOver 
+            && !game.HasNextMove) // not over because of a preview move
         {
             Player winner = game.Owner;
             if (winner != null)
             {
-                string name = Name(winner);
+                string name = winner.Name;
                 if (name.Equals("You")) { AppendText(name + " win!"); }
                 else { AppendText(name + " wins!"); }
                 }
@@ -37,18 +38,9 @@ public class Status : MonoBehaviour {
             return;
         }
 
-        if (game is SinglePlayerGame)
-        {
-            if (!(game.ActivePlayer is AI)) // Human's turn
-            {
-                AppendText("Your turn.");
-            }
-            else { AppendText("AI's turn."); }
-        }
-        else
-        {
-            AppendText(Name(game.ActivePlayer) + "'s turn");
-        }
+        string activeName = game.ActivePlayer.Name;
+        if(activeName.Equals("You")) { AppendText("Your turn."); }
+        else { AppendText(activeName + "'s turn."); }
     }
 
     string LocToName(Location loc)
@@ -91,15 +83,6 @@ public class Status : MonoBehaviour {
         }
 
         return name;
-    }
-
-    string Name(Player p)
-    {
-        if(p is AI) { return "AI"; }
-        bool onePlayer = Game.CurrentGame is SinglePlayerGame;
-        if(p.Turn == 1) { return onePlayer ? "You" : "X"; }
-        if(p.Turn == 2) { return onePlayer ? "You" : "O"; }
-        return null;
     }
 
     /// <summary>

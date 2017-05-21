@@ -5,8 +5,8 @@ using System.Collections.Generic;
 public abstract class AI : Player
 {
     // Chain to the base constructor
-    public AI(int turn, Color color, Sprite sprite) : 
-        base(turn, color, sprite) {}
+    public AI(int turn, Color color, Sprite sprite, string name) : 
+        base(turn, color, sprite, name) {}
 
     /// <summary>
     /// Return the best move for the AI in <paramref name="game"/>.
