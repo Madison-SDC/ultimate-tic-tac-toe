@@ -1,4 +1,6 @@
-﻿public class Location {
+﻿
+public class Location
+{
 
     int row, col;
 
@@ -21,5 +23,10 @@
                 && Col == other.Col;
         }
         return false;
+    }
+
+    public override int GetHashCode()
+    {
+        return base.GetHashCode();
     }
 }
