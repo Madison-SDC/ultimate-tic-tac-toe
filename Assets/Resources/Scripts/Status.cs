@@ -8,6 +8,13 @@ public class Status : MonoBehaviour {
 	void Update () {
         Game game = Game.CurrentGame;
         if(game is InstructionGame) { return; } // Instructions take care of their own status info
+
+        if(game.ZeroHumans)
+        {
+            SetText(game.P1Wins + " " + game.P2Wins + " " + game.Ties);
+            return;
+        }
+
         Move previousMove = game.PreviousMove;
         Spot spot = previousMove.Spot;
 

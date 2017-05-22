@@ -36,6 +36,16 @@ public class Game : Board
     Color disabledColor, enabledColor;
 
     /// <summary>
+    /// The exact number of humans in the game
+    /// </summary>
+    bool zeroHumans, oneHuman, twoHumans;
+
+    /// <summary>
+    /// The win count for this game
+    /// </summary>
+    int p1Wins, p2Wins, ties;
+
+    /// <summary>
     /// Time remaining until the AI previews its move (in ms)
     /// </summary>
     private float previewTime;
@@ -151,6 +161,65 @@ public class Game : Board
     }
 
     /// <summary>
+    /// The number of times p1 has won this game
+    /// </summary>
+    public int P1Wins
+    {
+        get
+        {
+            return p1Wins;
+        }
+
+        set
+        {
+            p1Wins = value;
+        }
+    }
+
+    /// <summary>
+    /// the number of times p2 has won this game
+    /// </summary>
+    public int P2Wins
+    {
+        get
+        {
+            return p2Wins;
+        }
+
+        set
+        {
+            p2Wins = value;
+        }
+    }
+
+    /// <summary>
+    /// the number of times no player has won this game
+    /// </summary>
+    public int Ties
+    {
+        get
+        {
+            return ties;
+        }
+
+        set
+        {
+            ties = value;
+        }
+    }
+
+    /// <summary>
+    /// Whether exactly zero humans are playing this game
+    /// </summary>
+    public bool ZeroHumans
+    {
+        get
+        {
+            return zeroHumans;
+        }
+    }
+
+    /// <summary>
     /// Reset the game
     /// </summary>
     internal virtual void Start()
@@ -170,6 +239,18 @@ public class Game : Board
 
         previewTimer = 0.5f;
         confirmTimer = 1f;
+        
+        // both computers: go super speed!
+        if(p1 is AI && p2 is AI)
+        {
+            zeroHumans = true;
+            previewTimer = 0;
+            confirmTimer = 0;
+        } else if(!(p1 is AI) && !(p2 is AI))
+        {
+            twoHumans = true;
+        } else { oneHuman = true; }
+
         previewTime = previewTimer;
         confirmTime = confirmTimer;
 
@@ -226,6 +307,16 @@ public class Game : Board
                     previewTime -= Time.deltaTime;
                 }
             }
+        }
+        else if (GameOver)
+        {
+            if(!HasNextMove)
+            {
+                if(Owner == null) { Ties++; }
+                else if(Owner.Turn == 1) { p1Wins++; }
+                else if(Owner.Turn == 2) { p2Wins++; }
+            }
+            if(zeroHumans) { Reset(); }
         }
     }
 
