@@ -35,6 +35,26 @@ public class Game : Board
     internal Player p1, p2;
     Color disabledColor, enabledColor;
 
+    /// <summary>
+    /// Time remaining until the AI previews its move (in ms)
+    /// </summary>
+    private float previewTime;
+
+    /// <summary>
+    /// How long the AI takes to preview its move (in ms)
+    /// </summary>
+    private float previewTimer;
+
+    /// <summary>
+    /// Time remaining until AI confirms the previewed move (in ms)
+    /// </summary>
+    private float confirmTime;
+
+    /// <summary>
+    /// How long the AI takes to confirm its move (in ms)
+    /// </summary>
+    private float confirmTimer;
+
     public const int REGULAR = 0,
         UNDO = 1,
         REDO = 2,
@@ -145,13 +165,68 @@ public class Game : Board
         firstTurn = true;
         disabledColor = Color.gray;
         enabledColor = Color.white;
-        p1 = new Player(1, Color.red, Resources.Load<Sprite>("Sprites/x"), "X");
-        p2 = new Player(2, Color.blue, Resources.Load<Sprite>("Sprites/o"), "O");
+        p1 = Settings.p1;
+        p2 = Settings.p2;
+
+        previewTimer = 0.5f;
+        confirmTimer = 1f;
+        previewTime = previewTimer;
+        confirmTime = confirmTimer;
 
         game = this;
         currentGame = this; // most recent game is the current game
 
         Active = true;
+    }
+
+    /// <summary>
+    /// Playing if the game is not over, or if the AI is making a move
+    /// </summary>
+    /// <returns></returns>
+    bool Playing()
+    {
+        bool gameOver = GameOver;
+
+        if (gameOver)
+        {
+            // game isn't really over, just next move ends it
+            return ActivePlayer is AI && HasNextMove;
+        }
+        return true;
+    }
+
+    /// <summary>
+    /// If AI's turn, preview or confirm move
+    /// </summary>
+    void Update()
+    {
+        if (Playing() && ActivePlayer is AI)
+        {
+            if (HasNextMove)
+            {
+                if (confirmTime <= 0)
+                {
+                    Confirm();
+                    confirmTime = confirmTimer;
+                }
+                else
+                {
+                    confirmTime -= Time.deltaTime;
+                }
+            }
+            else
+            {
+                if (previewTime <= 0)
+                {
+                    UpdateDisplay(((AI)ActivePlayer).BestMove(this));
+                    previewTime = previewTimer;
+                }
+                else
+                {
+                    previewTime -= Time.deltaTime;
+                }
+            }
+        }
     }
 
     /// <summary>
@@ -251,6 +326,7 @@ public class Game : Board
         {
             ShowMove(nextMove, true); // undo preview only
             nextMove = null;
+            return;
         }
 
         else if (history.Count > 1) // cannot undo original instantiation move
@@ -258,6 +334,12 @@ public class Game : Board
             Move move = history.Pop();
             Play(move.Spot, UNDO, move.Board); // remove piece
             future.Push(move);
+            if(ActivePlayer is AI && history.Count > 1)
+            {
+                move = history.Pop();
+                Play(move.Spot, UNDO, move.Board); // remove piece
+                future.Push(move);
+            }
         }
     }
 
@@ -268,6 +350,9 @@ public class Game : Board
             if (nextMove) { ShowMove(nextMove, true); } // undo the preview move
             Move move = future.Pop();
             Play(move.Spot, REDO); // act as though this is a new move
+
+            // redo AI moves
+            if (ActivePlayer is AI) { Play(future.Pop().Spot, REDO); }
         }
     }
 
@@ -365,17 +450,19 @@ public class Game : Board
 
     public virtual bool CanUndo()
     {
-        return history.Count > 1 // and has a move to undo
-            || HasNextMove; // or has a preview move
+        return (!(ActivePlayer is AI) ||  GameOver) && // not AI turn
+            (history.Count > 1  || HasNextMove); // something to undo
     }
 
     public virtual bool CanRedo()
     {
-        return future.Count > 0; // has move to redo
+        return !(ActivePlayer is AI) && // cannot redo on AI turn
+            future.Count > 0; // has move to redo
     }
 
     public virtual bool CanConfirm()
     {
-        return HasNextMove; // has move to redo
+        return !(ActivePlayer is AI) && // cannot confirm AI move
+            HasNextMove; // has move to confirm
     }
 }

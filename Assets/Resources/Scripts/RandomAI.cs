@@ -4,8 +4,8 @@ using System.Collections.Generic;
 
 public class RandomAI : AI {
 
-    public RandomAI(int turn, Color color, Sprite sprite) 
-        : base(turn, color, sprite, "AI") {}
+    public RandomAI(int turn, Color color, Sprite sprite, string name) 
+        : base(turn, color, sprite, name) {}
 
     /// <summary>
     /// Return a random open spot

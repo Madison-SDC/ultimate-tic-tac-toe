@@ -28,18 +28,7 @@ public class GameStart : MonoBehaviour {
     /// </summary>
     private void Awake()
     {
-        if(GameMode == ONE_PLAYER)
-        {
-            gameObject.AddComponent<SinglePlayerGame>();
-        }
-        else if (GameMode == TWO_PLAYER)
-        {
-            gameObject.AddComponent<Game>();
-        }
-        else if (GameMode == INSTRUCTION)
-        {
-            gameObject.AddComponent<InstructionGame>();
-        }
+        gameObject.AddComponent<Game>();
         Destroy(this);
     }
 }

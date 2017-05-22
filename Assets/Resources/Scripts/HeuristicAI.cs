@@ -45,10 +45,28 @@ public class HeuristicAI : AI {
     /// </summary>
     int relativeOverWeight;
 
+    /// <summary>
+    /// The other player in the game. 
+    /// Should only be set to the other player in the game
+    /// </summary>
+    public Player Opponent
+    {
+        get
+        {
+            return opponent;
+        }
+
+        set
+        {
+            opponent = value;
+        }
+    }
+
     public HeuristicAI(
         int turn, 
         Color color, 
         Sprite sprite,
+        string name,
         Player opponent, 
         int depth,
         int corner, 
@@ -58,9 +76,9 @@ public class HeuristicAI : AI {
         int localBlock,
         int relativeOver
         ) 
-        : base(turn, color, sprite, "AI")
+        : base(turn, color, sprite, name)
     {
-        this.opponent = opponent;
+        this.Opponent = opponent;
         this.depth = depth;
         cornerWeight = corner;
         sideWeight = side;
@@ -96,7 +114,7 @@ public class HeuristicAI : AI {
     /// <returns></returns>
     bool WinsLocal(Spot spot, bool me)
     {
-        Player currentPlayer = me ? this : opponent;
+        Player currentPlayer = me ? this : Opponent;
         Player previousOwner = spot.Owner; 
         
         // cannot win a board that's already been won
@@ -149,7 +167,7 @@ public class HeuristicAI : AI {
     bool WinsGlobal(Spot spot, bool me)
     {
         Game game = spot.Game;
-        Player active = me ? this : opponent;
+        Player active = me ? this : Opponent;
         // can't win a game that's already been won
         if(game.GameOver) { return false; }
 
@@ -169,7 +187,7 @@ public class HeuristicAI : AI {
     /// <returns>This if <paramref name="p"/> != this, else opponent</returns>
     Player OtherPlayer(Player p)
     {
-        return p == this ? opponent : this;
+        return p == this ? Opponent : this;
     }
 
     /// <summary>
@@ -194,7 +212,6 @@ public class HeuristicAI : AI {
         if (d != 0)
         {
             score = ScoreOf(spot, 0, p); // find score without looking ahead
-            Player previousOwner = spot.Owner;
             Game game = spot.Game;
             Board activeBoard = game.ActiveBoard;
             game.Play(spot, Game.PREVIEW); // preview moves are not in history
