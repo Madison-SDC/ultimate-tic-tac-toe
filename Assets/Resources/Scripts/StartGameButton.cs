@@ -8,7 +8,9 @@ public class StartGameButton : MonoBehaviour
     public Color p1Color, p2Color;
     public Sprite p1Sprite, p2Sprite;
     public Text p1Name, p2Name;
-    public ToggleGroup p1Group, p2Group;
+    public ToggleGroup p1TypeGroup, p2TypeGroup;
+    public ToggleGroup p1DiffGroup, p2DiffGroup;
+    public Slider p1SkillSlider, p2SkillSlider;
 
     /// <summary>
     /// Load the settings scene
@@ -23,65 +25,29 @@ public class StartGameButton : MonoBehaviour
     /// </summary>
     public void ToGame()
     {
-        // p1Type is the name of the first active toggle of the p1 group
-        string p1Type = ActiveToggleName(p1Group);
-        Player p1;
-        string p1NameString;
-        if(p1Name.text.Equals("")) { p1NameString = "X"; }
-        else { p1NameString = p1Name.text; }
-        if(p1Type.Equals("Human Toggle"))
-        {
-            p1 = new Player(1, p1Color, p1Sprite, p1NameString);
-        }
-        else
-        {
-            p1 = new HeuristicAI(
-            1, // turn
+
+        Player p1 = AssignPlayer(
+            1,
             p1Color,
             p1Sprite,
-            p1NameString, // name
-            null, // opponent
-            2,  // depth
-            3,  // corner weight
-            1,  // side weight
-            2,  // center weight
-            20, // local win
-            10, // local block
-            -25 // relative over
-            );
-        }
+            p1Name,
+            ActiveToggleName(p1TypeGroup),
+            ActiveToggleName(p1DiffGroup),
+            (int)p1SkillSlider.value,
+            null);
 
-
-        // p2Type is the name of the first active toggle of the p1 group
-        string p2Type = ActiveToggleName(p2Group);
-        Player p2;
-        string p2NameString;
-        if (p2Name.text.Equals("")) { p2NameString = "O"; }
-        else { p2NameString = p2Name.text; }
-        if (p2Type.Equals("Human Toggle"))
-        {
-            p2 = new Player(2, p2Color, p2Sprite, p2NameString);
-        }
-        else
-        {
-            p2 = new HeuristicAI(
-            2, // turn
+        Player p2 = AssignPlayer(
+            2,
             p2Color,
             p2Sprite,
-            p2NameString, // name
-            p1, // opponent
-            2,  // depth
-            3,  // corner weight
-            1,  // side weight
-            2,  // center weight
-            20, // local win
-            10, // local block
-            -25 // relative over
-            );
-        }
+            p2Name,
+            ActiveToggleName(p2TypeGroup),
+            ActiveToggleName(p2DiffGroup),
+            (int)p2SkillSlider.value,
+            p1);
 
         // can only be assigned once instantiated
-        if(p1 is HeuristicAI) { ((HeuristicAI)p1).Opponent = p2; }
+        if (p1 is HeuristicAI) { ((HeuristicAI)p1).Opponent = p2; }
 
         Settings.p1 = p1;
         Settings.p2 = p2;
@@ -89,6 +55,74 @@ public class StartGameButton : MonoBehaviour
         SceneManager.LoadScene("Game");
     }
 
+    Player AssignPlayer(
+        int turn, 
+        Color color, 
+        Sprite sprite, 
+        Text nameUI, 
+        string type, 
+        string difficulty,
+        int skill,
+        Player opponent)
+    {
+        string name = AssignName(nameUI, turn);
+
+        if(type.Equals("Human"))
+        {
+            return new Player(turn, color, sprite, name);
+        }
+        else
+        {
+            if(difficulty.Equals("Easy"))
+            {
+                return new RandomAI(turn, color, sprite, name);
+            }
+            else
+            {
+                return new HeuristicAI(
+                    turn, // turn
+                    color,
+                    sprite,
+                    name, // name
+                    opponent, // opponent
+                    skill,  // depth
+                    3,  // corner weight
+                    1,  // side weight
+                    2,  // center weight
+                    20, // local win
+                    10, // local block
+                    -25 // relative over
+                );
+            }
+        }
+    }
+
+    /// <summary>
+    /// Returns what a player should be named given its text object and turn
+    /// </summary>
+    /// <param name="textUI"></param>
+    /// <param name="turn"></param>
+    /// <returns></returns>
+    string AssignName(Text textUI, int turn)
+    {
+        if(textUI.text.Equals(""))
+        {
+            switch(turn)
+            {
+                case (1):
+                    return "X";
+                case (2):
+                    return "O";
+            }
+        }
+        return textUI.text;
+    }
+
+    /// <summary>
+    /// Returns the name of the active toggle in this group
+    /// </summary>
+    /// <param name="group"></param>
+    /// <returns></returns>
     string ActiveToggleName(ToggleGroup group)
     {
         IEnumerator < Toggle > enumerator = group.ActiveToggles().GetEnumerator();
