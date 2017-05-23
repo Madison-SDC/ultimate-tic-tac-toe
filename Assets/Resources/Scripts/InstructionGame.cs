@@ -18,7 +18,7 @@ public class InstructionGame : Game {
     List<CanContinue> conditions;
     
 	// Use this for initialization
-	void Start () {
+	new void Start () {
         base.Start();
         text = GameObject.Find("Status Text").GetComponent<Text>();
         InstantiateConditions();

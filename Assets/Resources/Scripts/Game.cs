@@ -38,7 +38,7 @@ public class Game : Board
     /// <summary>
     /// The exact number of humans in the game
     /// </summary>
-    bool zeroHumans, oneHuman, twoHumans;
+    bool zeroHumans;
 
     /// <summary>
     /// The win count for this game
@@ -222,7 +222,7 @@ public class Game : Board
     /// <summary>
     /// Reset the game
     /// </summary>
-    internal virtual void Start()
+    new internal virtual void Start()
     {
         history = new Stack<Move>();
         history.Push(new Move(null, null));
@@ -245,11 +245,8 @@ public class Game : Board
         {
             zeroHumans = true;
             previewTimer = 0;
-            confirmTimer = 0;
-        } else if(!(p1 is AI) && !(p2 is AI))
-        {
-            twoHumans = true;
-        } else { oneHuman = true; }
+            confirmTimer = 0.1f;
+        }
 
         previewTime = previewTimer;
         confirmTime = confirmTimer;
@@ -299,7 +296,7 @@ public class Game : Board
             {
                 if (previewTime <= 0)
                 {
-                    UpdateDisplay(((AI)ActivePlayer).BestMove(this));
+                    PreviewMove(((AI)ActivePlayer).BestMove(this));
                     previewTime = previewTimer;
                 }
                 else
@@ -324,7 +321,7 @@ public class Game : Board
     /// Resets the game
     /// Empties boards, clears winners
     /// </summary>
-    public void Reset()
+    new public void Reset()
     {
         if(HasNextMove) { Undo(); }
         while(history.Count > 1) { Undo(); }
@@ -451,9 +448,9 @@ public class Game : Board
     /// Shows the results of making this move, but does not confirm it
     /// </summary>
     /// <param name="spot"></param>
-    public void UpdateDisplay(Spot spot)
+    public void PreviewMove(Spot spot)
     {
-        // undo previous move shown (if not confirmed)
+        // undo previous move shown, then show new move
         if (nextMove) { ShowMove(nextMove, true); }
         nextMove = spot;
         ShowMove(nextMove);
@@ -490,7 +487,7 @@ public class Game : Board
     /// </summary>
     /// <param name="board">The next active board</param>
     /// <param name="remove">True if remove outline</param>
-    private void Outline(Board board, bool remove)
+    new private void Outline(Board board, bool remove)
     {
         // The color of the player who will play next (not currently)
         Color otherPlayerColor = ActivePlayer == P1 ? P2.Color : P1.Color;
@@ -508,7 +505,7 @@ public class Game : Board
         // only highlight active board if global game continues
         if (!GameOver)
         {
-            if (board.GameOver) // outline all other boards
+            if (board.GameOver) // outline all valid boards
             {
                 foreach (Board b in boards)
                 {
@@ -519,7 +516,7 @@ public class Game : Board
                     }
                 }
             }
-            else // board not full, can be played on
+            else // active board not full, can be played on
             {
                 board.Outline.enabled = true;
                 board.Outline.color = otherPlayerColor;
@@ -541,7 +538,8 @@ public class Game : Board
 
     public virtual bool CanUndo()
     {
-        return (!(ActivePlayer is AI) ||  GameOver) && // not AI turn
+        return !zeroHumans &&
+            (!(ActivePlayer is AI) ||  GameOver) && // not AI turn
             (history.Count > 1  || HasNextMove); // something to undo
     }
 

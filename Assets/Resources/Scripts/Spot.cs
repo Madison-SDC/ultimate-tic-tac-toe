@@ -88,7 +88,7 @@ public class Spot : Button {
     public void OnClick()
     {
         if(!(Game.ActivePlayer is AI))
-            Game.UpdateDisplay(this);
+            Game.PreviewMove(this);
     }
     
 

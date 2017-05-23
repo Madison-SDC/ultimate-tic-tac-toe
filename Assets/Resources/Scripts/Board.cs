@@ -87,7 +87,7 @@ public class Board : Spot
     }
 
     // Use this for initialization
-    void Start()
+    protected override void Start()
     {
         InitializeSpots();
         PopulateWinLines();
@@ -110,7 +110,7 @@ public class Board : Spot
         }
     }
 
-    public void Reset()
+    new public void Reset()
     {
         Start();
         GetComponent<Image>().color = Color.white;

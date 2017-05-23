@@ -125,7 +125,7 @@ public class StartGameButton : MonoBehaviour
     /// <returns></returns>
     string ActiveToggleName(ToggleGroup group)
     {
-        IEnumerator < Toggle > enumerator = group.ActiveToggles().GetEnumerator();
+        IEnumerator <Toggle> enumerator = group.ActiveToggles().GetEnumerator();
         enumerator.MoveNext();
         return enumerator.Current.name;
     }
