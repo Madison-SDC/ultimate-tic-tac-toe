@@ -2,7 +2,6 @@
 using UnityEngine.UI;
 
 public class SpotUI : MonoBehaviour {
-    private bool clicked;
     private static Sprite empty;
     private Location loc;
     internal Player owner;
