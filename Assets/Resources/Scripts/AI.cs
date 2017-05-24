@@ -14,22 +14,22 @@ public abstract class AI : Player
     /// </summary>
     /// <param name="game"></param>
     /// <returns></returns>
-    public abstract Spot BestMove(Game game);
+    public abstract SpotUI BestMove(Game game);
 
     /// <summary>
     /// All the open spots in the game
     /// </summary>
     /// <param name="game"></param>
     /// <returns></returns>
-    internal List<Spot> OpenSpots(Game game)
+    internal List<SpotUI> OpenSpots(Game game)
     {
-        List<Spot> openSpots = new List<Spot>();
+        List<SpotUI> openSpots = new List<SpotUI>();
 
         foreach (Board board in game.Boards)
         {
             if (board.Active)
             {
-                foreach (Spot spot in board.Spots)
+                foreach (SpotUI spot in board.Spots)
                 {
                     if (spot.Owner == null)
                     { openSpots.Add(spot); }

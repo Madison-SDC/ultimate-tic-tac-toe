@@ -112,7 +112,7 @@ public class HeuristicAI : AI {
     /// <param name="spot">The spot to move</param>
     /// <param name="me">True if the AI is moving, false otherwise</param>
     /// <returns></returns>
-    bool WinsLocal(Spot spot, bool me)
+    bool WinsLocal(SpotUI spot, bool me)
     {
         Player currentPlayer = me ? this : Opponent;
         Player previousOwner = spot.Owner; 
@@ -126,7 +126,7 @@ public class HeuristicAI : AI {
         return wins;
     }
 
-    public override Spot BestMove(Game game)
+    public override SpotUI BestMove(Game game)
     {
         return BestMove(game, depth, this);
     }
@@ -138,12 +138,12 @@ public class HeuristicAI : AI {
     /// <param name="d"></param>
     /// <param name="p"></param>
     /// <returns></returns>
-    Spot BestMove(Game g, int d, Player p)
+    SpotUI BestMove(Game g, int d, Player p)
     {
-        List<Spot> openSpots = OpenSpots(g);
+        List<SpotUI> openSpots = OpenSpots(g);
         int bestScore = Int32.MinValue;
-        Spot bestMove = null;
-        foreach (Spot spot in openSpots)
+        SpotUI bestMove = null;
+        foreach (SpotUI spot in openSpots)
         {
             int spotScore = ScoreOf(spot, d, p);
             if (spotScore > bestScore)
@@ -164,7 +164,7 @@ public class HeuristicAI : AI {
     /// True for this
     /// False for opponent</param>
     /// <returns></returns>
-    bool WinsGlobal(Spot spot, bool me)
+    bool WinsGlobal(SpotUI spot, bool me)
     {
         Game game = spot.Game;
         Player active = me ? this : Opponent;
@@ -200,7 +200,7 @@ public class HeuristicAI : AI {
     /// <param name="d">The depth of the search</param>
     /// <param name="p">The player to score</param>
     /// <returns></returns>
-    int ScoreOf(Spot spot, int d, Player p)
+    int ScoreOf(SpotUI spot, int d, Player p)
     {
         if(spot == null) { return 0; }
         Location loc = spot.Loc;

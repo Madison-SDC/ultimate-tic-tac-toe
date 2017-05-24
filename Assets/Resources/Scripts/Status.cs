@@ -16,7 +16,7 @@ public class Status : MonoBehaviour {
         }
 
         Move previousMove = game.PreviousMove;
-        Spot spot = previousMove.Spot;
+        SpotUI spot = previousMove.Spot;
 
         if (spot != null) // a previous move has been made
         {

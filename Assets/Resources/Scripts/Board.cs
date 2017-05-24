@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class Board : Spot
+public class Board : SpotUI
 {
-    Spot[,] spots;
+    SpotUI[,] spots;
     bool active;
     /// <summary>
     /// The 8 combos that win the game
@@ -55,7 +55,7 @@ public class Board : Spot
     /// <summary>
     /// The spots on this board
     /// </summary>
-    public Spot[,] Spots { get { return spots; } }
+    public SpotUI[,] Spots { get { return spots; } }
     
     /// <summary>
     /// Whether this game is over
@@ -69,7 +69,7 @@ public class Board : Spot
     {
         get
         {
-            foreach (Spot spot in spots)
+            foreach (SpotUI spot in spots)
             {
                 if (spot.Owner == null) { return false; }
             }
@@ -87,7 +87,7 @@ public class Board : Spot
     }
 
     // Use this for initialization
-    protected override void Start()
+    void Start()
     {
         InitializeSpots();
         PopulateWinLines();
@@ -99,8 +99,8 @@ public class Board : Spot
     {
         if(spots == null)
         {
-            spots = new Spot[3, 3];
-            foreach(Spot spot in GetComponentsInChildren<Spot>())
+            spots = new SpotUI[3, 3];
+            foreach(SpotUI spot in GetComponentsInChildren<SpotUI>())
             {
                 if(spot.transform.parent == transform) // direct children only
                 {
@@ -110,7 +110,7 @@ public class Board : Spot
         }
     }
 
-    new public void Reset()
+    public void Reset()
     {
         Start();
         GetComponent<Image>().color = Color.white;
@@ -121,7 +121,7 @@ public class Board : Spot
     /// </summary>
     /// <param name="loc"></param>
     /// <param name="player"></param>
-    public void FillSpot(Spot spot, Player player)
+    public void FillSpot(SpotUI spot, Player player)
     {
         // whether the game was over before the move was made
         bool gameOverState = GameOver; 
@@ -162,7 +162,7 @@ public class Board : Spot
         }
     }
 
-    public Spot Get(Location loc)
+    public SpotUI Get(Location loc)
     {
         return spots[loc.Row, loc.Col];
     }

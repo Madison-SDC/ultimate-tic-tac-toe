@@ -27,7 +27,7 @@ public class Game : Board
     /// The spot that contains the next move for this board. 
     /// Null if no next move
     /// </summary>
-    internal Spot nextMove;
+    internal SpotUI nextMove;
     
     Board[,] boards;
     Board activeBoard;
@@ -222,7 +222,7 @@ public class Game : Board
     /// <summary>
     /// Reset the game
     /// </summary>
-    new internal virtual void Start()
+    internal virtual void Start()
     {
         history = new Stack<Move>();
         history.Push(new Move(null, null));
@@ -354,7 +354,7 @@ public class Game : Board
 
         board.Active = false;
         
-        foreach (Spot spot in board.Spots) { spot.interactable = false; }
+        foreach (SpotUI spot in board.Spots) { spot.button.interactable = false; }
     }
 
     /// <summary>
@@ -368,10 +368,10 @@ public class Game : Board
 
         board.Active = true;
         
-        foreach (Spot spot in board.Spots)
+        foreach (SpotUI spot in board.Spots)
         {
             // all empty spots
-            if (spot.Owner == null) { spot.interactable = true; }
+            if (spot.Owner == null) { spot.button.interactable = true; }
         }
     }
 
@@ -381,7 +381,7 @@ public class Game : Board
     /// <param name="spot">The spot to play</param>
     /// <param name="undo">Whether to undo a move</param>
     /// <param name="prevActiveBoard">The previous active board</param>
-    public void Play(Spot spot, int moveType = REGULAR, Board prevActiveBoard = null)
+    public void Play(SpotUI spot, int moveType = REGULAR, Board prevActiveBoard = null)
     {
         // update logic
         spot.ParentBoard.FillSpot(spot, moveType == UNDO ? null : ActivePlayer);
@@ -448,7 +448,7 @@ public class Game : Board
     /// Shows the results of making this move, but does not confirm it
     /// </summary>
     /// <param name="spot"></param>
-    public void PreviewMove(Spot spot)
+    public void PreviewMove(SpotUI spot)
     {
         // undo previous move shown, then show new move
         if (nextMove) { ShowMove(nextMove, true); }
@@ -461,7 +461,7 @@ public class Game : Board
     /// </summary>
     /// <param name="spot">The spot to play on</param>
     /// <param name="undo">Whether to undo the shown move</param>
-    private void ShowMove(Spot spot, bool undo = false)
+    private void ShowMove(SpotUI spot, bool undo = false)
     {
         // the owner of the shown move
         Player player = undo ? null : ActivePlayer;

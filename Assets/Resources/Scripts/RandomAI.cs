@@ -12,9 +12,9 @@ public class RandomAI : AI {
     /// </summary>
     /// <param name="game"></param>
     /// <returns></returns>
-    public override Spot BestMove(Game game)
+    public override SpotUI BestMove(Game game)
     {
-        List<Spot> openSpots = OpenSpots(game); 
+        List<SpotUI> openSpots = OpenSpots(game); 
         return openSpots[Random.Range(0, openSpots.Count)];
     }
 }

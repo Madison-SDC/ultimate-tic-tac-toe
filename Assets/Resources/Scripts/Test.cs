@@ -121,7 +121,7 @@ public class Test : UnityEngine.UI.Button {
         if(!IsActive(localBoard)) { return false; }
 
         // The local spot to be played
-        Spot spot = localBoard.Get(new Location(spotRow, spotCol));
+        SpotUI spot = localBoard.Get(new Location(spotRow, spotCol));
 
         // spot must be empty to play
         if (OwnerIs(spot, null)) { game.PreviewMove(spot); }
@@ -137,7 +137,7 @@ public class Test : UnityEngine.UI.Button {
     /// </summary>
     /// <param name="spot"></param>
     /// <returns></returns>
-    static bool OwnerIs(Spot spot, Player owner)
+    static bool OwnerIs(SpotUI spot, Player owner)
     {
         if(spot.Owner != owner)
         {

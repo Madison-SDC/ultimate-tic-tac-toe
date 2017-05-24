@@ -1,7 +1,7 @@
 ﻿public class Move
 {
     private Board board;
-    private Spot spot;
+    private SpotUI spot;
 
     /// <summary>
     /// The active board at the time of this move<para></para>
@@ -24,7 +24,7 @@
     /// <summary>
     /// The local spot this move was made on
     /// </summary>
-    public Spot Spot
+    public SpotUI Spot
     {
         get
         {
@@ -43,7 +43,7 @@
     /// <param name="b"></param>
     /// <param name="s"></param>
     /// <param name="p"></param>
-    public Move(Board b, Spot s)
+    public Move(Board b, SpotUI s)
     {
         Board = b;
         Spot = s;
