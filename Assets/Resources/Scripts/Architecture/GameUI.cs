@@ -5,6 +5,11 @@ public class GameUI : MonoBehaviour
 {
     Game game;
     public Image image;
+    
+    /// <summary>
+    /// How similar the color of the board will be to the color of the winner
+    /// </summary>
+    public float highlightPercent;
 
     public Game Game
     {
@@ -47,8 +52,18 @@ public class GameUI : MonoBehaviour
         bool enabled = game.Enabled;
         bool hasWinner = game.Winner != null;
         Color newColor;
-        if(hasWinner) { newColor = game.Winner.Color; }
+        if(hasWinner) { newColor = OpaqueColor(highlightPercent*game.Winner.Color); }
         else { newColor = enabled ? Color.white : Color.gray; }
         image.color = newColor;
+    }
+
+    /// <summary>
+    /// Returns the opaque version of the given color
+    /// </summary>
+    /// <param name="color"></param>
+    /// <returns></returns>
+    Color OpaqueColor(Color color)
+    {
+        return new Color(color.r, color.g, color.b, 1);
     }
 }
