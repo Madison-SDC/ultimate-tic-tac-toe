@@ -25,7 +25,7 @@ class GameInitialization : MonoBehaviour
         {
             for(int boardCol = 0; boardCol < 3; boardCol++)
             {
-                Spot[,] board = new Spot[3, 3];
+                Spot[,] spots = new Spot[3, 3];
 
                 for(int spotRow = 0; spotRow < 3; spotRow++)
                 {
@@ -38,29 +38,27 @@ class GameInitialization : MonoBehaviour
 
                         spotUI.Spot = spot;
 
-                        board[spotRow, spotCol] = spot;
+                        spots[spotRow, spotCol] = spot;
                         spotUIIndex++;
                     }
                 }
 
-                // each board
-                Location loc = new Location(boardRow, boardCol);
-                LocalBoard localBoard = new LocalBoard(loc, board);
-                
-                LocalGame localGame = new LocalGame(localBoard, true, loc);
+                // each local game
+                Location loc = new Location(boardRow, boardCol);                
+                LocalGame localGame = new LocalGame(spots, true, loc);
                 localGames[boardRow, boardCol] = localGame;
                 gameUIs[localGameUIIndex].Game = localGame;
                 localGameUIIndex++;
             }
         }
 
-        // initialize the global board
+        // initialize the global game
         GetComponent<GameUI>().Game = new GlobalGame(
-            new GlobalBoard(localGames),    // the board for the global game
-            true,                           // enabled
-            Settings.p1,                    // player 1
-            Settings.p2,                    // player 2
-            true                            // player 1 turn
+            localGames,    // the board for the global game
+            true,          // enabled
+            Settings.p1,   // player 1
+            Settings.p2,   // player 2
+            true           // player 1 turn
         );
     }
 }

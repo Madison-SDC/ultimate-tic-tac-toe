@@ -6,14 +6,15 @@ using System;
 /// </summary>
 public abstract class Game
 {
-    Board board;
+    protected Player[,] ownerArray;
+    int playerCount;
+    bool isFull;
     Player winner;
     bool gameOver;
     bool enabled;
     protected List<List<Location>> winCombos;
     protected static List<List<Location>> ticTacToeWinCombos = TicTacToeWinCombos();
     
-    public Board Board { get { return board; } }
     public Player Winner
     {
         get { return winner; }
@@ -87,25 +88,39 @@ public abstract class Game
     /// listen to the board
     /// </summary>
     /// <param name="board"></param>
-    public Game(Board board, bool enabled)
+    public Game(bool enabled)
     {
-        this.board = board;
         this.enabled = enabled;
         winCombos = ticTacToeWinCombos;
-        board.OwnerArrayChanged += HandleBoardOwnerArrayChanged;
-        UpdateState();
     }
 
-    /// if necessary, check the winner
-    void HandleBoardOwnerArrayChanged(object o, BoardEventArgs e)
+    /// <summary>
+    /// Assign <paramref name="owner"/> to <paramref name="loc"/> of ownerArray
+    /// </summary>
+    /// <param name="loc"></param>
+    /// <param name="owner"></param>
+    protected void UpdateOwnerArray(Location loc, Player owner)
     {
+        ownerArray[loc.Row, loc.Col] = owner;
+
+        if (owner == null)
+        {
+            playerCount--;
+            isFull = false;
+        }
+        else
+        {
+            playerCount++;
+            if (playerCount >= 9) { isFull = true; }
+        }
+
         UpdateState();
     }
 
     /// <summary>
     /// Checks the winner and whether the game is over
     /// </summary>
-    void UpdateState()
+    protected void UpdateState()
     {
         CheckWinner();
         CheckGameOver();
@@ -121,17 +136,14 @@ public abstract class Game
     /// </summary>
     protected virtual void CheckWinner()
     {
-        // probably would look something like this:
-
         Player player = null;
-        Player[,] ownership = board.OwnerArray;
         bool foundWinner = true;
     
         foreach (List<Location> combo in winCombos)
         {
             foundWinner = true; // assume we'll find a winner, get proven wrong
             Location firstLoc = combo[0];
-            player = ownership[firstLoc.Row, firstLoc.Col];
+            player = ownerArray[firstLoc.Row, firstLoc.Col];
 
             if (player != null) // first spot occupied
             {
@@ -139,7 +151,7 @@ public abstract class Game
                 for (int i = 1; i < combo.Count; i++)
                 {
                     // if they don't match, we have no winner
-                    if (ownership[combo[i].Row, combo[i].Col] != player)
+                    if (ownerArray[combo[i].Row, combo[i].Col] != player)
                     {
                         foundWinner = false;
                         break;
@@ -168,6 +180,6 @@ public abstract class Game
     protected virtual void CheckGameOver()
     {
         gameOver = winner != null // somebody won means game over
-            || board.IsFull; // no spots left means game over
+            || isFull; // no spots left means game over
     }
 }

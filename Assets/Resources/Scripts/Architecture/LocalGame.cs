@@ -1,14 +1,33 @@
 ﻿public class LocalGame : Game
 {
     private Location loc;
+    Spot[,] spots;
 
     public Location Loc { get { return loc; } }
-    public LocalBoard LocalBoard { get { return (LocalBoard)Board; } }
+    public Spot[,] Spots { get { return spots; } }
 
-	public LocalGame(LocalBoard board, bool enabled, Location loc) 
-        : base(board, enabled)
+	public LocalGame(Spot[,] spots, bool enabled, Location loc) 
+        : base(enabled)
     {
-        winCombos = ticTacToeWinCombos;
         this.loc = loc;
+        this.spots = spots;
+        PopulateOwnerArray(spots);
+        UpdateState();
+    }
+
+    void PopulateOwnerArray(Spot[,] spots)
+    {
+        ownerArray = new Player[spots.GetLength(0), spots.GetLength(1)];
+        foreach (Spot spot in spots)
+        {
+            spot.OwnerChanged += HandleSpotOwnerChanged;
+            HandleSpotOwnerChanged(spot, null); // populate array
+        }
+    }
+
+    void HandleSpotOwnerChanged(object o, SpotEventArgs e)
+    {
+        Spot spot = (Spot)o;
+        UpdateOwnerArray(spot.Loc, spot.Owner);
     }
 }

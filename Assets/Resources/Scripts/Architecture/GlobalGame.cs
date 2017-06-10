@@ -1,31 +1,52 @@
 ﻿public class GlobalGame : Game
 {
+    LocalGame[,] localGames;
     Player p1, p2;
     bool p1Turn;
-
-    public GlobalBoard GlobalBoard { get { return (GlobalBoard)Board; } }
-    
+        
     public GlobalGame(
-        GlobalBoard board, 
+        LocalGame[,] localGames,
         bool enabled, 
         Player p1, 
         Player p2, 
         bool p1Turn
     ) 
-        : base(board, enabled)
+        : base(enabled)
     {
+        PopulateOwnerArray(localGames);
+        this.localGames = localGames;
         this.p1 = p1;
         this.p2 = p2;
         this.p1Turn = p1Turn;
 
+        //* WILL FIX SOONLY
         // listen for when any spot in the game has been clicked
-        foreach(LocalGame game in board.LocalGames)
+        foreach(LocalGame game in localGames)
         {
-            foreach(Spot spot in game.LocalBoard.Spots)
+            foreach(Spot spot in game.Spots)
             {
                 spot.Clicked += HandleSpotClicked;
             }
         }
+        //*/
+
+        UpdateState();
+    }
+
+    void PopulateOwnerArray(LocalGame[,] localGames)
+    {
+        ownerArray = new Player[localGames.GetLength(0), localGames.GetLength(1)];
+        foreach (LocalGame localGame in localGames)
+        {
+            localGame.WinnerChanged += HandleLocalWinnerChanged;
+            HandleLocalWinnerChanged(localGame, null); // populate array
+        }
+    }
+
+    void HandleLocalWinnerChanged(object o, GameEventArgs e)
+    {
+        LocalGame localGame = (LocalGame)o;
+        UpdateOwnerArray(localGame.Loc, localGame.Winner);
     }
 
     void HandleSpotClicked(object o, SpotEventArgs e)
@@ -49,14 +70,14 @@
     {
         if(!localGame.GameOver) // enable only the active board
         {
-            foreach(LocalGame game in GlobalBoard.LocalGames)
+            foreach(LocalGame game in localGames)
             {
                 SetEnabled(game, game == localGame);
             }
         }
         else
         {
-            foreach (LocalGame game in GlobalBoard.LocalGames)
+            foreach (LocalGame game in localGames)
             {
                 SetEnabled(game, game.GameOver == false);
             }
@@ -66,7 +87,7 @@
     void SetEnabled(LocalGame localGame, bool value)
     {
         localGame.Enabled = value;
-        foreach (Spot spot in localGame.LocalBoard.Spots)
+        foreach (Spot spot in localGame.Spots)
         {
             if (!value // can always disable a spot
                 || spot.Owner == null) // can only enable empty spots
@@ -76,10 +97,15 @@
         }
     }
 
+    /// <summary>
+    /// The Local Game that listens to this spot
+    /// </summary>
+    /// <param name="spot"></param>
+    /// <returns></returns>
     LocalGame GetGame(Spot spot)
     {
         Location loc = spot.Loc;
-        return GlobalBoard.LocalGames[loc.Row, loc.Col];
+        return localGames[loc.Row, loc.Col];
     }
 
     /* THE OLD CODE

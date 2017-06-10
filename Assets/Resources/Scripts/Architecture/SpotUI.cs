@@ -37,17 +37,6 @@ public class SpotUI : MonoBehaviour {
             }
         }
     }
-
-    /// <summary>
-    /// The board this component is a part of
-    /// </summary>
-    public Board ParentBoard
-    {
-        get
-        {
-            return transform.parent.GetComponent<GameUI>().Game.Board;
-        }
-    }
     
     /// <summary>
     /// The game this is a part of
