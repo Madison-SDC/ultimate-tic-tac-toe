@@ -3,6 +3,7 @@
 public abstract class Board
 {
     protected Player[,] ownerArray;
+    protected int playerCount;
     protected bool isFull;
 
     /// <summary>
@@ -16,16 +17,17 @@ public abstract class Board
     {
         if(OwnerArrayChanged != null) { OwnerArrayChanged(this, e); }
     }
-
+    
     public event EventHandler<BoardEventArgs> SpotEnabledChanged;
     protected virtual void RaiseSpotEnabledChanged(BoardEventArgs e)
     {
         if (SpotEnabledChanged != null) { SpotEnabledChanged(this, e); }
     }
-    
+
     public Board()
     {
         ownerArray = new Player[3, 3];
+        playerCount = 0;
         isFull = false;
     }
 
@@ -38,28 +40,18 @@ public abstract class Board
     {
         ownerArray[loc.Row, loc.Col] = owner;
 
-        if (owner == null) { isFull = false; }
-        else { CheckIsFull(); }
+        if(owner == null)
+        {
+            playerCount--;
+            isFull = false;
+        }
+        else
+        {
+            playerCount++;
+            if(playerCount >= 9) { isFull = true; }
+        }
 
         RaiseOwnerArrayChanged(GetArgs());
-    }
-
-    /// <summary>
-    /// Updates the isFull indicator
-    /// If any element of ownerArray is null, isFull becomes false
-    /// Otherwise is full becomes true
-    /// </summary>
-    protected void CheckIsFull()
-    {
-        foreach(Player p in ownerArray)
-        {
-            if(p == null)
-            {
-                isFull = false;
-                return;
-            }
-        }
-        isFull = true;
     }
 
     protected BoardEventArgs GetArgs()
