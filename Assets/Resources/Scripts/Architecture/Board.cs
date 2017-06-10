@@ -18,12 +18,6 @@ public abstract class Board
         if(OwnerArrayChanged != null) { OwnerArrayChanged(this, e); }
     }
     
-    public event EventHandler<BoardEventArgs> SpotEnabledChanged;
-    protected virtual void RaiseSpotEnabledChanged(BoardEventArgs e)
-    {
-        if (SpotEnabledChanged != null) { SpotEnabledChanged(this, e); }
-    }
-
     public Board()
     {
         ownerArray = new Player[3, 3];
