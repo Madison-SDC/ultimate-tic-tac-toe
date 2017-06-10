@@ -3,15 +3,10 @@
 public class Spot
 {
     Location loc;
-    LocalBoard board;
     Player owner;
     bool enabled;
 
     public Location Loc { get { return loc; } }
-    public LocalBoard Board {
-        get { return board; }
-        set { board = value; }
-    }
     public Player Owner
     {
         get { return owner; }
@@ -52,10 +47,9 @@ public class Spot
         if(Clicked != null) { Clicked(this, e); }
     }
 
-    public Spot(Location loc, LocalBoard board, Player owner, bool enabled)
+    public Spot(Location loc, Player owner, bool enabled)
     {
         this.loc = loc;
-        this.board = board;
         this.owner = owner;
         this.enabled = enabled;
     }

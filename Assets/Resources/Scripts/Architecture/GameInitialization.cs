@@ -2,6 +2,11 @@
 
 /// <summary>
 /// This script goes on the same GameObject as the GlobalGameUI
+/// Conditions for GameObject:
+/// Has 9 children that have GameUIs
+/// Each child has 9 children that are SpotUIs
+/// Child 0 is top left
+/// Children and grandchildren are ordered left to right, top to bottom
 /// </summary>
 class GameInitialization : MonoBehaviour
 {
@@ -21,14 +26,15 @@ class GameInitialization : MonoBehaviour
             for(int boardCol = 0; boardCol < 3; boardCol++)
             {
                 Spot[,] board = new Spot[3, 3];
+
                 for(int spotRow = 0; spotRow < 3; spotRow++)
                 {
                     for(int spotCol = 0; spotCol < 3; spotCol++)
                     {
+                        // each spot
                         SpotUI spotUI = spotUIs[spotUIIndex];
                         Spot spot = new Spot(
                             new Location(spotRow, spotCol),
-                            null,
                             null,
                             true
                         );
@@ -40,12 +46,10 @@ class GameInitialization : MonoBehaviour
                     }
                 }
 
+                // each board
                 Location loc = new Location(boardRow, boardCol);
                 LocalBoard localBoard = new LocalBoard(loc, board);
-                foreach (Spot spot in board)
-                {
-                    spot.Board = localBoard;
-                }
+                
                 LocalGame localGame = new LocalGame(localBoard, true, loc);
                 localGames[boardRow, boardCol] = localGame;
                 gameUIs[localGameUIIndex].Game = localGame;
@@ -53,6 +57,7 @@ class GameInitialization : MonoBehaviour
             }
         }
 
+        // initialize the global board
         GlobalBoard globalBoard = new GlobalBoard(localGames);
         GetComponent<GameUI>().Game = new GlobalGame(
             globalBoard, 
