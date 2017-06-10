@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;
 
 /// <summary>
-/// This script goes on the same Object as the GlobalGameUI
+/// This script goes on the same GameObject as the GlobalGameUI
 /// </summary>
 class GameInitialization : MonoBehaviour
 {
