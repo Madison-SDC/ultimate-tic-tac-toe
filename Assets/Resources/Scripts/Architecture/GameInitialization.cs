@@ -34,10 +34,7 @@ class GameInitialization : MonoBehaviour
                         // each spot
                         SpotUI spotUI = spotUIs[spotUIIndex];
                         Spot spot = new Spot(
-                            new Location(spotRow, spotCol),
-                            null,
-                            true
-                        );
+                            new Location(spotRow, spotCol), null, true);
 
                         spotUI.Spot = spot;
 
@@ -58,13 +55,12 @@ class GameInitialization : MonoBehaviour
         }
 
         // initialize the global board
-        GlobalBoard globalBoard = new GlobalBoard(localGames);
         GetComponent<GameUI>().Game = new GlobalGame(
-            globalBoard, 
-            true, 
-            Settings.p1, 
-            Settings.p2, 
-            true
+            new GlobalBoard(localGames),    // the board for the global game
+            true,                           // enabled
+            Settings.p1,                    // player 1
+            Settings.p2,                    // player 2
+            true                            // player 1 turn
         );
     }
 }
