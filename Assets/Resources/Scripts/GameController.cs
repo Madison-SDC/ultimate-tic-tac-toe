@@ -24,4 +24,9 @@ public class GameController : MonoBehaviour
     {
         game.Redo();
     }
+
+    public void Reset()
+    {
+        game.Reset();
+    }
 }

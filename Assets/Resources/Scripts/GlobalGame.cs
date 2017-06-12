@@ -55,7 +55,7 @@ public class GlobalGame : Game
             }
         }
     }
-
+    
     public GlobalGame(
         LocalGame[,] localGames,
         bool enabled, 
@@ -107,7 +107,7 @@ public class GlobalGame : Game
     {
         if(CanRedoChanged != null) { CanRedoChanged(this, e); }
     }
-
+    
     void PopulateOwnerArray(LocalGame[,] localGames)
     {
         ownerArray = new Player[localGames.GetLength(0), localGames.GetLength(1)];
@@ -177,6 +177,14 @@ public class GlobalGame : Game
         if(!CanRedo) { return; }
         Play(future.Pop().Spot, REDO);
         CanRedo = future.Count != 0;
+    }
+
+    public void Reset()
+    {
+        while(CanUndo)
+        {
+            Undo();
+        }
     }
 
     void Play(Spot spot, int moveType = REGULAR, LocalGame prevActiveGame = null)
