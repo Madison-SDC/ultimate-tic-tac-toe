@@ -1,8 +1,11 @@
-﻿public class GlobalGame : Game
+﻿using System.Collections.Generic;
+
+public class GlobalGame : Game
 {
     LocalGame[,] localGames;
     Player p1, p2;
     bool p1Turn;
+    Spot nextMove;
         
     public GlobalGame(
         LocalGame[,] localGames,
@@ -18,8 +21,8 @@
         this.p1 = p1;
         this.p2 = p2;
         this.p1Turn = p1Turn;
-
-        //* WILL FIX SOONLY
+        nextMove = null;
+        
         // listen for when any spot in the game has been clicked
         foreach(LocalGame game in localGames)
         {
@@ -28,7 +31,6 @@
                 spot.Clicked += HandleSpotClicked;
             }
         }
-        //*/
 
         UpdateState();
     }
@@ -51,7 +53,35 @@
 
     void HandleSpotClicked(object o, SpotEventArgs e)
     {
-        Play((Spot)o);
+        Preview((Spot)o);
+    }
+
+    void Preview(Spot spot)
+    {
+        // remove the mark from the last spot
+        if (nextMove != null)
+        {
+            nextMove.Owner = null;
+        }
+
+        if (spot != null)
+        {
+            spot.Owner = ActivePlayer(); // add a mark to this spot
+        }
+
+        nextMove = spot;
+    }
+
+    public void Confirm()
+    {
+        Spot spot = nextMove;
+        Preview(null); // undo preview move
+        Play(spot);
+    }
+
+    public void Undo()
+    {
+
     }
 
     void Play(Spot spot)

@@ -25,6 +25,7 @@ class GameInitialization : MonoBehaviour
         {
             for(int boardCol = 0; boardCol < 3; boardCol++)
             {
+                // a grid of spots represents each local board
                 Spot[,] spots = new Spot[3, 3];
 
                 for(int spotRow = 0; spotRow < 3; spotRow++)
@@ -52,13 +53,18 @@ class GameInitialization : MonoBehaviour
             }
         }
 
-        // initialize the global game
-        GetComponent<GameUI>().Game = new GlobalGame(
+        // initialize the global game and its view and controller
+        GlobalGame game = new GlobalGame(
             localGames,    // the board for the global game
             true,          // enabled
             Settings.p1,   // player 1
             Settings.p2,   // player 2
             true           // player 1 turn
         );
+        
+        GetComponent<GameUI>().Game = game;
+        GetComponent<GameController>().Game = game;
+
+        Destroy(this);
     }
 }
