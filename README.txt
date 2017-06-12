@@ -11,6 +11,11 @@ Planned features include:
 
 Changelog:
 
+UT_???
+	All platforms
+		Completely rewrite architecture
+			Now built on an MVC model with event support
+
 UT_0.7 (Gameplay update, 2017-05-06)
 	All platforms
 		Rule change
