@@ -79,14 +79,28 @@ class GameInitialization : MonoBehaviour
 
     void InitializeButtons()
     {
-        GameObject confirmButton = GameObject.Find("Confirm Button");
-        ButtonView confirmView = confirmButton.GetComponent<ButtonView>();
-        globalGame.CanConfirmChanged += confirmView.OnValueChanged;
-        confirmView.OnValueChanged(globalGame, new BoolEventArgs(false));
+        // Confirm button
+        {
+            GameObject confirmButton = GameObject.Find("Confirm Button");
+            ButtonView confirmView = confirmButton.GetComponent<ButtonView>();
+            globalGame.CanConfirmChanged += confirmView.OnValueChanged;
+            confirmView.OnValueChanged(globalGame, new BoolEventArgs(false));
+        }
 
-        GameObject undoButton = GameObject.Find("Undo Button");
-        ButtonView undoView = undoButton.GetComponent<ButtonView>();
-        globalGame.CanUndoChanged += undoView.OnValueChanged;
-        undoView.OnValueChanged(globalGame, new BoolEventArgs(false));
+        // Undo button
+        {
+            GameObject undoButton = GameObject.Find("Undo Button");
+            ButtonView undoView = undoButton.GetComponent<ButtonView>();
+            globalGame.CanUndoChanged += undoView.OnValueChanged;
+            undoView.OnValueChanged(globalGame, new BoolEventArgs(false));
+        }
+
+        // Redo button
+        {
+            GameObject redoButton = GameObject.Find("Redo Button");
+            ButtonView redoView = redoButton.GetComponent<ButtonView>();
+            globalGame.CanRedoChanged += redoView.OnValueChanged;
+            redoView.OnValueChanged(globalGame, new BoolEventArgs(false));
+        }
     }
 }

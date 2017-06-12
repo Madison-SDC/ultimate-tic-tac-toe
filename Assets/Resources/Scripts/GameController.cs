@@ -19,4 +19,9 @@ public class GameController : MonoBehaviour
     {
         game.Undo();
     }
+
+    public void Redo()
+    {
+        game.Redo();
+    }
 }

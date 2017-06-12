@@ -14,7 +14,48 @@ public class GlobalGame : Game
     Spot nextMove;
     Stack<Move> history;
     LocalGame activeGame;
-        
+    Stack<Move> future;
+    bool canConfirm, canUndo, canRedo;
+    
+    private bool CanConfirm
+    {
+        get { return canConfirm; }
+        set
+        {
+            if(canConfirm != value)
+            {
+                canConfirm = value;
+                RaiseCanConfirmChanged(new BoolEventArgs(canConfirm));
+            }
+        }
+    }
+
+    private bool CanUndo
+    {
+        get { return canUndo; }
+        set
+        {
+            if(canUndo != value)
+            {
+                canUndo = value;
+                RaiseCanUndoChanged(new BoolEventArgs(canUndo));
+            }
+        }
+    }
+
+    private bool CanRedo
+    {
+        get { return canRedo; }
+        set
+        {
+            if(canRedo != value)
+            {
+                canRedo = value;
+                RaiseCanRedoChanged(new BoolEventArgs(canRedo));
+            }
+        }
+    }
+
     public GlobalGame(
         LocalGame[,] localGames,
         bool enabled, 
@@ -32,6 +73,10 @@ public class GlobalGame : Game
         nextMove = null;
         history = new Stack<Move>();
         SetActiveGame(null);
+        future = new Stack<Move>();
+        canConfirm = false;
+        canUndo = false;
+        canRedo = false;
 
         // listen for when any spot in the game has been clicked
         foreach(LocalGame game in localGames)
@@ -55,6 +100,12 @@ public class GlobalGame : Game
     protected virtual void RaiseCanUndoChanged(BoolEventArgs e)
     {
         if (CanUndoChanged != null) { CanUndoChanged(this, e); }
+    }
+
+    public event EventHandler<BoolEventArgs> CanRedoChanged;
+    protected virtual void RaiseCanRedoChanged(BoolEventArgs e)
+    {
+        if(CanRedoChanged != null) { CanRedoChanged(this, e); }
     }
 
     void PopulateOwnerArray(LocalGame[,] localGames)
@@ -93,12 +144,14 @@ public class GlobalGame : Game
 
         nextMove = spot;
         bool hasNextMove = nextMove != null;
-        RaiseCanConfirmChanged(new BoolEventArgs(hasNextMove));
-        RaiseCanUndoChanged(new BoolEventArgs(hasNextMove));
+        CanConfirm = hasNextMove;
+        CanUndo = hasNextMove || history.Count != 0;
+        CanRedo = !hasNextMove && future.Count != 0;
     }
 
     public void Confirm()
     {
+        if(!CanConfirm) { return; }
         Spot spot = nextMove;
         Preview(null); // undo preview move
         Play(spot);
@@ -106,6 +159,7 @@ public class GlobalGame : Game
 
     public void Undo()
     {
+        if(!CanUndo) { return; }
         if(nextMove != null)
         {
             Preview(null);
@@ -113,21 +167,33 @@ public class GlobalGame : Game
         }
         Move lastMove = history.Pop();
         Play(lastMove.Spot, UNDO, lastMove.Game);
-        if (history.Count == 0)
-        {
-            // cannot undo if the only move is the init move
-            RaiseCanUndoChanged(new BoolEventArgs(false));
-        }
+        future.Push(lastMove);
+        CanRedo = true;
+        CanUndo = history.Count != 0;
+    }
+
+    public void Redo()
+    {
+        if(!CanRedo) { return; }
+        Play(future.Pop().Spot, REDO);
+        CanRedo = future.Count != 0;
     }
 
     void Play(Spot spot, int moveType = REGULAR, LocalGame prevActiveGame = null)
     {
         bool undo = moveType == UNDO;
+        bool redo = moveType == REDO;
         spot.Owner = undo ? null : ActivePlayer();
         if(!undo)
         {
             history.Push(new Move(activeGame, spot));
-            RaiseCanUndoChanged(new BoolEventArgs(true));
+            CanUndo = true;
+            if(!redo)
+            {
+                // regular move resets the future, cannot redo old moves
+                future = new Stack<Move>();
+                CanRedo = false;
+            }
         }
         SetActiveGame(undo ? prevActiveGame : GetGame(spot));
         p1Turn = !p1Turn;
@@ -194,376 +260,7 @@ public class GlobalGame : Game
     }
 
     /* THE OLD CODE
-    static GlobalGame currentGame;
-
-    /// <summary>
-    /// Previous moves made for this game
-    /// </summary>
-    internal Stack<Move> history;
-
-    /// <summary>
-    /// All move that have been undone
-    /// Resets when a "fresh" move is made
-    /// </summary>
-    Stack<Move> future;
-
-    /// <summary>
-    /// Whether the board is currently resetting
-    /// </summary>
-    internal bool resetting;
-
-    /// <summary>
-    /// The spot that contains the next move for this board. 
-    /// Null if no next move
-    /// </summary>
-    internal SpotUI nextMove;
     
-    Board[,] boards;
-    Board activeBoard;
-    bool firstTurn;
-    internal Player p1, p2;
-    Color disabledColor, enabledColor;
-
-    /// <summary>
-    /// The exact number of humans in the game
-    /// </summary>
-    bool zeroHumans;
-
-    /// <summary>
-    /// The win count for this game
-    /// </summary>
-    int p1Wins, p2Wins, ties;
-
-    /// <summary>
-    /// Time remaining until the AI previews its move (in ms)
-    /// </summary>
-    private float previewTime;
-
-    /// <summary>
-    /// How long the AI takes to preview its move (in ms)
-    /// </summary>
-    private float previewTimer;
-
-    /// <summary>
-    /// Time remaining until AI confirms the previewed move (in ms)
-    /// </summary>
-    private float confirmTime;
-
-    /// <summary>
-    /// How long the AI takes to confirm its move (in ms)
-    /// </summary>
-    private float confirmTimer;
-
-    public const int REGULAR = 0,
-        UNDO = 1,
-        REDO = 2,
-        PREVIEW = 3;
-
-    /// <summary>
-    /// The current game on the screen
-    /// </summary>
-    public static GlobalGame CurrentGame { get { return currentGame; } }
-    
-    /// <summary>
-    /// All 9 boards on scene
-    /// </summary>
-    public Board[,] Boards { get { return boards; } }
-
-    /// <summary>
-    /// The current active board
-    /// </summary>
-    public Board ActiveBoard
-    {
-        get { return activeBoard; }
-        set
-        {
-            activeBoard = value;
-
-            // active is null on opening move
-            bool activeIsNull = activeBoard == null;
-            bool activeIsOver = !activeIsNull
-                && activeBoard.GameOver;
-
-            bool gameOver = GameOver;
-
-            foreach (Board board in boards)
-            {
-                if (gameOver || board.GameOver) { Disable(board); }
-                else if (activeIsNull || activeIsOver) { Enable(board); }
-                else if (board != activeBoard) { Disable(board); }
-                else { Enable(board); }
-            }
-        }
-    }
-
-    public Move PreviousMove
-    {
-        get
-        {
-            return history.Peek();
-        }
-    }
-
-    /// <summary>
-    /// Whether it is the first player's turn
-    /// </summary>
-    public bool FirstTurn
-    {
-        get { return firstTurn; }
-    }
-
-    /// <summary>
-    /// The current player
-    /// </summary>
-    public Player ActivePlayer
-    {
-        get { return FirstTurn ? P1 : P2; }
-    }
-    public Player P1 { get { return p1; } }
-    public Player P2 { get { return p2; } }
-
-    public Color DisabledColor { get { return disabledColor; } }
-    public Color EnabledColor { get { return enabledColor; } }
-
-    /// <summary>
-    /// True if the game board is entirely clear (no moves have been made)
-    /// </summary>
-    public bool IsClear {
-        get {
-            return history != null 
-                && history.Count == 1;
-        }
-    }
-
-    public bool HasNextMove { get { return nextMove != null; } }
-
-    public bool IsFull
-    {
-        get
-        {
-            foreach(Board board in boards)
-            {
-                if(!board.GameOver) { return false; }
-            }
-            return true;
-        }
-    }
-
-    /// <summary>
-    /// The number of times p1 has won this game
-    /// </summary>
-    public int P1Wins
-    {
-        get
-        {
-            return p1Wins;
-        }
-
-        set
-        {
-            p1Wins = value;
-        }
-    }
-
-    /// <summary>
-    /// the number of times p2 has won this game
-    /// </summary>
-    public int P2Wins
-    {
-        get
-        {
-            return p2Wins;
-        }
-
-        set
-        {
-            p2Wins = value;
-        }
-    }
-
-    /// <summary>
-    /// the number of times no player has won this game
-    /// </summary>
-    public int Ties
-    {
-        get
-        {
-            return ties;
-        }
-
-        set
-        {
-            ties = value;
-        }
-    }
-
-    /// <summary>
-    /// Whether exactly zero humans are playing this game
-    /// </summary>
-    public bool ZeroHumans
-    {
-        get
-        {
-            return zeroHumans;
-        }
-    }
-
-    /// <summary>
-    /// Reset the game
-    /// </summary>
-    internal virtual void Start()
-    {
-        history = new Stack<Move>();
-        history.Push(new Move(null, null));
-        future = new Stack<Move>();
-        InstantiateBoards();
-        InitializeSpots();
-        resetting = false;
-        activeBoard = null;
-        firstTurn = true;
-        disabledColor = Color.gray;
-        enabledColor = Color.white;
-        p1 = Settings.p1;
-        p2 = Settings.p2;
-
-        previewTimer = 0.5f;
-        confirmTimer = 1f;
-        
-        // both computers: go super speed!
-        if(p1 is AI && p2 is AI)
-        {
-            zeroHumans = true;
-            previewTimer = 0;
-            confirmTimer = 0.1f;
-        }
-
-        previewTime = previewTimer;
-        confirmTime = confirmTimer;
-
-        game = this;
-        currentGame = this; // most recent game is the current game
-
-        Active = true;
-    }
-
-    /// <summary>
-    /// Playing if the game is not over, or if the AI is making a move
-    /// </summary>
-    /// <returns></returns>
-    bool Playing()
-    {
-        bool gameOver = GameOver;
-
-        if (gameOver)
-        {
-            // game isn't really over, just next move ends it
-            return ActivePlayer is AI && HasNextMove;
-        }
-        return true;
-    }
-
-    /// <summary>
-    /// If AI's turn, preview or confirm move
-    /// </summary>
-    void Update()
-    {
-        if (Playing() && ActivePlayer is AI)
-        {
-            if (HasNextMove)
-            {
-                if (confirmTime <= 0)
-                {
-                    Confirm();
-                    confirmTime = confirmTimer;
-                }
-                else
-                {
-                    confirmTime -= Time.deltaTime;
-                }
-            }
-            else
-            {
-                if (previewTime <= 0)
-                {
-                    PreviewMove(((AI)ActivePlayer).BestMove(this));
-                    previewTime = previewTimer;
-                }
-                else
-                {
-                    previewTime -= Time.deltaTime;
-                }
-            }
-        }
-        else if (GameOver)
-        {
-            if(!HasNextMove)
-            {
-                if(Owner == null) { Ties++; }
-                else if(Owner.Turn == 1) { p1Wins++; }
-                else if(Owner.Turn == 2) { p2Wins++; }
-            }
-            if(zeroHumans) { Reset(); }
-        }
-    }
-
-    /// <summary>
-    /// Resets the game
-    /// Empties boards, clears winners
-    /// </summary>
-    public void Reset()
-    {
-        if(HasNextMove) { Undo(); }
-        while(history.Count > 1) { Undo(); }
-    }
-
-    /// <summary>
-    /// Populate the boards array with the nine boards on scene
-    /// </summary>
-    internal void InstantiateBoards()
-    {
-        boards = new Board[3,3];
-        boards[0,0] = GameObject.Find("Top Left Board").GetComponent<Board>();
-        boards[0,1] = GameObject.Find("Top Mid Board").GetComponent<Board>();
-        boards[0,2] = GameObject.Find("Top Right Board").GetComponent<Board>();
-        boards[1,0] = GameObject.Find("Center Left Board").GetComponent<Board>();
-        boards[1,1] = GameObject.Find("Center Mid Board").GetComponent<Board>();
-        boards[1,2] = GameObject.Find("Center Right Board").GetComponent<Board>();
-        boards[2,0] = GameObject.Find("Bottom Left Board").GetComponent<Board>();
-        boards[2,1] = GameObject.Find("Bottom Mid Board").GetComponent<Board>();
-        boards[2,2] = GameObject.Find("Bottom Right Board").GetComponent<Board>();
-    }
-
-    /// <summary>
-    /// Disables the button for all of the spots of this board
-    /// </summary>
-    /// <param name="board"></param>
-    public static void Disable(Board board)
-    {
-        if (board == null) { return; }
-
-        board.Active = false;
-        
-        foreach (SpotUI spot in board.Spots) { spot.button.interactable = false; }
-    }
-
-    /// <summary>
-    /// Enables the button for all of the spots of this board
-    /// if that spot hasn't been taken (clicked before)
-    /// </summary>
-    /// <param name="board"></param>
-    public void Enable(Board board)
-    {
-        if (board == null) { return; }
-
-        board.Active = true;
-        
-        foreach (SpotUI spot in board.Spots)
-        {
-            // all empty spots
-            if (spot.Owner == null) { spot.button.interactable = true; }
-        }
-    }
-
     /// <summary>
     /// Advances or reverts the state of the board by one turn
     /// </summary>
