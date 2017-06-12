@@ -167,11 +167,8 @@ public abstract class Game
                 break; // we have a winner! no need to check any more combos
             }
         }
-
-        if (foundWinner)
-        {
-            Winner = player; // this fires event as well
-        }
+        
+        Winner = foundWinner ? player : null; // this fires event as well
     }
 
     /// <summary>

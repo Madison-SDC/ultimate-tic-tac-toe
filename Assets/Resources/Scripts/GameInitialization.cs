@@ -10,10 +10,20 @@
 /// </summary>
 class GameInitialization : MonoBehaviour
 {
+    GlobalGame globalGame;
+
     /// <summary>
     /// Create all scripts and set up their references to the UI
     /// </summary>
-    private void Start()
+    private void Awake()
+    {
+        InitializeGames();
+        InitializeButtons();
+
+        Destroy(this);
+    }
+
+    void InitializeGames()
     {
         int spotUIIndex = 0;
         int localGameUIIndex = 1; // first component is global
@@ -23,14 +33,14 @@ class GameInitialization : MonoBehaviour
 
         for (int boardRow = 0; boardRow < 3; boardRow++)
         {
-            for(int boardCol = 0; boardCol < 3; boardCol++)
+            for (int boardCol = 0; boardCol < 3; boardCol++)
             {
                 // a grid of spots represents each local board
                 Spot[,] spots = new Spot[3, 3];
 
-                for(int spotRow = 0; spotRow < 3; spotRow++)
+                for (int spotRow = 0; spotRow < 3; spotRow++)
                 {
-                    for(int spotCol = 0; spotCol < 3; spotCol++)
+                    for (int spotCol = 0; spotCol < 3; spotCol++)
                     {
                         // each spot
                         SpotUI spotUI = spotUIs[spotUIIndex];
@@ -45,7 +55,7 @@ class GameInitialization : MonoBehaviour
                 }
 
                 // each local game
-                Location loc = new Location(boardRow, boardCol);                
+                Location loc = new Location(boardRow, boardCol);
                 LocalGame localGame = new LocalGame(spots, true, loc);
                 localGames[boardRow, boardCol] = localGame;
                 gameUIs[localGameUIIndex].Game = localGame;
@@ -61,10 +71,22 @@ class GameInitialization : MonoBehaviour
             Settings.p2,   // player 2
             true           // player 1 turn
         );
-        
+
         GetComponent<GameUI>().Game = game;
         GetComponent<GameController>().Game = game;
+        globalGame = game;
+    }
 
-        Destroy(this);
+    void InitializeButtons()
+    {
+        GameObject confirmButton = GameObject.Find("Confirm Button");
+        ButtonView confirmView = confirmButton.GetComponent<ButtonView>();
+        globalGame.CanConfirmChanged += confirmView.OnValueChanged;
+        confirmView.OnValueChanged(globalGame, new BoolEventArgs(false));
+
+        GameObject undoButton = GameObject.Find("Undo Button");
+        ButtonView undoView = undoButton.GetComponent<ButtonView>();
+        globalGame.CanUndoChanged += undoView.OnValueChanged;
+        undoView.OnValueChanged(globalGame, new BoolEventArgs(false));
     }
 }

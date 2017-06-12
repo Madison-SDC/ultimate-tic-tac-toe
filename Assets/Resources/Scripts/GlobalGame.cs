@@ -1,11 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 public class GlobalGame : Game
 {
+    // gameMode constants for play method
+    const int REGULAR = 0,
+        UNDO = 1,
+        REDO = 2;
+
     LocalGame[,] localGames;
     Player p1, p2;
     bool p1Turn;
     Spot nextMove;
+    Stack<Move> history;
+    LocalGame activeGame;
         
     public GlobalGame(
         LocalGame[,] localGames,
@@ -22,7 +30,9 @@ public class GlobalGame : Game
         this.p2 = p2;
         this.p1Turn = p1Turn;
         nextMove = null;
-        
+        history = new Stack<Move>();
+        SetActiveGame(null);
+
         // listen for when any spot in the game has been clicked
         foreach(LocalGame game in localGames)
         {
@@ -33,6 +43,18 @@ public class GlobalGame : Game
         }
 
         UpdateState();
+    }
+
+    public event EventHandler<BoolEventArgs> CanConfirmChanged;
+    protected virtual void RaiseCanConfirmChanged(BoolEventArgs e)
+    {
+        if (CanConfirmChanged != null) { CanConfirmChanged(this, e); }
+    }
+
+    public event EventHandler<BoolEventArgs> CanUndoChanged;
+    protected virtual void RaiseCanUndoChanged(BoolEventArgs e)
+    {
+        if (CanUndoChanged != null) { CanUndoChanged(this, e); }
     }
 
     void PopulateOwnerArray(LocalGame[,] localGames)
@@ -70,6 +92,9 @@ public class GlobalGame : Game
         }
 
         nextMove = spot;
+        bool hasNextMove = nextMove != null;
+        RaiseCanConfirmChanged(new BoolEventArgs(hasNextMove));
+        RaiseCanUndoChanged(new BoolEventArgs(hasNextMove));
     }
 
     public void Confirm()
@@ -81,13 +106,30 @@ public class GlobalGame : Game
 
     public void Undo()
     {
-
+        if(nextMove != null)
+        {
+            Preview(null);
+            return;
+        }
+        Move lastMove = history.Pop();
+        Play(lastMove.Spot, UNDO, lastMove.Game);
+        if (history.Count == 0)
+        {
+            // cannot undo if the only move is the init move
+            RaiseCanUndoChanged(new BoolEventArgs(false));
+        }
     }
 
-    void Play(Spot spot)
+    void Play(Spot spot, int moveType = REGULAR, LocalGame prevActiveGame = null)
     {
-        spot.Owner = ActivePlayer();
-        SetActiveGame(GetGame(spot));
+        bool undo = moveType == UNDO;
+        spot.Owner = undo ? null : ActivePlayer();
+        if(!undo)
+        {
+            history.Push(new Move(activeGame, spot));
+            RaiseCanUndoChanged(new BoolEventArgs(true));
+        }
+        SetActiveGame(undo ? prevActiveGame : GetGame(spot));
         p1Turn = !p1Turn;
     }
 
@@ -98,20 +140,33 @@ public class GlobalGame : Game
 
     void SetActiveGame(LocalGame localGame)
     {
-        if(!localGame.GameOver) // enable only the active board
+        if(GameOver)
         {
+            // disable all games
             foreach(LocalGame game in localGames)
+            {
+                SetEnabled(game, false);
+            }
+        }
+        else if (localGame != null
+            && !localGame.GameOver)
+        {
+            // enable only the active game
+            foreach (LocalGame game in localGames)
             {
                 SetEnabled(game, game == localGame);
             }
         }
         else
         {
+            // enable all unfinished games
             foreach (LocalGame game in localGames)
             {
                 SetEnabled(game, game.GameOver == false);
             }
         }
+
+        activeGame = localGame;
     }
 
     void SetEnabled(LocalGame localGame, bool value)

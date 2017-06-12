@@ -14,4 +14,9 @@ public class GameController : MonoBehaviour
     {
         game.Confirm();
     }
+
+    public void Undo()
+    {
+        game.Undo();
+    }
 }
