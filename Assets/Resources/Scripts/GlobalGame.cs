@@ -16,6 +16,7 @@ public class GlobalGame : Game
     LocalGame activeGame;
     Stack<Move> future;
     bool canConfirm, canUndo, canRedo;
+    List<Spot> availableSpots;
     
     private bool CanConfirm
     {
@@ -55,6 +56,11 @@ public class GlobalGame : Game
             }
         }
     }
+
+    public List<Spot> AvailableSpots
+    {
+        get { return new List<Spot>(availableSpots); }
+    }
     
     public GlobalGame(
         LocalGame[,] localGames,
@@ -84,6 +90,7 @@ public class GlobalGame : Game
             foreach(Spot spot in game.Spots)
             {
                 spot.Clicked += HandleSpotClicked;
+                if (game.Enabled && spot.Enabled) { availableSpots.Add(spot); }
             }
         }
 
@@ -248,10 +255,13 @@ public class GlobalGame : Game
         localGame.Enabled = value;
         foreach (Spot spot in localGame.Spots)
         {
-            if (!value // can always disable a spot
-                || spot.Owner == null) // can only enable empty spots
+            if (spot.Enabled != value // don't bother doing nothing
+                && (!value // can always disable a spot
+                || spot.Owner == null)) // can only enable empty spots
             {
                 spot.Enabled = value;
+                if(value) { availableSpots.Add(spot); }
+                else { availableSpots.Remove(spot); }
             }
         }
     }
