@@ -2,7 +2,13 @@
 
 public abstract class AI : Player
 {
-    protected GlobalGame game;
+    GlobalGame game;
+
+    public GlobalGame Game
+    {
+        get { return game; }
+        set { game = value; }
+    }
 
     public AI(GlobalGame game, int turn, Color color, Sprite sprite, string name)
         : base(turn, color, sprite, name)

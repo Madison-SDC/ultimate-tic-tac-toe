@@ -10,8 +10,7 @@ public class RandomAI : AI
 
     public override Spot BestMove()
     {
-        List<Spot> spots = game.AvailableSpots;
-
-        return spots[Random.Range(0, spots.Count - 1)];
+        List<Spot> spots = Game.AvailableSpots;
+        return spots[Random.Range(0, spots.Count)];
     }
 }

@@ -8,9 +8,7 @@ public abstract class Game
 {
     protected Player[,] ownerArray;
     int playerCount;
-    bool isFull;
     Player winner;
-    bool gameOver;
     bool enabled;
     protected List<List<Location>> winCombos;
     protected static List<List<Location>> ticTacToeWinCombos = TicTacToeWinCombos();
@@ -27,7 +25,7 @@ public abstract class Game
             }
         }
     }
-    public bool GameOver { get { return gameOver; } }
+
     public bool Enabled
     {
         get { return enabled; }
@@ -94,6 +92,16 @@ public abstract class Game
         winCombos = ticTacToeWinCombos;
     }
 
+    public virtual bool GameOver()
+    {
+        return winner != null || IsFull();
+    }
+
+    public virtual bool IsFull()
+    {
+        return playerCount >= 9;
+    }
+
     /// <summary>
     /// Assign <paramref name="owner"/> to <paramref name="loc"/> of ownerArray
     /// </summary>
@@ -101,29 +109,19 @@ public abstract class Game
     /// <param name="owner"></param>
     protected void UpdateOwnerArray(Location loc, Player owner)
     {
+        Player prevOwner = ownerArray[loc.Row, loc.Col];
         ownerArray[loc.Row, loc.Col] = owner;
 
-        if (owner == null)
+        if (prevOwner != null && owner == null)
         {
             playerCount--;
-            isFull = false;
         }
-        else
+        else if (prevOwner == null && owner != null)
         {
             playerCount++;
-            if (playerCount >= 9) { isFull = true; }
         }
 
-        UpdateState();
-    }
-
-    /// <summary>
-    /// Checks the winner and whether the game is over
-    /// </summary>
-    protected void UpdateState()
-    {
         CheckWinner();
-        CheckGameOver();
     }
 
     GameEventArgs GetArgs() { return new GameEventArgs(); }
@@ -169,14 +167,5 @@ public abstract class Game
         }
         
         Winner = foundWinner ? player : null; // this fires event as well
-    }
-
-    /// <summary>
-    /// A generic game is over when it has a winner or its board is full
-    /// </summary>
-    protected virtual void CheckGameOver()
-    {
-        gameOver = winner != null // somebody won means game over
-            || isFull; // no spots left means game over
     }
 }

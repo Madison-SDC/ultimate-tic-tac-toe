@@ -17,6 +17,7 @@ public class GlobalGame : Game
     Stack<Move> future;
     bool canConfirm, canUndo, canRedo;
     List<Spot> availableSpots;
+    bool hasNextMove;
     
     private bool CanConfirm
     {
@@ -62,6 +63,11 @@ public class GlobalGame : Game
         get { return new List<Spot>(availableSpots); }
     }
     
+    public bool HasNextMove { get { return hasNextMove; } }
+
+    public Player P1 { get { return p1; } }
+    public Player P2 { get { return p2; } }
+
     public GlobalGame(
         LocalGame[,] localGames,
         bool enabled, 
@@ -83,6 +89,8 @@ public class GlobalGame : Game
         canConfirm = false;
         canUndo = false;
         canRedo = false;
+        availableSpots = new List<Spot>();
+        hasNextMove = false;
 
         // listen for when any spot in the game has been clicked
         foreach(LocalGame game in localGames)
@@ -90,11 +98,12 @@ public class GlobalGame : Game
             foreach(Spot spot in game.Spots)
             {
                 spot.Clicked += HandleSpotClicked;
+                spot.EnabledChanged += HandleSpotEnabledChanged;
                 if (game.Enabled && spot.Enabled) { availableSpots.Add(spot); }
             }
         }
 
-        UpdateState();
+        CheckWinner();
     }
 
     public event EventHandler<BoolEventArgs> CanConfirmChanged;
@@ -136,7 +145,14 @@ public class GlobalGame : Game
         Preview((Spot)o);
     }
 
-    void Preview(Spot spot)
+    void HandleSpotEnabledChanged(object o, SpotEventArgs e)
+    {
+        Spot spot = (Spot)o;
+        if(spot.Enabled) { availableSpots.Add(spot); }
+        else { availableSpots.Remove(spot); }
+    }
+
+    public void Preview(Spot spot)
     {
         // remove the mark from the last spot
         if (nextMove != null)
@@ -150,7 +166,7 @@ public class GlobalGame : Game
         }
 
         nextMove = spot;
-        bool hasNextMove = nextMove != null;
+        hasNextMove = nextMove != null;
         CanConfirm = hasNextMove;
         CanUndo = hasNextMove || history.Count != 0;
         CanRedo = !hasNextMove && future.Count != 0;
@@ -199,6 +215,7 @@ public class GlobalGame : Game
         bool undo = moveType == UNDO;
         bool redo = moveType == REDO;
         spot.Owner = undo ? null : ActivePlayer();
+        spot.Enabled = spot.Owner == null;
         if(!undo)
         {
             history.Push(new Move(activeGame, spot));
@@ -213,15 +230,36 @@ public class GlobalGame : Game
         SetActiveGame(undo ? prevActiveGame : GetGame(spot));
         p1Turn = !p1Turn;
     }
+    
+    public override bool GameOver()
+    {
+        return base.GameOver() && nextMove == null;
+    }
 
-    Player ActivePlayer()
+    /// <summary>
+    /// A global game is full if all of its local games are over
+    /// </summary>
+    /// <returns></returns>
+    public override bool IsFull()
+    {
+        foreach(LocalGame game in localGames)
+        {
+            if(!game.GameOver())
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public Player ActivePlayer()
     {
         return p1Turn ? p1 : p2;
     }
 
     void SetActiveGame(LocalGame localGame)
     {
-        if(GameOver)
+        if(GameOver())
         {
             // disable all games
             foreach(LocalGame game in localGames)
@@ -230,7 +268,7 @@ public class GlobalGame : Game
             }
         }
         else if (localGame != null
-            && !localGame.GameOver)
+            && !localGame.GameOver())
         {
             // enable only the active game
             foreach (LocalGame game in localGames)
@@ -243,7 +281,7 @@ public class GlobalGame : Game
             // enable all unfinished games
             foreach (LocalGame game in localGames)
             {
-                SetEnabled(game, game.GameOver == false);
+                SetEnabled(game, !game.GameOver());
             }
         }
 
@@ -260,8 +298,6 @@ public class GlobalGame : Game
                 || spot.Owner == null)) // can only enable empty spots
             {
                 spot.Enabled = value;
-                if(value) { availableSpots.Add(spot); }
-                else { availableSpots.Remove(spot); }
             }
         }
     }

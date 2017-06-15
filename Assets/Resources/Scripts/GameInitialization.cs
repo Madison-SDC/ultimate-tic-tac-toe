@@ -63,14 +63,14 @@ class GameInitialization : MonoBehaviour
             }
         }
 
+        Player p1 = Settings.p1;
+        Player p2 = Settings.p2;
+
         // initialize the global game and its view and controller
-        GlobalGame game = new GlobalGame(
-            localGames,    // the board for the global game
-            true,          // enabled
-            Settings.p1,   // player 1
-            Settings.p2,   // player 2
-            true           // player 1 turn
-        );
+        GlobalGame game = new GlobalGame(localGames, true, p1, p2, true);
+
+        if(p1 is AI) { ((AI)p1).Game = game; }
+        if(p2 is AI) { ((AI)p2).Game = game; }
 
         GetComponent<GameUI>().Game = game;
         GetComponent<GameController>().Game = game;

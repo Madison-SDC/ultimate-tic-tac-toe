@@ -12,7 +12,7 @@
         this.loc = loc;
         this.spots = spots;
         PopulateOwnerArray(spots);
-        UpdateState();
+        CheckWinner();
     }
 
     void PopulateOwnerArray(Spot[,] spots)
