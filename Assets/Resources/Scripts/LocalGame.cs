@@ -1,16 +1,40 @@
-﻿public class LocalGame : Game
+﻿using UnityEngine;
+using System;
+
+public class LocalGame : Game
 {
     private Location loc;
     Spot[,] spots;
+    Color outline;
 
     public Location Loc { get { return loc; } }
     public Spot[,] Spots { get { return spots; } }
 
-	public LocalGame(Spot[,] spots, bool enabled, Location loc) 
+    public Color Outline
+    {
+        get { return outline; }
+        internal set
+        {
+            if(outline != value)
+            {
+                outline = value;
+                RaiseOutlineChanged(GetArgs());
+            }
+        }
+    }
+
+    public event EventHandler<GameEventArgs> OutlineChanged;
+    protected virtual void RaiseOutlineChanged(GameEventArgs e)
+    {
+        if (OutlineChanged != null) { OutlineChanged(this, e); }
+    }
+
+    public LocalGame(Spot[,] spots, bool enabled, Location loc) 
         : base(enabled)
     {
         this.loc = loc;
         this.spots = spots;
+        Outline = Color.clear;
         PopulateOwnerArray(spots);
         CheckWinner();
     }

@@ -124,7 +124,7 @@ public abstract class Game
         CheckWinner();
     }
 
-    GameEventArgs GetArgs() { return new GameEventArgs(); }
+    protected GameEventArgs GetArgs() { return new GameEventArgs(); }
     
     /// <summary>
     /// By default, checking a winner runs through each combo

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class GlobalGame : Game
 {
@@ -160,13 +161,15 @@ public class GlobalGame : Game
         if (nextMove != null)
         {
             nextMove.Owner = null;
+            Outline(null, true);
         }
 
         if (spot != null)
         {
             spot.Owner = ActivePlayer(); // add a mark to this spot
+            Outline(GetGame(spot));
         }
-
+        
         nextMove = spot;
         hasNextMove = nextMove != null;
         CanConfirm = hasNextMove;
@@ -277,32 +280,77 @@ public class GlobalGame : Game
         return p1Turn ? p1 : p2;
     }
 
-    void SetActiveGame(LocalGame localGame)
+    public Player OtherPlayer()
     {
+        return p1Turn ? p2 : p1;
+    }
+
+    /// <summary>
+    /// All games that would be enabled if <paramref name="localGame"/> 
+    /// was the active game
+    /// </summary>
+    /// <param name="localGame"></param>
+    /// <returns></returns>
+    List<LocalGame> ActiveGames(LocalGame localGame)
+    {
+        List<LocalGame> activeGames = new List<LocalGame>();
+        
         if (GameOver())
         {
-            // disable all games
-            foreach (LocalGame game in localGames)
-            {
-                SetEnabled(game, false);
-            }
+            // no active games if the global game is over
+            return activeGames;
         }
-        else if (localGame != null
-            && !localGame.GameOver())
+
+        if (localGame != null && !localGame.GameOver())
         {
-            // enable only the active game
-            foreach (LocalGame game in localGames)
-            {
-                SetEnabled(game, game == localGame);
-            }
+            // return only the active game
+            activeGames.Add(localGame);
+            return activeGames;
         }
         else
         {
-            // enable all unfinished games
+            // return all unfinished games
             foreach (LocalGame game in localGames)
             {
-                SetEnabled(game, !game.GameOver());
+                if (!game.GameOver())
+                {
+                    activeGames.Add(game);
+                }
             }
+            return activeGames;
+        }
+    }
+
+    /// <summary>
+    /// Toggles the outline of active games for the next turn, assuming
+    /// the next active game will be <paramref name="nextActiveGame"/>
+    /// </summary>
+    /// <param name="nextActiveGame"></param>
+    void Outline(LocalGame nextActiveGame, bool remove = false)
+    {
+        List<LocalGame> outlinedGames = base.GameOver()? 
+            new List<LocalGame>() : ActiveGames(nextActiveGame);
+
+        foreach (LocalGame game in localGames)
+        {
+            Color color = !remove && outlinedGames.Contains(game) ? 
+                OtherPlayer().Color : Color.clear;
+            SetOutlined(game, color);
+        }
+    }
+
+    void SetOutlined(LocalGame game, Color color)
+    {
+        game.Outline = color;
+    }
+
+    void SetActiveGame(LocalGame localGame)
+    {
+        List<LocalGame> activeGames = ActiveGames(localGame);
+
+        foreach (LocalGame game in localGames)
+        {
+            SetEnabled(game, activeGames.Contains(game));
         }
 
         activeGame = localGame;
@@ -331,6 +379,7 @@ public class GlobalGame : Game
     /// <returns></returns>
     LocalGame GetGame(Spot spot)
     {
+        if (spot == null) { return null; }
         Location loc = spot.Loc;
         return localGames[loc.Row, loc.Col];
     }

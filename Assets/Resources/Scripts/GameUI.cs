@@ -22,11 +22,21 @@ public class GameUI : MonoBehaviour
                 {
                     game.WinnerChanged -= HandleWinnerChanged;
                     game.EnabledChanged -= HandleEnabledChanged;
+                    if (game is LocalGame)
+                    {
+                        ((LocalGame)game).OutlineChanged -= 
+                            HandleOutlineChanged;
+                    }
                 }
                 if(value != null)
                 {
                     value.WinnerChanged += HandleWinnerChanged;
                     value.EnabledChanged += HandleEnabledChanged;
+                    if (value is LocalGame)
+                    {
+                        ((LocalGame)value).OutlineChanged +=
+                            HandleOutlineChanged;
+                    }
                     game = value;
                 }
             }
@@ -41,6 +51,16 @@ public class GameUI : MonoBehaviour
     void HandleEnabledChanged(object o, GameEventArgs e)
     {
         UpdateColor();
+    }
+
+    void HandleOutlineChanged(object o, GameEventArgs e)
+    {
+        UpdateOutline(((LocalGame)o).Outline);
+    }
+
+    void UpdateOutline(Color color)
+    {
+        transform.GetChild(0).GetComponent<Image>().color = color;
     }
 
     /// <summary>
