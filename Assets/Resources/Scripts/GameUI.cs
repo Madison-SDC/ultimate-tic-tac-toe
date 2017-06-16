@@ -5,11 +5,20 @@ public class GameUI : MonoBehaviour
 {
     Game game;
     public Image image;
+    public Color disabledColor;
+    public Color enabledColor;
     
     /// <summary>
     /// How similar the color of the board will be to the color of the winner
+    /// Clamped between -1 and 1
     /// </summary>
-    public float highlightPercent;
+    public float winnerOffset;
+
+    /// <summary>
+    /// The change in the board when it has a winner and changes enabled values
+    /// Clamped between -1 and 1
+    /// </summary>
+    public float disabledOffset;
 
     public Game Game
     {
@@ -69,21 +78,66 @@ public class GameUI : MonoBehaviour
     /// </summary>
     void UpdateColor()
     {
-        bool enabled = game.Enabled;
         bool hasWinner = game.Winner != null;
-        Color newColor;
-        if(hasWinner) { newColor = OpaqueColor(highlightPercent*game.Winner.Color); }
-        else { newColor = enabled ? Color.white : Color.gray; }
-        image.color = newColor;
+        float offset = 0f;
+
+        if(game.Enabled)
+        {
+            // enabled with winner, light offset
+            if (hasWinner) { offset = winnerOffset; }
+            
+            // enabled with no winner, simply turn enabled color
+            else
+            {
+                image.color = enabledColor;
+                return;
+            }
+        }
+        else
+        {
+            // disabled with winner, darker version of winner offset
+            if (hasWinner) { offset = winnerOffset + disabledOffset; }
+            
+            // disabled, no winner, simply turn disabled color
+            else
+            {
+                image.color = disabledColor;
+                return;
+            }
+        }
+        
+        image.color = AugmentColor(game.Winner.Color, offset);
     }
 
-    /// <summary>
-    /// Returns the opaque version of the given color
-    /// </summary>
-    /// <param name="color"></param>
-    /// <returns></returns>
-    Color OpaqueColor(Color color)
+    Color AugmentColor(Color color, float offset)
     {
-        return new Color(color.r, color.g, color.b, 1);
+        if(offset > 0)
+        {
+            return ApproachWhite(color, offset);
+        }
+        return ApproachBlack(color, offset);
+    }
+
+    Color ApproachWhite(Color color, float value)
+    {
+        float newR = ApproachWhite(color.r, value);
+        float newG = ApproachWhite(color.g, value);
+        float newB = ApproachWhite(color.b, value);
+        return new Color(newR, newG, newB);
+    }
+
+    float ApproachWhite(float previous, float value)
+    {
+        float diff = 1 - previous;
+        return previous + diff * value;
+    }
+
+    Color ApproachBlack(Color color, float offset)
+    {
+        float mult = 1 - offset;
+        float newR = color.r * mult;
+        float newG = color.g * mult;
+        float newB = color.b * mult;
+        return new Color(newR, newG, newB);
     }
 }
