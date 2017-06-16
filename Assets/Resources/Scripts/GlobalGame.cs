@@ -54,7 +54,6 @@ public class GlobalGame : Game
             canRedo = value;
             RaiseCanRedoChanged(new BoolEventArgs(
                 canRedo && !(ActivePlayer() is AI)));
-
         }
     }
 
@@ -221,6 +220,7 @@ public class GlobalGame : Game
     {
         if (!CanRedo) { return; }
         Play(future.Pop().Spot, true);
+        if (ActivePlayer() is AI) { Play(future.Pop().Spot, true); }
         CanRedo = future.Count != 0;
     }
 
