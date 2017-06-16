@@ -188,13 +188,32 @@ public class GlobalGame : Game
     public void Undo()
     {
         if(!CanUndo) { return; }
-        if(nextMove != null)
+        
+        if(ActivePlayer() is AI)
         {
             Preview(null);
-            return;
+            UndoLastMove(); // now it's the human's turn
         }
+        else
+        {
+            if(nextMove != null)
+            {
+                Preview(null); // undo human's preview and be done
+                return;
+            }
+            UndoLastMove(); // undo AI's last move
+            UndoLastMove(); // undo human's last move
+            // now it's the human's turn
+        }
+    }
+
+    private void UndoLastMove()
+    {
         Move lastMove = history.Pop();
-        Play(lastMove.Spot, UNDO, lastMove.Game);
+        lastMove.Spot.Owner = null;
+        lastMove.Spot.Enabled = true;
+        SetActiveGame(lastMove.Game);
+        p1Turn = !p1Turn;
         future.Push(lastMove);
         CanRedo = true;
         CanUndo = history.Count != 0;
@@ -203,7 +222,7 @@ public class GlobalGame : Game
     public void Redo()
     {
         if(!CanRedo) { return; }
-        Play(future.Pop().Spot, REDO);
+        Play(future.Pop().Spot, true);
         CanRedo = future.Count != 0;
     }
 
@@ -215,24 +234,20 @@ public class GlobalGame : Game
         }
     }
 
-    void Play(Spot spot, int moveType = REGULAR, LocalGame prevActiveGame = null)
+    /// <summary>
+    /// Advances the game by playing at the specified spot
+    /// </summary>
+    /// <param name="spot"></param>
+    /// <param name="redo">Whether this move is a redo</param>
+    void Play(Spot spot, bool redo=false)
     {
-        bool undo = moveType == UNDO;
-        bool redo = moveType == REDO;
-        spot.Owner = undo ? null : ActivePlayer();
+        spot.Owner = ActivePlayer();
         spot.Enabled = spot.Owner == null;
-        if(!undo)
-        {
-            history.Push(new Move(activeGame, spot));
-            CanUndo = true;
-            if(!redo)
-            {
-                // regular move resets the future, cannot redo old moves
-                future = new Stack<Move>();
-                CanRedo = false;
-            }
-        }
-        SetActiveGame(undo ? prevActiveGame : GetGame(spot));
+        history.Push(new Move(activeGame, spot));
+        CanUndo = true;
+        future = redo ? future : new Stack<Move>();
+        CanRedo = redo;        
+        SetActiveGame(GetGame(spot));
         p1Turn = !p1Turn;
     }
     

@@ -33,14 +33,8 @@ public class GameController : MonoBehaviour
 
     void Update()
     {
-        if (game.ActivePlayer() is AI)
+        if (game.ActivePlayer() is AI && !game.GameOver())
         {
-            if(game.GameOver() && game.P1 is AI && game.P2 is AI)
-            {
-                //game.Reset();
-                return;
-            }
-
             if(game.HasNextMove)
             {
                 if (confirmTimer <= 0)
