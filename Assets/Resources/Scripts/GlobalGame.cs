@@ -310,7 +310,9 @@ public class GlobalGame : Game
     }
 
     /// <summary>
-    /// The Local Game that listens to this spot
+    /// The Local Game that corresponds to this spot
+    /// E.g. if the spot is the top-right spot, 
+    /// returns the top-right local game
     /// </summary>
     /// <param name="spot"></param>
     /// <returns></returns>
