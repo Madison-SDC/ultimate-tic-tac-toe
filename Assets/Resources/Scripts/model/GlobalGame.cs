@@ -65,8 +65,11 @@ public class GlobalGame : Game
 
     public bool HasNextMove { get { return hasNextMove; } }
 
+    public LocalGame[,] LocalGames { get { return localGames; } }
+
     public Player P1 { get { return p1; } }
     public Player P2 { get { return p2; } }
+    public bool P1Turn { get { return p1Turn; } }
 
     public GlobalGame(
         LocalGame[,] localGames,
