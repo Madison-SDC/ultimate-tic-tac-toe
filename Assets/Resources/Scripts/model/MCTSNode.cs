@@ -162,6 +162,8 @@ public class MCTSNode
     /// <returns></returns>
     GlobalGame CopyGlobalGame(GlobalGame globalGame)
     {
+        if(globalGame == null) { return null; }
+
         LocalGame[,] localGames = new LocalGame[3, 3];
         foreach(LocalGame game in globalGame.LocalGames)
         {

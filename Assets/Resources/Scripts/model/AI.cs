@@ -4,7 +4,7 @@ public abstract class AI : Player
 {
     GlobalGame game;
 
-    public GlobalGame Game
+    virtual public GlobalGame Game
     {
         get { return game; }
         set { game = value; }

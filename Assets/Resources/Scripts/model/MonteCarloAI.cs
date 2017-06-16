@@ -5,6 +5,20 @@ public class MonteCarloAI : AI
 {
     MCTSNode root;
 
+    public override GlobalGame Game
+    {
+        get
+        {
+            return base.Game;
+        }
+
+        set
+        {
+            base.Game = value;
+            root = new MCTSNode(Game, null, null);
+        }
+    }
+
     public MonteCarloAI(GlobalGame game, int turn, Color color, Sprite sprite, string name) : base(game, turn, color, sprite, name)
     {
         root = new MCTSNode(game, null, null);
