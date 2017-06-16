@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 public class MCTSNode
 {
@@ -20,11 +21,111 @@ public class MCTSNode
         totalTrials = 0;
     }
 
+    /// <summary>
+    /// Recursively choose an unexplored descendant, 
+    /// or find a child where the game is over,
+    /// and run a simulation on it
+    /// </summary>
     public void ChooseChild()
     {
+        // Make sure this has generated its children
         if(children == null)
         {
             GenerateChildren();
+        }
+
+        // No children? Game over, run simulation
+        if(children.Count == 0)
+        {
+            RunSimulation();
+            return;
+        }
+        
+        // Has children, run simulation on first unexplored child
+        foreach(MCTSNode child in children)
+        {
+            if(child.totalTrials == 0)
+            {
+                child.RunSimulation();
+                return;
+            }
+        }
+
+        // No unexplored children, choose child of best child
+        BestChild().ChooseChild();
+    }
+
+    MCTSNode BestChild()
+    {
+        double highestPotential = -1f;
+        MCTSNode bestChild = null;
+        foreach(MCTSNode child in children)
+        {
+            double childPotential = Potential(child);
+            if(childPotential > highestPotential)
+            {
+                highestPotential = childPotential;
+                bestChild = child;
+            }
+        }
+        return bestChild;
+    }
+
+    double Potential(MCTSNode child)
+    {
+        // misses of child are hits for parent
+        int w = child.misses - child.hits;
+        int n = child.totalTrials;
+
+        // w/n + sqrt(2)*sqrt( ln(totalTrials) / n)
+        return w / n + 1.414f * Math.Sqrt(Math.Log(totalTrials) / n);
+    }
+
+    void RunSimulation()
+    {
+        BackPropagate(Simulate(game));
+    }
+
+    /// <summary>
+    /// Play <paramref name="game"/> randomly to the end
+    /// Return positive if the player to make the first move won
+    /// Return negative if the player to make the first move lost
+    /// Return 0 if the game ends in a tie
+    /// </summary>
+    /// <param name="game"></param>
+    /// <returns></returns>
+    int Simulate(GlobalGame game)
+    {
+        Player activePlayer = game.ActivePlayer();
+
+        while(!game.GameOver())
+        {
+            List<Spot> moves = game.AvailableSpots;
+            Spot randomSpot = moves[UnityEngine.Random.Range(0, moves.Count)];
+            game.Play(randomSpot);
+        }
+
+        if(game.Winner == activePlayer) { return 1; }
+        if(game.Winner == null) { return 0; }
+        return -1;
+    }
+
+    /// <summary>
+    /// Increment hits or misses according to the sign of the result
+    /// Have the parent node do this as well
+    /// </summary>
+    /// <param name="result"></param>
+    void BackPropagate(int result)
+    {
+        if(result > 0) { hits++; }
+        if(result < 0) { misses++; }
+        totalTrials++;
+
+        if(parent != null)
+        {
+            // parent active player is opposite of this active player
+            // so negate sign of result
+            parent.BackPropagate(-result);
         }
     }
 
