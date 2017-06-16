@@ -27,7 +27,8 @@ public class GlobalGame : Game
             if(canConfirm != value)
             {
                 canConfirm = value;
-                RaiseCanConfirmChanged(new BoolEventArgs(canConfirm));
+                RaiseCanConfirmChanged(new BoolEventArgs(
+                    canConfirm && !(ActivePlayer() is AI)));
             }
         }
     }
@@ -53,7 +54,8 @@ public class GlobalGame : Game
             if(canRedo != value)
             {
                 canRedo = value;
-                RaiseCanRedoChanged(new BoolEventArgs(canRedo));
+                RaiseCanRedoChanged(new BoolEventArgs(
+                    canRedo && !(ActivePlayer() is AI)));
             }
         }
     }
@@ -142,7 +144,10 @@ public class GlobalGame : Game
 
     void HandleSpotClicked(object o, SpotEventArgs e)
     {
-        Preview((Spot)o);
+        if (!(ActivePlayer() is AI))
+        {
+            Preview((Spot)o);
+        }
     }
 
     void HandleSpotEnabledChanged(object o, SpotEventArgs e)
@@ -233,7 +238,9 @@ public class GlobalGame : Game
     
     public override bool GameOver()
     {
-        return base.GameOver() && nextMove == null;
+        bool gameOver = base.GameOver() && nextMove == null;
+        Enabled = !gameOver;
+        return gameOver;
     }
 
     /// <summary>

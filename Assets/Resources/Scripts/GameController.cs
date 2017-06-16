@@ -37,10 +37,7 @@ public class GameController : MonoBehaviour
         {
             if(game.GameOver() && game.P1 is AI && game.P2 is AI)
             {
-                if (Game.Winner != null)
-                {
-                    game.Reset();
-                }
+                //game.Reset();
                 return;
             }
 
