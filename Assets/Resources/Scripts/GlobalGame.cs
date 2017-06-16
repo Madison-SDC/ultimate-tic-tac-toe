@@ -246,7 +246,7 @@ public class GlobalGame : Game
     void Play(Spot spot, bool redo = false)
     {
         spot.Owner = ActivePlayer();
-        spot.Enabled = spot.Owner == null;
+        spot.Enabled = false;
         history.Push(new Move(activeGame, spot));
         CanUndo = true;
         future = redo ? future : new Stack<Move>();
