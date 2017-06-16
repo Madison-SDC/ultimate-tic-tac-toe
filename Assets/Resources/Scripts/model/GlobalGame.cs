@@ -241,13 +241,20 @@ public class GlobalGame : Game
         }
     }
 
+    void Play(Spot spot, bool redo = false)
+    {
+        Play(spot.LocalGame.Loc, spot.Loc, redo);
+    }
+
     /// <summary>
     /// Advances the game by playing at the specified spot
     /// </summary>
     /// <param name="spot"></param>
     /// <param name="redo">Whether this move is a redo</param>
-    void Play(Spot spot, bool redo = false)
+    void Play(Location localGameLoc, Location spotLoc, bool redo = false)
     {
+        Spot spot = Get(localGameLoc).Get(spotLoc);
+
         spot.Owner = ActivePlayer();
         spot.Enabled = false;
         history.Push(new Move(activeGame, spot));
@@ -256,6 +263,11 @@ public class GlobalGame : Game
         CanRedo = redo;
         SetActiveGame(GetGame(spot));
         p1Turn = !p1Turn;
+    }
+
+    LocalGame Get(Location loc)
+    {
+        return localGames[loc.Row, loc.Col];
     }
 
     public override bool GameOver()

@@ -39,6 +39,11 @@ public class LocalGame : Game
         CheckWinner();
     }
 
+    public Spot Get(Location loc)
+    {
+        return spots[loc.Row, loc.Col];
+    }
+
     void PopulateOwnerArray(Spot[,] spots)
     {
         ownerArray = new Player[spots.GetLength(0), spots.GetLength(1)];
@@ -46,6 +51,7 @@ public class LocalGame : Game
         {
             spot.OwnerChanged += HandleSpotOwnerChanged;
             HandleSpotOwnerChanged(spot, null); // populate array
+            spot.LocalGame = this;
         }
     }
 

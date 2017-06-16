@@ -5,6 +5,7 @@ public class Spot
     Location loc;
     Player owner;
     bool enabled;
+    LocalGame game;
 
     public Location Loc { get { return loc; } }
     public Player Owner
@@ -24,6 +25,11 @@ public class Spot
             enabled = value;
             RaiseEnabledChanged(GetArgs());
         }
+    }
+    public LocalGame LocalGame
+    {
+        get { return game; }
+        set { game = value; }
     }
 
     public event EventHandler<SpotEventArgs> OwnerChanged;
