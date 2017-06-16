@@ -1,14 +1,42 @@
-﻿public class MCTSNode
+﻿using System.Collections.Generic;
+
+public class MCTSNode
 {
     GlobalGame game;
     Spot lastMove;
     MCTSNode parent;
+    int hits;
+    int misses;
+    int totalTrials;
+    List<MCTSNode> children;
 
 	public MCTSNode(GlobalGame game, Spot lastMove, MCTSNode parent)
     {
         this.game = CopyGlobalGame(game);
         this.lastMove = lastMove;
         this.parent = parent;
+        hits = 0;
+        misses = 0;
+        totalTrials = 0;
+    }
+
+    public void ChooseChild()
+    {
+        if(children == null)
+        {
+            GenerateChildren();
+        }
+    }
+
+    void GenerateChildren()
+    {
+        children = new List<MCTSNode>();
+        foreach(Spot spot in game.AvailableSpots)
+        {
+            game.Play(spot); // make the move
+            children.Add(new MCTSNode(game, spot, this));
+            game.Undo(); // undo that move
+        }
     }
 
     /// <summary>

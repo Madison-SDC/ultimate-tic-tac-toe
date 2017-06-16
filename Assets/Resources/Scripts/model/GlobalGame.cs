@@ -241,7 +241,7 @@ public class GlobalGame : Game
         }
     }
 
-    void Play(Spot spot, bool redo = false)
+    public void Play(Spot spot, bool redo = false)
     {
         Play(spot.LocalGame.Loc, spot.Loc, redo);
     }
