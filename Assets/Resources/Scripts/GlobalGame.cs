@@ -18,13 +18,13 @@ public class GlobalGame : Game
     bool canConfirm, canUndo, canRedo;
     List<Spot> availableSpots;
     bool hasNextMove;
-    
+
     private bool CanConfirm
     {
         get { return canConfirm; }
         set
         {
-            if(canConfirm != value)
+            if (canConfirm != value)
             {
                 canConfirm = value;
                 RaiseCanConfirmChanged(new BoolEventArgs(
@@ -38,7 +38,7 @@ public class GlobalGame : Game
         get { return canUndo; }
         set
         {
-            if(canUndo != value)
+            if (canUndo != value)
             {
                 canUndo = value;
                 RaiseCanUndoChanged(new BoolEventArgs(canUndo));
@@ -51,12 +51,10 @@ public class GlobalGame : Game
         get { return canRedo; }
         set
         {
-            if(canRedo != value)
-            {
-                canRedo = value;
-                RaiseCanRedoChanged(new BoolEventArgs(
-                    canRedo && !(ActivePlayer() is AI)));
-            }
+            canRedo = value;
+            RaiseCanRedoChanged(new BoolEventArgs(
+                canRedo && !(ActivePlayer() is AI)));
+
         }
     }
 
@@ -64,7 +62,7 @@ public class GlobalGame : Game
     {
         get { return new List<Spot>(availableSpots); }
     }
-    
+
     public bool HasNextMove { get { return hasNextMove; } }
 
     public Player P1 { get { return p1; } }
@@ -72,11 +70,11 @@ public class GlobalGame : Game
 
     public GlobalGame(
         LocalGame[,] localGames,
-        bool enabled, 
-        Player p1, 
-        Player p2, 
+        bool enabled,
+        Player p1,
+        Player p2,
         bool p1Turn
-    ) 
+    )
         : base(enabled)
     {
         PopulateOwnerArray(localGames);
@@ -95,9 +93,9 @@ public class GlobalGame : Game
         hasNextMove = false;
 
         // listen for when any spot in the game has been clicked
-        foreach(LocalGame game in localGames)
+        foreach (LocalGame game in localGames)
         {
-            foreach(Spot spot in game.Spots)
+            foreach (Spot spot in game.Spots)
             {
                 spot.Clicked += HandleSpotClicked;
                 spot.EnabledChanged += HandleSpotEnabledChanged;
@@ -123,9 +121,9 @@ public class GlobalGame : Game
     public event EventHandler<BoolEventArgs> CanRedoChanged;
     protected virtual void RaiseCanRedoChanged(BoolEventArgs e)
     {
-        if(CanRedoChanged != null) { CanRedoChanged(this, e); }
+        if (CanRedoChanged != null) { CanRedoChanged(this, e); }
     }
-    
+
     void PopulateOwnerArray(LocalGame[,] localGames)
     {
         ownerArray = new Player[localGames.GetLength(0), localGames.GetLength(1)];
@@ -153,7 +151,7 @@ public class GlobalGame : Game
     void HandleSpotEnabledChanged(object o, SpotEventArgs e)
     {
         Spot spot = (Spot)o;
-        if(spot.Enabled) { availableSpots.Add(spot); }
+        if (spot.Enabled) { availableSpots.Add(spot); }
         else { availableSpots.Remove(spot); }
     }
 
@@ -179,7 +177,7 @@ public class GlobalGame : Game
 
     public void Confirm()
     {
-        if(!CanConfirm) { return; }
+        if (!CanConfirm) { return; }
         Spot spot = nextMove;
         Preview(null); // undo preview move
         Play(spot);
@@ -187,16 +185,16 @@ public class GlobalGame : Game
 
     public void Undo()
     {
-        if(!CanUndo) { return; }
-        
-        if(ActivePlayer() is AI)
+        if (!CanUndo) { return; }
+
+        if (ActivePlayer() is AI)
         {
             Preview(null);
             UndoLastMove(); // now it's the human's turn
         }
         else
         {
-            if(nextMove != null)
+            if (nextMove != null)
             {
                 Preview(null); // undo human's preview and be done
                 return;
@@ -221,14 +219,14 @@ public class GlobalGame : Game
 
     public void Redo()
     {
-        if(!CanRedo) { return; }
+        if (!CanRedo) { return; }
         Play(future.Pop().Spot, true);
         CanRedo = future.Count != 0;
     }
 
     public void Reset()
     {
-        while(CanUndo)
+        while (CanUndo)
         {
             Undo();
         }
@@ -239,18 +237,18 @@ public class GlobalGame : Game
     /// </summary>
     /// <param name="spot"></param>
     /// <param name="redo">Whether this move is a redo</param>
-    void Play(Spot spot, bool redo=false)
+    void Play(Spot spot, bool redo = false)
     {
         spot.Owner = ActivePlayer();
         spot.Enabled = spot.Owner == null;
         history.Push(new Move(activeGame, spot));
         CanUndo = true;
         future = redo ? future : new Stack<Move>();
-        CanRedo = redo;        
+        CanRedo = redo;
         SetActiveGame(GetGame(spot));
         p1Turn = !p1Turn;
     }
-    
+
     public override bool GameOver()
     {
         bool gameOver = base.GameOver() && nextMove == null;
@@ -264,9 +262,9 @@ public class GlobalGame : Game
     /// <returns></returns>
     public override bool IsFull()
     {
-        foreach(LocalGame game in localGames)
+        foreach (LocalGame game in localGames)
         {
-            if(!game.GameOver())
+            if (!game.GameOver())
             {
                 return false;
             }
@@ -281,10 +279,10 @@ public class GlobalGame : Game
 
     void SetActiveGame(LocalGame localGame)
     {
-        if(GameOver())
+        if (GameOver())
         {
             // disable all games
-            foreach(LocalGame game in localGames)
+            foreach (LocalGame game in localGames)
             {
                 SetEnabled(game, false);
             }
