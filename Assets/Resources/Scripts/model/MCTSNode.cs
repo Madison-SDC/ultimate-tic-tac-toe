@@ -11,7 +11,7 @@ public class MCTSNode
     int totalTrials;
     List<MCTSNode> children;
 
-	public MCTSNode(GlobalGame game, Spot lastMove, MCTSNode parent)
+    public MCTSNode(GlobalGame game, Spot lastMove, MCTSNode parent)
     {
         this.game = CopyGlobalGame(game);
         this.lastMove = lastMove;
@@ -19,6 +19,21 @@ public class MCTSNode
         hits = 0;
         misses = 0;
         totalTrials = 0;
+    }
+
+    internal Spot BestMove()
+    {
+        int mostSimulations = 0;
+        Spot bestMove = null;
+        foreach(MCTSNode child in children)
+        {
+            if(child.totalTrials > mostSimulations)
+            {
+                mostSimulations = child.totalTrials;
+                bestMove = child.lastMove;
+            }
+        }
+        return bestMove;
     }
 
     /// <summary>
