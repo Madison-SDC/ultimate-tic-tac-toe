@@ -22,7 +22,7 @@ public abstract class AI : Player
     /// Update any information when the last move is made
     /// </summary>
     /// <param name="spot"></param>
-    virtual public void LastMove(Spot spot)
+    virtual public void UpdateLastMove(Spot spot)
     {
         // do nothing by default
     }

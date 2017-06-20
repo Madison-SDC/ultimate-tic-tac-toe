@@ -279,14 +279,14 @@ public class GlobalGame : Game
     /// </summary>
     void InformAI()
     {
-        Spot lastMove = history.Peek().Spot;
+        Spot lastMove = history.Count > 0 ? history.Peek().Spot : null;
         Inform(p1, lastMove);
         Inform(p2, lastMove);
     }
 
     void Inform(Player player, Spot spot)
     {
-        if (player is AI) { ((AI)player).LastMove(spot); }
+        if (player is AI) { ((AI)player).UpdateLastMove(spot); }
     }
 
     LocalGame Get(Location loc)

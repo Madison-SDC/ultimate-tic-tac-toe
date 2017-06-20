@@ -37,7 +37,7 @@ public class MonteCarloAI : AI
     /// Update the root node
     /// </summary>
     /// <param name="spot"></param>
-    public override void LastMove(Spot spot)
+    public override void UpdateLastMove(Spot spot)
     {
         root = root.NextRoot(spot);
     }
