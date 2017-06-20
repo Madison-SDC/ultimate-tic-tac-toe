@@ -30,7 +30,7 @@ public class PlayController : MonoBehaviour
         int turn = first ? 1 : 2;
         Color color = first ? Color.red : Color.blue;
         Sprite sprite = Resources.Load<Sprite>("Sprites/" + (first ? "x" : "o"));
-        string name = nameField.text;
+        string name = NameFrom(nameField.text, first);
         float time = diff.value;
 
         bool isAI = ActiveToggleTag(toggle).Equals("AI");
@@ -50,6 +50,15 @@ public class PlayController : MonoBehaviour
         {
             return new Player(turn, color, sprite, name);
         }
+    }
+
+    string NameFrom(string name, bool first)
+    {
+        if(name.Equals(""))
+        {
+            return first ? "X" : "O";
+        }
+        return name;
     }
 
     string ActiveToggleTag(ToggleGroup group)
