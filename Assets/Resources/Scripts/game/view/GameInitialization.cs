@@ -65,8 +65,8 @@ class GameInitialization : MonoBehaviour
             }
         }
 
-        Player p1 = menu ? Settings.RandomAI(true) : Settings.p1;
-        Player p2 = menu ? Settings.RandomAI(false) : Settings.p2;
+        Player p1 = menu ? Settings.NewPlayer(true, true) : Settings.p1;
+        Player p2 = menu ? Settings.NewPlayer(false, true) : Settings.p2;
         
         // initialize the global game, its view and its controller
         GlobalGame game = new GlobalGame(localGames, true, p1, p2, true);
