@@ -73,4 +73,18 @@ public class Spot
     {
         return new SpotEventArgs();
     }
+
+    /// <summary>
+    /// Two spots are considered equal if they are in the same location 
+    /// and their parent boards are also in the same location
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <returns></returns>
+    public override bool Equals(object obj)
+    {
+        if(!(obj is Spot)) { return false; }
+        Spot spot = (Spot)obj;
+
+        return spot.Loc.Equals(loc) && spot.game.Loc.Equals(game.Loc);
+    }
 }

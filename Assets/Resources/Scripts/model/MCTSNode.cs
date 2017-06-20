@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class MCTSNode
 {
@@ -37,6 +38,25 @@ public class MCTSNode
     }
 
     /// <summary>
+    /// Returns a new root node when the given spot has been played in
+    /// </summary>
+    /// <param name="spot"></param>
+    /// <returns></returns>
+    internal MCTSNode NextRoot(Spot spot)
+    {
+        if(children == null) { GenerateChildren(); }
+        foreach(MCTSNode child in children)
+        {
+            if(child.lastMove.Equals(spot))
+            {
+                child.parent = null;
+                return child;
+            }
+        }
+        return this;
+    }
+
+    /// <summary>
     /// Recursively choose an unexplored descendant, 
     /// or find a child where the game is over,
     /// and run a simulation on it
@@ -55,8 +75,9 @@ public class MCTSNode
             RunSimulation();
             return;
         }
-        
+
         // Has children, run simulation on first unexplored child
+        List<MCTSNode> unexplored = new List<MCTSNode>();
         foreach(MCTSNode child in children)
         {
             if(child.totalTrials == 0)
@@ -113,15 +134,17 @@ public class MCTSNode
     {
         Player activePlayer = game.ActivePlayer();
 
-        while(!game.GameOver())
+        GlobalGame copy = CopyGlobalGame(game);
+
+        while(!copy.GameOver())
         {
-            List<Spot> moves = game.AvailableSpots;
+            List<Spot> moves = copy.AvailableSpots;
             Spot randomSpot = moves[UnityEngine.Random.Range(0, moves.Count)];
-            game.Play(randomSpot);
+            copy.Play(randomSpot, false, true);
         }
 
-        if(game.Winner == activePlayer) { return 1; }
-        if(game.Winner == null) { return 0; }
+        if(copy.Winner == activePlayer) { return 1; }
+        if(copy.Winner == null) { return 0; }
         return -1;
     }
 
@@ -149,9 +172,9 @@ public class MCTSNode
         children = new List<MCTSNode>();
         foreach(Spot spot in game.AvailableSpots)
         {
-            game.Play(spot); // make the move
+            game.Play(spot, false, true); // make the move
             children.Add(new MCTSNode(game, spot, this));
-            game.Undo(); // undo that move
+            game.UndoLastMove(); // undo that move
         }
     }
 
@@ -165,17 +188,23 @@ public class MCTSNode
         if(globalGame == null) { return null; }
 
         LocalGame[,] localGames = new LocalGame[3, 3];
+        LocalGame activeGame = null;
         foreach(LocalGame game in globalGame.LocalGames)
         {
             localGames[game.Loc.Row, game.Loc.Col] = CopyLocalGame(game);
+            if(game == globalGame.ActiveGame)
+            {
+                activeGame = localGames[game.Loc.Row, game.Loc.Col];
+            }
         }
 
         return new GlobalGame(
             localGames, 
             globalGame.Enabled, 
-            globalGame.P1, 
-            globalGame.P2, 
-            globalGame.P1Turn
+            globalGame.P1,
+            globalGame.P2,
+            globalGame.P1Turn,
+            activeGame
         );
     }
 

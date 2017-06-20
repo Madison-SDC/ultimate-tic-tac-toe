@@ -9,16 +9,24 @@ public class GlobalGame : Game
         UNDO = 1,
         REDO = 2;
 
+    Stack<Move> history;
+    Stack<Move> future;
+    Spot nextMove;
     LocalGame[,] localGames;
     Player p1, p2;
     bool p1Turn;
-    Spot nextMove;
-    Stack<Move> history;
     LocalGame activeGame;
-    Stack<Move> future;
     bool canConfirm, canUndo, canRedo;
     List<Spot> availableSpots;
     bool hasNextMove;
+
+    public LocalGame[,] LocalGames { get { return localGames; } }
+
+    public Player P1 { get { return p1; } }
+    public Player P2 { get { return p2; } }
+    public bool P1Turn { get { return p1Turn; } }
+
+    public LocalGame ActiveGame { get { return activeGame; } }
 
     private bool CanConfirm
     {
@@ -33,7 +41,6 @@ public class GlobalGame : Game
             }
         }
     }
-
     private bool CanUndo
     {
         get { return canUndo; }
@@ -46,7 +53,6 @@ public class GlobalGame : Game
             }
         }
     }
-
     private bool CanRedo
     {
         get { return canRedo; }
@@ -65,18 +71,13 @@ public class GlobalGame : Game
 
     public bool HasNextMove { get { return hasNextMove; } }
 
-    public LocalGame[,] LocalGames { get { return localGames; } }
-
-    public Player P1 { get { return p1; } }
-    public Player P2 { get { return p2; } }
-    public bool P1Turn { get { return p1Turn; } }
-
     public GlobalGame(
         LocalGame[,] localGames,
         bool enabled,
         Player p1,
         Player p2,
-        bool p1Turn
+        bool p1Turn,
+        LocalGame activeGame = null
     )
         : base(enabled)
     {
@@ -87,7 +88,7 @@ public class GlobalGame : Game
         this.p1Turn = p1Turn;
         nextMove = null;
         history = new Stack<Move>();
-        SetActiveGame(null);
+        SetActiveGame(activeGame);
         future = new Stack<Move>();
         canConfirm = false;
         canUndo = false;
@@ -147,7 +148,7 @@ public class GlobalGame : Game
     {
         if (!(ActivePlayer() is AI))
         {
-            Preview((Spot)o);
+            Play((Spot)o);
         }
     }
 
@@ -160,6 +161,7 @@ public class GlobalGame : Game
 
     public void Preview(Spot spot)
     {
+
         // remove the mark from the last spot
         if (nextMove != null)
         {
@@ -169,6 +171,7 @@ public class GlobalGame : Game
 
         if (spot != null)
         {
+            spot = Get(spot.LocalGame.Loc).Get(spot.Loc);
             spot.Owner = ActivePlayer(); // add a mark to this spot
             Outline(GetGame(spot));
         }
@@ -210,7 +213,7 @@ public class GlobalGame : Game
         }
     }
 
-    private void UndoLastMove()
+    public void UndoLastMove()
     {
         Move lastMove = history.Pop();
         lastMove.Spot.Owner = null;
@@ -241,9 +244,9 @@ public class GlobalGame : Game
         }
     }
 
-    public void Play(Spot spot, bool redo = false)
+    public void Play(Spot spot, bool redo = false, bool simulation = false)
     {
-        Play(spot.LocalGame.Loc, spot.Loc, redo);
+        Play(spot.LocalGame.Loc, spot.Loc, redo, simulation);
     }
 
     /// <summary>
@@ -251,7 +254,7 @@ public class GlobalGame : Game
     /// </summary>
     /// <param name="spot"></param>
     /// <param name="redo">Whether this move is a redo</param>
-    void Play(Location localGameLoc, Location spotLoc, bool redo = false)
+    void Play(Location localGameLoc, Location spotLoc, bool redo = false, bool simulation = false)
     {
         Spot spot = Get(localGameLoc).Get(spotLoc);
 
@@ -263,6 +266,27 @@ public class GlobalGame : Game
         CanRedo = redo;
         SetActiveGame(GetGame(spot));
         p1Turn = !p1Turn;
+        if (!simulation)
+        {
+            InformAI();
+        }
+    }
+
+
+
+    /// <summary>
+    /// Inform the artificial intelligences that a move has been made
+    /// </summary>
+    void InformAI()
+    {
+        Spot lastMove = history.Peek().Spot;
+        Inform(p1, lastMove);
+        Inform(p2, lastMove);
+    }
+
+    void Inform(Player player, Spot spot)
+    {
+        if (player is AI) { ((AI)player).LastMove(spot); }
     }
 
     LocalGame Get(Location loc)

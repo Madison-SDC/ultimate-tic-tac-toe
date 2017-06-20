@@ -25,13 +25,22 @@ public class MonteCarloAI : AI
     }
 
     /// <summary>
-    /// Run ten thousand simulations, 
+    /// Update the root node
+    /// </summary>
+    /// <param name="spot"></param>
+    public override void LastMove(Spot spot)
+    {
+        root = root.NextRoot(spot);
+    }
+
+    /// <summary>
+    /// Run a thousand simulations, 
     /// then return the move of the child with the most simulations
     /// </summary>
     /// <returns></returns>
     public override Spot BestMove()
     {
-        for(int i = 0; i < 10000; i++)
+        for(int i = 0; i < 100000; i++)
         {
             root.ChooseChild();
         }
