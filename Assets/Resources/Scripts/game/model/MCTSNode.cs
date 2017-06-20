@@ -138,8 +138,27 @@ public class MCTSNode
         while(!copy.GameOver())
         {
             List<Spot> moves = copy.AvailableSpots;
-            Spot randomSpot = moves[UnityEngine.Random.Range(0, moves.Count)];
-            copy.Play(randomSpot, false, true);
+            bool moveFound = false;
+
+            // If there's a game-winning move, play it
+            // This shortens simulations and makes them more realistic
+            foreach (Spot spot in moves)
+            {
+                copy.Play(spot, false, true);
+                if (copy.Winner != null)
+                {
+                    moveFound = true;
+                    break;
+                }
+                copy.UndoLastMove();
+            }
+
+            // Otherwise play a random move
+            if (!moveFound)
+            {
+                Spot randomSpot = moves[UnityEngine.Random.Range(0, moves.Count)];
+                copy.Play(randomSpot, false, true);
+            }
         }
 
         if(copy.Winner == activePlayer) { return 1; }
