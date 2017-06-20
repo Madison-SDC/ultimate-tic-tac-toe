@@ -77,7 +77,6 @@ public class MCTSNode
         }
 
         // Has children, run simulation on first unexplored child
-        List<MCTSNode> unexplored = new List<MCTSNode>();
         foreach(MCTSNode child in children)
         {
             if(child.totalTrials == 0)
@@ -110,11 +109,11 @@ public class MCTSNode
     double Potential(MCTSNode child)
     {
         // misses of child are hits for parent
-        int w = child.misses - child.hits;
+        int w = child.misses;
         int n = child.totalTrials;
 
         // w/n + sqrt(2)*sqrt( ln(totalTrials) / n)
-        return w / n + 1.414f * Math.Sqrt(Math.Log(totalTrials) / n);
+        return (double)w / n + 1.414f * Math.Sqrt(Math.Log(totalTrials) / n);
     }
 
     void RunSimulation()
