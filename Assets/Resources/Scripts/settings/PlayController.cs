@@ -12,7 +12,7 @@ public class PlayController : MonoBehaviour
     public void PlayGame()
     {
         CreatePlayers();
-        StartGame();
+        OpenScene("Game");
     }
 
     void CreatePlayers()
@@ -59,8 +59,8 @@ public class PlayController : MonoBehaviour
         return enumerator.Current.tag;
     }
 
-    void StartGame()
+    public void OpenScene(string sceneName)
     {
-        SceneManager.LoadScene("Game");
+        SceneManager.LoadScene(sceneName);
     }
 }
