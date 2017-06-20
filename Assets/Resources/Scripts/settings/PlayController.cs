@@ -6,8 +6,41 @@ using UnityEngine.UI;
 public class PlayController : MonoBehaviour
 {
     public InputField p1Name, p2Name;
-    public ToggleGroup p1Toggle, p2Toggle;
+    public Toggle p1AIToggle, p1HumanToggle,
+        p2AIToggle, p2HumanToggle;
     public Slider p1Difficulty, p2Difficulty;
+
+    private void Awake()
+    {
+        if (p1Name != null)
+        {
+            UpdateViews();
+        }
+    }
+
+    /// <summary>
+    /// Update the views to match the current settings
+    /// </summary>
+    void UpdateViews()
+    {
+        p1Name.text = Settings.p1.Name;
+        p2Name.text = Settings.p2.Name;
+
+        bool p1AI = Settings.p1 is AI;
+        bool p2AI = Settings.p2 is AI;
+
+        p1AIToggle.isOn = p1AI;
+        p1HumanToggle.isOn = !p1AI;
+        
+        p2AIToggle.isOn = p2AI;
+        p2HumanToggle.isOn = !p2AI;
+
+        p1Difficulty.value = Settings.p1 is MonteCarloAI ? 
+            ((MonteCarloAI)Settings.p1).Time : 0;
+
+        p2Difficulty.value = Settings.p2 is MonteCarloAI ? 
+            ((MonteCarloAI)Settings.p2).Time : 0;
+    }
 
     public void PlayGame()
     {
@@ -17,13 +50,13 @@ public class PlayController : MonoBehaviour
 
     void CreatePlayers()
     {
-        Settings.p1 = CreatePlayer(p1Name, p1Toggle, p1Difficulty, true);
-        Settings.p2 = CreatePlayer(p2Name, p2Toggle, p2Difficulty, false);
+        Settings.p1 = CreatePlayer(p1Name, p1AIToggle, p1Difficulty, true);
+        Settings.p2 = CreatePlayer(p2Name, p2AIToggle, p2Difficulty, false);
     }
 
     Player CreatePlayer(
         InputField nameField,
-        ToggleGroup toggle,
+        Toggle aiToggle,
         Slider diff,
         bool first)
     {
@@ -33,18 +66,13 @@ public class PlayController : MonoBehaviour
         string name = NameFrom(nameField.text, first);
         float time = diff.value;
 
-        bool isAI = ActiveToggleTag(toggle).Equals("AI");
-
-        if (isAI)
+        if (aiToggle.isOn)
         {
-            if (time > 0)
-            {
-                return new MonteCarloAI(null, turn, color, sprite, name, time);
-            }
-            else
+            if(time == 0)
             {
                 return new RandomAI(null, turn, color, sprite, name);
             }
+            return new MonteCarloAI(null, turn, color, sprite, name, time);
         }
         else
         {
@@ -59,13 +87,6 @@ public class PlayController : MonoBehaviour
             return first ? "X" : "O";
         }
         return name;
-    }
-
-    string ActiveToggleTag(ToggleGroup group)
-    {
-        IEnumerator<Toggle> enumerator = group.ActiveToggles().GetEnumerator();
-        enumerator.MoveNext();
-        return enumerator.Current.tag;
     }
 
     public void OpenScene(string sceneName)
