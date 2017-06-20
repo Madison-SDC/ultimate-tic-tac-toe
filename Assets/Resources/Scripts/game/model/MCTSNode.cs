@@ -12,8 +12,6 @@ public class MCTSNode
     int totalTrials;
     List<MCTSNode> children;
 
-    public int TotalTrials { get { return totalTrials; } }
-
     public MCTSNode(GlobalGame game, Spot lastMove, MCTSNode parent)
     {
         this.game = CopyGlobalGame(game);

@@ -44,14 +44,12 @@ public class MonteCarloAI : AI
     {
         Stopwatch stopwatch = new Stopwatch();
         stopwatch.Start();
-        int totalTrials = root.TotalTrials;
         int seconds = 3;
         int milliseconds = seconds * 1000;
         while(stopwatch.ElapsedMilliseconds < milliseconds)
         { 
             root.ChooseChild();
         }
-        UnityEngine.Debug.Log(root.TotalTrials - totalTrials);
         return root.BestMove();
     }
 }
