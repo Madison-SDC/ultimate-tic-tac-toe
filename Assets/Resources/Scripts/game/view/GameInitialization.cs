@@ -66,7 +66,7 @@ class GameInitialization : MonoBehaviour
         Player p1 = Settings.p1;
         Player p2 = Settings.p2;
 
-        // initialize the global game and its view and controller
+        // initialize the global game, its view and its controller
         GlobalGame game = new GlobalGame(localGames, true, p1, p2, true);
 
         if(p1 is AI) { ((AI)p1).Game = game; }
@@ -82,33 +82,45 @@ class GameInitialization : MonoBehaviour
         // Confirm button
         {
             GameObject confirmButton = GameObject.Find("Confirm Button");
-            ButtonView confirmView = confirmButton.GetComponent<ButtonView>();
-            globalGame.CanConfirmChanged += confirmView.OnValueChanged;
-            confirmView.OnValueChanged(globalGame, new BoolEventArgs(false));
+            if (confirmButton != null)
+            {
+                ButtonView confirmView = confirmButton.GetComponent<ButtonView>();
+                globalGame.CanConfirmChanged += confirmView.OnValueChanged;
+                confirmView.OnValueChanged(globalGame, new BoolEventArgs(false));
+            }
         }
 
         // Undo button
         {
             GameObject undoButton = GameObject.Find("Undo Button");
-            ButtonView undoView = undoButton.GetComponent<ButtonView>();
-            globalGame.CanUndoChanged += undoView.OnValueChanged;
-            undoView.OnValueChanged(globalGame, new BoolEventArgs(false));
+            if (undoButton != null)
+            {
+                ButtonView undoView = undoButton.GetComponent<ButtonView>();
+                globalGame.CanUndoChanged += undoView.OnValueChanged;
+                undoView.OnValueChanged(globalGame, new BoolEventArgs(false));
+            }
         }
 
         // Redo button
         {
             GameObject redoButton = GameObject.Find("Redo Button");
-            ButtonView redoView = redoButton.GetComponent<ButtonView>();
-            globalGame.CanRedoChanged += redoView.OnValueChanged;
-            redoView.OnValueChanged(globalGame, new BoolEventArgs(false));
+            if (redoButton != null)
+            {
+                ButtonView redoView = redoButton.GetComponent<ButtonView>();
+                globalGame.CanRedoChanged += redoView.OnValueChanged;
+                redoView.OnValueChanged(globalGame, new BoolEventArgs(false));
+            }
         }
 
         // Reset button
         {
             GameObject resetButton = GameObject.Find("Reset Button");
-            ButtonView resetView = resetButton.GetComponent<ButtonView>();
-            globalGame.CanUndoChanged += resetView.OnValueChanged;
-            resetView.OnValueChanged(globalGame, new BoolEventArgs(false));
+            if (resetButton != null)
+            {
+                ButtonView resetView = resetButton.GetComponent<ButtonView>();
+                globalGame.CanUndoChanged += resetView.OnValueChanged;
+                resetView.OnValueChanged(globalGame, new BoolEventArgs(false));
+            }
         }
     }
 }
