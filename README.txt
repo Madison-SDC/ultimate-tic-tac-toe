@@ -11,10 +11,26 @@ Planned features include:
 
 Changelog:
 
-UT_???
+UT_0.8 (Embrace the overhaul update, ???)
 	All platforms
 		Completely rewrite architecture
 			Now built on an MVC model with event support
+		Better artificial intelligence
+			Monte Carlo Tree Search with variable timing (more time = more difficult)
+			Benchmark runs about 650 simulations per second on a blank game
+		Settings scene
+			Removed unnecessary "Easy/Hard" buttons
+			Changed slider handles to circles
+			Choose how long to give the AI to think: 0 to 5 seconds
+			Change color scheme to black/white to match other scenes
+			View now matches previous settings when coming back to this scene
+		Menu scene
+			Add animated game between two random AIs
+		Miscellaneous
+			Changed coloring scheme, global game wins are now darker
+			
+	Known bugs:
+		Undo/redo/reset with Monte Carlo AI does not work
 
 UT_0.7 (Gameplay update, 2017-05-06)
 	All platforms
