@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using UnityEngine;
 
 public class MonteCarloAI : AI
@@ -10,6 +11,8 @@ public class MonteCarloAI : AI
     /// </summary>
     float time;
     
+    public float Time { get { return time; } }
+
     public override GlobalGame Game
     {
         get
@@ -27,7 +30,7 @@ public class MonteCarloAI : AI
     public MonteCarloAI(GlobalGame game, int turn, Color color, Sprite sprite, string name, float time) : base(game, turn, color, sprite, name)
     {
         root = new MCTSNode(game, null, null);
-        this.time = time;
+        this.time = Math.Max(float.Epsilon, time);
     }
 
     /// <summary>
@@ -47,11 +50,11 @@ public class MonteCarloAI : AI
     public override Spot BestMove()
     {
         Stopwatch stopwatch = new Stopwatch();
-        stopwatch.Start();
         float seconds = time;
         float milliseconds = seconds * 1000;
-        while(stopwatch.ElapsedMilliseconds < milliseconds)
-        { 
+        stopwatch.Start();
+        while (stopwatch.ElapsedMilliseconds < milliseconds)
+        {
             root.ChooseChild();
         }
         return root.BestMove();
