@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Diagnostics;
 using UnityEngine;
 
 public class MonteCarloAI : AI
 {
     MCTSNode root;
+
 
     public override GlobalGame Game
     {
@@ -40,11 +42,16 @@ public class MonteCarloAI : AI
     /// <returns></returns>
     public override Spot BestMove()
     {
-        for(int i = 0; i < 10000; i++)
-        {
+        Stopwatch stopwatch = new Stopwatch();
+        stopwatch.Start();
+        int totalTrials = root.TotalTrials;
+        int seconds = 3;
+        int milliseconds = seconds * 1000;
+        while(stopwatch.ElapsedMilliseconds < milliseconds)
+        { 
             root.ChooseChild();
         }
-
+        UnityEngine.Debug.Log(root.TotalTrials - totalTrials);
         return root.BestMove();
     }
 }
