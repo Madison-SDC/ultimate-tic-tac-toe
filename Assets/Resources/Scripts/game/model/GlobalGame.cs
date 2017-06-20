@@ -148,7 +148,7 @@ public class GlobalGame : Game
     {
         if (!(ActivePlayer() is AI))
         {
-            Play((Spot)o);
+            Preview((Spot)o);
         }
     }
 
