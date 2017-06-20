@@ -1,12 +1,15 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using UnityEngine;
 
 public class MonteCarloAI : AI
 {
     MCTSNode root;
 
-
+    /// <summary>
+    /// The amount of time this AI has to think, in seconds
+    /// </summary>
+    float time;
+    
     public override GlobalGame Game
     {
         get
@@ -21,9 +24,10 @@ public class MonteCarloAI : AI
         }
     }
 
-    public MonteCarloAI(GlobalGame game, int turn, Color color, Sprite sprite, string name) : base(game, turn, color, sprite, name)
+    public MonteCarloAI(GlobalGame game, int turn, Color color, Sprite sprite, string name, float time) : base(game, turn, color, sprite, name)
     {
         root = new MCTSNode(game, null, null);
+        this.time = time;
     }
 
     /// <summary>
@@ -44,8 +48,8 @@ public class MonteCarloAI : AI
     {
         Stopwatch stopwatch = new Stopwatch();
         stopwatch.Start();
-        int seconds = 3;
-        int milliseconds = seconds * 1000;
+        float seconds = time;
+        float milliseconds = seconds * 1000;
         while(stopwatch.ElapsedMilliseconds < milliseconds)
         { 
             root.ChooseChild();
