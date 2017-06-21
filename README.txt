@@ -11,7 +11,7 @@ Planned features include:
 
 Changelog:
 
-UT_0.8 (Embrace the overhaul update, ???)
+UT_0.8 (Embrace the overhaul update, 2017-06-21)
 	All platforms
 		Completely rewrite architecture
 			Now built on an MVC model with event support
