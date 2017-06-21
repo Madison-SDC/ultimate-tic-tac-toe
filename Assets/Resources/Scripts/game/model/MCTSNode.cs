@@ -49,6 +49,7 @@ public class MCTSNode
         {
             if(child.lastMove.Equals(spot))
             {
+                child.parent = null;
                 return child; // spot is a new move
             }
         }
