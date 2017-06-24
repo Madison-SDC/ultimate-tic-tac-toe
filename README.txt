@@ -11,6 +11,11 @@ Planned features include:
 
 Changelog:
 
+UT_???
+	All platforms (for newer versions, "All platforms" will be implied)
+		Centered Player panes on Settings scene
+		
+
 UT_0.8 (Embrace the overhaul update, 2017-06-21)
 	All platforms
 		Completely rewrite architecture

@@ -200,16 +200,19 @@ public class GlobalGame : Game
             Preview(null);
             UndoLastMove(); // now it's the human's turn
         }
-        else
+        else // it's a human's turn
         {
             if (nextMove != null)
             {
                 Preview(null); // undo human's preview and be done
                 return;
             }
-            UndoLastMove(); // undo AI's last move
-            UndoLastMove(); // undo human's last move
-            // now it's the human's turn
+            UndoLastMove(); // undo last move
+            if (ActivePlayer() is AI)
+            {
+                UndoLastMove(); // undo human's last move
+            }
+            // now it's a human's turn
         }
     }
 
