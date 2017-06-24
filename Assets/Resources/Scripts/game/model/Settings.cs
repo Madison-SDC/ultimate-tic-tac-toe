@@ -16,7 +16,7 @@ public class Settings
     public static Player NewPlayer(bool firstPlayer, bool AI)
     {
         int turn = firstPlayer ? 1 : 2;
-        Color color = firstPlayer ? Color.red : Color.blue;
+        Color color = firstPlayer ? Color.cyan : Color.magenta;
         Sprite sprite = 
             Resources.Load<Sprite>("Sprites/" + (firstPlayer ? "x" : "o"));
         string name = firstPlayer ? "X" : "O";

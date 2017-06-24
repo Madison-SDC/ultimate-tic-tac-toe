@@ -61,7 +61,7 @@ public class PlayController : MonoBehaviour
         bool first)
     {
         int turn = first ? 1 : 2;
-        Color color = first ? Color.red : Color.blue;
+        Color color = first ? Color.cyan : Color.magenta;
         Sprite sprite = Resources.Load<Sprite>("Sprites/" + (first ? "x" : "o"));
         string name = NameFrom(nameField.text, first);
         float time = diff.value;
