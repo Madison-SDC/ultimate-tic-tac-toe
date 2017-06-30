@@ -11,10 +11,13 @@ Planned features include:
 
 Changelog:
 
-UT_???
+UT_0.8.1 (Status patch, 2017-06-30)
 	All platforms (for newer versions, "All platforms" will be implied)
 		Centered Player panes on Settings scene
-		
+		Better organization of buttons on Game scene
+		Status text
+			Display whose turn it is (using player names)
+			Display winner or tie when game is over
 
 UT_0.8 (Embrace the overhaul update, 2017-06-21)
 	All platforms
