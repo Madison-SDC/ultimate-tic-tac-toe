@@ -128,6 +128,12 @@ public class GlobalGame : Game
         if (CanRedoChanged != null) { CanRedoChanged(this, e); }
     }
 
+    public event EventHandler<GameEventArgs> TurnChanged;
+    protected virtual void RaiseTurnChanged(GameEventArgs e)
+    {
+        if(TurnChanged != null) { TurnChanged(this, e); }
+    }
+
     void PopulateOwnerArray(LocalGame[,] localGames)
     {
         ownerArray = new Player[localGames.GetLength(0), localGames.GetLength(1)];
@@ -169,6 +175,8 @@ public class GlobalGame : Game
             Outline(null, true);
         }
 
+        nextMove = spot;
+
         if (spot != null)
         {
             spot = Get(spot.LocalGame.Loc).Get(spot.Loc);
@@ -176,7 +184,6 @@ public class GlobalGame : Game
             Outline(GetGame(spot));
         }
         
-        nextMove = spot;
         hasNextMove = nextMove != null;
         CanConfirm = hasNextMove;
         CanUndo = hasNextMove || history.Count != 0;
@@ -226,6 +233,7 @@ public class GlobalGame : Game
         future.Push(lastMove);
         CanRedo = true;
         CanUndo = history.Count != 0;
+        RaiseTurnChanged(null);
     }
 
     public void Redo()
@@ -237,6 +245,7 @@ public class GlobalGame : Game
             Play(future.Pop().Spot, true);
         }
         CanRedo = future.Count != 0;
+        RaiseTurnChanged(null);
     }
 
     public void Reset()
@@ -272,6 +281,7 @@ public class GlobalGame : Game
         if (!simulation)
         {
             InformAI();
+            RaiseTurnChanged(null);
         }
     }
 
@@ -289,7 +299,7 @@ public class GlobalGame : Game
 
     void Inform(Player player, Spot spot)
     {
-        if (player is AI) { ((AI)player).UpdateLastMove(spot); }
+        player.UpdateLastMove(spot);
     }
 
     LocalGame Get(Location loc)

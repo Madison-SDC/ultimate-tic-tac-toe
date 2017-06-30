@@ -23,4 +23,9 @@ public class Player {
         Sprite = sprite;
         Name = name;
     }
+
+    public virtual void UpdateLastMove(Spot spot)
+    {
+
+    }
 }

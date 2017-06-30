@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// This script goes on the same GameObject as the GlobalGameUI
@@ -21,6 +22,7 @@ class GameInitialization : MonoBehaviour
     {
         InitializeGames();
         InitializeButtons();
+        InitializeText();
 
         Destroy(this);
     }
@@ -28,7 +30,7 @@ class GameInitialization : MonoBehaviour
     void InitializeGames()
     {
         int spotUIIndex = 0;
-        int localGameUIIndex = 1; // first component is global
+        int localGameUIIndex = 1; // first GameUI is global UI
         SpotUI[] spotUIs = GetComponentsInChildren<SpotUI>();
         GameUI[] gameUIs = GetComponentsInChildren<GameUI>();
         LocalGame[,] localGames = new LocalGame[3, 3];
@@ -124,5 +126,13 @@ class GameInitialization : MonoBehaviour
                 resetView.OnValueChanged(globalGame, new BoolEventArgs(false));
             }
         }
+    }
+
+    void InitializeText()
+    {
+        GameObject statusGo = GameObject.Find("Status Text");
+        if (statusGo == null) { return; }
+        StatusText statusText = statusGo.GetComponent<StatusText>();
+        statusText.Game = globalGame;
     }
 }

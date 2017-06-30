@@ -17,13 +17,4 @@ public abstract class AI : Player
     }
 
     abstract public Spot BestMove();
-
-    /// <summary>
-    /// Update any information when the last move is made
-    /// </summary>
-    /// <param name="spot"></param>
-    virtual public void UpdateLastMove(Spot spot)
-    {
-        // do nothing by default
-    }
 }
