@@ -48,8 +48,16 @@ public class GameUI : MonoBehaviour
                     }
                     game = value;
                 }
+                UpdateState();
             }
         }
+    }
+
+    void UpdateState()
+    {
+        HandleWinnerChanged(game, null);
+        HandleEnabledChanged(game, null);
+        HandleOutlineChanged(game, null);
     }
 
     void HandleWinnerChanged(object o, GameEventArgs e)
@@ -64,7 +72,10 @@ public class GameUI : MonoBehaviour
 
     void HandleOutlineChanged(object o, GameEventArgs e)
     {
-        UpdateOutline(((LocalGame)o).Outline);
+        if(o is LocalGame)
+        {
+            UpdateOutline(((LocalGame)o).Outline);
+        }
     }
 
     void UpdateOutline(Color color)

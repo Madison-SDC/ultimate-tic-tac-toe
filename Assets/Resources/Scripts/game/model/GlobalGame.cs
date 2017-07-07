@@ -252,14 +252,6 @@ public class GlobalGame : Game
         RaiseTurnChanged(null);
     }
 
-    public void Reset()
-    {
-        while (CanUndo)
-        {
-            Undo();
-        }
-    }
-
     public void Play(Spot spot, bool redo = false, bool simulation = false)
     {
         Play(spot.LocalGame.Loc, spot.Loc, redo, simulation);

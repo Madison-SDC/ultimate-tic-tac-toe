@@ -23,11 +23,9 @@ class GameInitialization : MonoBehaviour
         InitializeGames();
         InitializeButtons();
         InitializeText();
-
-        Destroy(this);
     }
 
-    void InitializeGames()
+    public void InitializeGames()
     {
         int spotUIIndex = 0;
         int localGameUIIndex = 1; // first GameUI is global UI

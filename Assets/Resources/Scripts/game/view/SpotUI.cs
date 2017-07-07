@@ -34,6 +34,7 @@ public class SpotUI : MonoBehaviour {
                     value.EnabledChanged += HandleSpotEnabledChanged;
                     spot = value;
                 }
+                UpdateState();
             }
         }
     }
@@ -76,6 +77,12 @@ public class SpotUI : MonoBehaviour {
         spot.HandleOnClicked();
     }
 
+    void UpdateState()
+    {
+        HandleSpotOwnerChanged(spot, null);
+        HandleSpotEnabledChanged(spot, null);
+    }
+
     /// <summary>
     /// Change image to reflect the new owner
     /// </summary>
@@ -83,7 +90,7 @@ public class SpotUI : MonoBehaviour {
     /// <param name="e"></param>
     public virtual void HandleSpotOwnerChanged(object o, SpotEventArgs e)
     {
-        Player owner = ((Spot)o).Owner;
+        Player owner = o == null ? null : ((Spot)o).Owner;
         Image image = GetComponent<Image>();
         if (owner != null)
         {
@@ -104,6 +111,6 @@ public class SpotUI : MonoBehaviour {
     /// <param name="e"></param>
     public virtual void HandleSpotEnabledChanged(object o, SpotEventArgs e)
     {
-        button.interactable = ((Spot)o).Enabled;
+        button.interactable = o == null ? false : ((Spot)o).Enabled;
     }
 }
