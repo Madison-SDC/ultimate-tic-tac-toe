@@ -45,15 +45,24 @@ public class MCTSNode
     internal MCTSNode NextRoot(Spot spot)
     {
         if(children == null) { GenerateChildren(); }
+
         foreach(MCTSNode child in children)
         {
             if(child.lastMove.Equals(spot))
             {
-                child.parent = null;
+                if(parent != null)
+                {
+                    parent.parent = null; // allow for one undo
+                }
                 return child; // spot is a new move
             }
         }
         
+        if(parent != null)
+        {
+            return parent;
+        }
+
         return this; 
     }
 
@@ -151,7 +160,7 @@ public class MCTSNode
                     moveFound = true;
                     break;
                 }
-                copy.UndoLastMove();
+                copy.UndoLastMove(true);
             }
 
             // Otherwise play a random move
@@ -193,7 +202,7 @@ public class MCTSNode
         {
             game.Play(spot, false, true); // make the move
             children.Add(new MCTSNode(game, spot, this));
-            game.UndoLastMove(); // undo that move
+            game.UndoLastMove(true); // undo that move
         }
     }
 

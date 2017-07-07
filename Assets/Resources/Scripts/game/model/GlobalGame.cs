@@ -198,14 +198,14 @@ public class GlobalGame : Game
         Play(spot);
     }
 
-    public void Undo()
+    public void Undo(bool sim=false)
     {
         if (!CanUndo) { return; }
 
         if (ActivePlayer() is AI)
         {
             Preview(null);
-            UndoLastMove(); // now it's the human's turn
+            UndoLastMove(sim); // now it's the human's turn
         }
         else // it's a human's turn
         {
@@ -214,16 +214,16 @@ public class GlobalGame : Game
                 Preview(null); // undo human's preview and be done
                 return;
             }
-            UndoLastMove(); // undo last move
+            UndoLastMove(sim); // undo last move
             if (ActivePlayer() is AI)
             {
-                UndoLastMove(); // undo human's last move
+                UndoLastMove(sim); // undo human's last move
             }
             // now it's a human's turn
         }
     }
 
-    public void UndoLastMove()
+    public void UndoLastMove(bool sim)
     {
         Move lastMove = history.Pop();
         lastMove.Spot.Owner = null;
@@ -234,6 +234,10 @@ public class GlobalGame : Game
         CanRedo = true;
         CanUndo = history.Count != 0;
         RaiseTurnChanged(null);
+        if (!sim)
+        {
+            InformPlayers();
+        }
     }
 
     public void Redo()
@@ -280,7 +284,7 @@ public class GlobalGame : Game
         p1Turn = !p1Turn;
         if (!simulation)
         {
-            InformAI();
+            InformPlayers();
             RaiseTurnChanged(null);
         }
     }
@@ -290,7 +294,7 @@ public class GlobalGame : Game
     /// <summary>
     /// Inform the artificial intelligences that a move has been made
     /// </summary>
-    void InformAI()
+    void InformPlayers()
     {
         Spot lastMove = history.Count > 0 ? history.Peek().Spot : null;
         Inform(p1, lastMove);
