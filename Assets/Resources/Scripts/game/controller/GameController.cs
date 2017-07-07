@@ -28,7 +28,7 @@ public class GameController : MonoBehaviour
 
     public void Reset()
     {
-        GetComponent<GameInitialization>().InitializeGames();
+        GetComponent<GameInitialization>().ResetGame();
     }
 
     void Update()

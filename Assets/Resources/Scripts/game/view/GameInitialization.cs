@@ -20,12 +20,20 @@ class GameInitialization : MonoBehaviour
     /// </summary>
     private void Awake()
     {
+        ResetGame();
+    }
+
+    /// <summary>
+    /// Initialize all facets of the global game
+    /// </summary>
+    public void ResetGame()
+    {
         InitializeGames();
         InitializeButtons();
         InitializeText();
     }
-
-    public void InitializeGames()
+    
+    void InitializeGames()
     {
         int spotUIIndex = 0;
         int localGameUIIndex = 1; // first GameUI is global UI
