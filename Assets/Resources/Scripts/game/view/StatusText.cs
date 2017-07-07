@@ -23,22 +23,34 @@ public class StatusText : MonoBehaviour
 
             game = value;
 
-            game.WinnerChanged += HandleGameStateChanged;
-            game.TurnChanged += HandleGameStateChanged;
+            if (game != null)
+            {
+                game.WinnerChanged += HandleGameStateChanged;
+                game.TurnChanged += HandleGameStateChanged;
+            }
+            UpdateState();
         }
+    }
+
+    void UpdateState()
+    {
+        HandleGameStateChanged(game, null);
     }
 
     private void Start()
     {
         text = GetComponent<Text>();
-        if (game != null)
-        {
-            HandleGameStateChanged(null, null);
-        }
+        UpdateState();
     }
 
     public void HandleGameStateChanged(object o, GameEventArgs e)
     {
+        if (game == null)
+        {
+            text.text = "";
+            return;
+        }
+
         if (game.GameOver())
         {
             if (game.Winner != null)
@@ -49,6 +61,7 @@ public class StatusText : MonoBehaviour
             text.text = "Tie game";
             return;
         }
+
         text.text = game.ActivePlayer().Name + "'s turn";
     }
 }
