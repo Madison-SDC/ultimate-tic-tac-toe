@@ -212,6 +212,7 @@ public class GlobalGame : Game
             if (nextMove != null)
             {
                 Preview(null); // undo human's preview and be done
+                CanUndo = false; // cannot undo through whole game
                 return;
             }
             UndoLastMove(sim); // undo last move
@@ -221,6 +222,7 @@ public class GlobalGame : Game
             }
             // now it's a human's turn
         }
+        CanUndo = false; // cannot undo through the whole game
     }
 
     public void UndoLastMove(bool sim)
