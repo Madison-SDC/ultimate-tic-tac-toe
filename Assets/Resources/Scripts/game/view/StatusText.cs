@@ -6,7 +6,6 @@ using UnityEngine.UI;
 /// </summary>
 public class StatusText : MonoBehaviour
 {
-    Text text;
     GlobalGame game;
 
     public GlobalGame Game
@@ -37,14 +36,14 @@ public class StatusText : MonoBehaviour
         HandleGameStateChanged(game, null);
     }
 
-    private void Start()
+    private void Awake()
     {
-        text = GetComponent<Text>();
         UpdateState();
     }
 
     public void HandleGameStateChanged(object o, GameEventArgs e)
     {
+        Text text = GetComponent<Text>();
         if (game == null)
         {
             text.text = "";
