@@ -11,6 +11,15 @@ Planned features include:
 
 Changelog:
 
+UT_0.8.2 (Bugfix patch, 2017-07-07)
+	Can no longer undo throughout the whole game, only once
+		Undo removes preview move or last confirmed move
+
+	Bugfixes
+		Fix undo glitch with Monte Carlo AI (MCTS AI)
+			Now possible to undo once in a row on games with MCTS AI
+		Fix reset glitch with MCTS AI
+
 UT_0.8.1 (Status patch, 2017-06-30)
 	All platforms (for newer versions, "All platforms" will be implied)
 		Centered Player panes on Settings scene
