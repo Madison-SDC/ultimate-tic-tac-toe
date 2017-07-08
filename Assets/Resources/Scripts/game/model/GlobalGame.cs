@@ -16,7 +16,7 @@ public class GlobalGame : Game
     Player p1, p2;
     bool p1Turn;
     LocalGame activeGame;
-    bool canConfirm, canUndo, canRedo;
+    bool canConfirm, canUndo, canRedo, canReset;
     List<Spot> availableSpots;
     bool hasNextMove;
 
@@ -63,6 +63,15 @@ public class GlobalGame : Game
                 canRedo && !(ActivePlayer() is AI)));
         }
     }
+    private bool CanReset
+    {
+        get { return canReset; }
+        set
+        {
+            canReset = value;
+            RaiseCanResetChanged(new BoolEventArgs(canReset));
+        }
+    }
 
     public List<Spot> AvailableSpots
     {
@@ -93,6 +102,7 @@ public class GlobalGame : Game
         canConfirm = false;
         canUndo = false;
         canRedo = false;
+        canReset = false;
         availableSpots = new List<Spot>();
         hasNextMove = false;
 
@@ -126,6 +136,12 @@ public class GlobalGame : Game
     protected virtual void RaiseCanRedoChanged(BoolEventArgs e)
     {
         if (CanRedoChanged != null) { CanRedoChanged(this, e); }
+    }
+
+    public event EventHandler<BoolEventArgs> CanResetChanged;
+    protected virtual void RaiseCanResetChanged(BoolEventArgs e)
+    {
+        if(CanResetChanged != null) { CanResetChanged(this, e); }
     }
 
     public event EventHandler<GameEventArgs> TurnChanged;
@@ -213,6 +229,7 @@ public class GlobalGame : Game
             {
                 Preview(null); // undo human's preview and be done
                 CanUndo = false; // cannot undo through whole game
+                CanReset = history.Count > 0;
                 return;
             }
             UndoLastMove(sim); // undo last move
@@ -223,6 +240,7 @@ public class GlobalGame : Game
             // now it's a human's turn
         }
         CanUndo = false; // cannot undo through the whole game
+        CanReset = history.Count > 0;
     }
 
     public void UndoLastMove(bool sim)
@@ -272,6 +290,7 @@ public class GlobalGame : Game
         spot.Enabled = false;
         history.Push(new Move(activeGame, spot));
         CanUndo = true;
+        CanReset = true;
         future = redo ? future : new Stack<Move>();
         CanRedo = redo;
         SetActiveGame(GetGame(spot));

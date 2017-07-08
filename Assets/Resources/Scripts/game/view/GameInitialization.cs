@@ -128,7 +128,7 @@ class GameInitialization : MonoBehaviour
             if (resetButton != null)
             {
                 ButtonView resetView = resetButton.GetComponent<ButtonView>();
-                globalGame.CanUndoChanged += resetView.OnValueChanged;
+                globalGame.CanResetChanged += resetView.OnValueChanged;
                 resetView.OnValueChanged(globalGame, new BoolEventArgs(false));
             }
         }
