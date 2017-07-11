@@ -28,6 +28,8 @@ public class GameController : MonoBehaviour
 
     public void Reset()
     {
+        confirmTimer = confirmTime;
+        previewTimer = previewTime;
         GetComponent<GameInitialization>().ResetGame();
     }
 
