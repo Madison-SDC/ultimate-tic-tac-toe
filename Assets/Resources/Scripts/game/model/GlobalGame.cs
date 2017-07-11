@@ -202,7 +202,8 @@ public class GlobalGame : Game
         
         hasNextMove = nextMove != null;
         CanConfirm = hasNextMove;
-        CanUndo = hasNextMove || history.Count != 0;
+        CanUndo = !(ActivePlayer() is AI) // can't undo on AI turn
+            && (hasNextMove || history.Count != 0); // something to undo
         CanRedo = !hasNextMove && future.Count != 0;
     }
 
@@ -289,11 +290,11 @@ public class GlobalGame : Game
         spot.Owner = ActivePlayer();
         spot.Enabled = false;
         history.Push(new Move(activeGame, spot));
-        CanUndo = true;
         CanReset = true;
         future = redo ? future : new Stack<Move>();
         CanRedo = redo;
         SetActiveGame(GetGame(spot));
+        CanUndo = !(ActivePlayer() is AI);
         p1Turn = !p1Turn;
         if (!simulation)
         {
