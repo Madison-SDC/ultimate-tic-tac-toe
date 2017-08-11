@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class InstructionController : GameController
 {
@@ -27,7 +28,7 @@ public class InstructionController : GameController
     /// </summary>
     public void Next()
     {
-        if(instructionIndex == instructions.Length - 1)
+        if (instructionIndex == instructions.Length - 1)
         {
             return; // cannot go next if there is no next instruction
         }
@@ -51,7 +52,7 @@ public class InstructionController : GameController
     void DisableAllButtons()
     {
         Button[] buttons = GetComponentsInChildren<Button>();
-        foreach(Button button in buttons)
+        foreach (Button button in buttons)
         {
             button.enabled = false;
         }
@@ -66,14 +67,23 @@ public class InstructionController : GameController
             PreviewAll,
             delegate () { },
             delegate () { },
-            delegate () { },
+            delegate () { previewTime = 0.111f; },
             delegate () { }
         );
 
         instructions[1] = new Instruction(
             "...on nine local games.",
             PreviewRelative,
+            delegate () { previewTime = 0.333f; },
             delegate () { },
+            delegate () { },
+            delegate () { }
+        );
+
+        instructions[2] = new Instruction(
+            "Players take turns playing on any open spot in the global game",
+            PlayRandom,
+            delegate () { Game.Preview(null); },
             delegate () { },
             delegate () { },
             delegate () { }
@@ -99,7 +109,7 @@ public class InstructionController : GameController
 
         Game.Preview(boardRow, boardCol, spotRow, spotCol);
 
-        if(previewTimer <= 0)
+        if (previewTimer <= 0)
         {
             index++;
             previewTimer = previewTime;
@@ -123,7 +133,7 @@ public class InstructionController : GameController
         col = index % 3;
         Game.Preview(row, col, row, col);
 
-        if(previewTimer <= 0)
+        if (previewTimer <= 0)
         {
             index++;
             previewTimer = previewTime;
@@ -131,6 +141,41 @@ public class InstructionController : GameController
         else
         {
             previewTimer -= Time.deltaTime;
+        }
+    }
+
+    /// <summary>
+    /// Preview and play a random spot, 
+    /// just as though two random AIs were playing
+    /// </summary>
+    void PlayRandom()
+    {
+        if (Game.HasNextMove)
+        {
+            if (confirmTimer <= 0)
+            {
+                Game.Confirm();
+                confirmTimer = confirmTime;
+            }
+            else
+            {
+                confirmTimer -= Time.deltaTime;
+            }
+        }
+        else
+        {
+            if (previewTimer <= 0)
+            {
+                // preview random spot
+                List<Spot> spots = Game.AvailableSpots;
+                Game.Preview(spots[Random.Range(0, spots.Count)]);
+
+                previewTimer = previewTime;
+            }
+            else
+            {
+                previewTimer -= Time.deltaTime;
+            }
         }
     }
 }
