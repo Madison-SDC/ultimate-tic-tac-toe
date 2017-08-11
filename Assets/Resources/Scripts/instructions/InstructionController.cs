@@ -8,15 +8,43 @@ public class InstructionController : GameController
     Instruction currentInstruction;
     Text infoText;
     int index; // for miscellaneous cycles
+    Slider slider;
 
     private void Start()
     {
         DisableAllButtons();
         InitializeInstructions();
-        instructionIndex = 0;
-        currentInstruction = instructions[instructionIndex];
+
         infoText = GameObject.Find("Info Text").GetComponent<Text>();
+
+        instructionIndex = -1;
+        slider = GameObject.Find("Progress Slider").GetComponent<Slider>();
+        Next();
+    }
+
+    /// <summary>
+    /// Advance into the next instruction
+    /// </summary>
+    public void Next()
+    {
+        if(instructionIndex == instructions.Length - 1)
+        {
+            return; // cannot go next if there is no next instruction
+        }
+
+        if (currentInstruction != null)
+        {
+            currentInstruction.AdvanceOut();
+        }
+        instructionIndex++;
+        slider.value = instructionIndex;
+
+        currentInstruction = instructions[instructionIndex];
+        currentInstruction.AdvanceIn();
         infoText.text = currentInstruction.Info;
+
+        previewTimer = previewTime;
+        confirmTimer = confirmTime;
     }
 
     void DisableAllButtons()
@@ -33,18 +61,18 @@ public class InstructionController : GameController
         instructions = new Instruction[12];
 
         instructions[0] = new Instruction(
-            "Ultimate Tic-Tac-Toe is a game with 81 spots",
-            PreviewRandom,
+            "Ultimate Tic-Tac-Toe is a game with 81 spots...",
+            PreviewAll,
             delegate () { },
-            delegate () { },
+            delegate () { }, // advance out
             delegate () { },
             delegate () { }
         );
 
         instructions[1] = new Instruction(
-            "On nine local boards",
+            "...on nine local games.",
             PreviewRelative,
-            delegate () { },
+            delegate () { index = 0; }, // advance in
             delegate () { },
             delegate () { },
             delegate () { }
@@ -57,20 +85,22 @@ public class InstructionController : GameController
     }
 
     /// <summary>
-    /// Change game to preview a random spot based on previewTime
-    /// Or decrement timer
-    /// To be called continuously as an instruction action
+    /// Preview a spot based on the current index
+    /// Cycle through each spot in order, top to bottom, left to right
     /// </summary>
-    void PreviewRandom()
+    void PreviewAll()
     {
+        index %= 81;
+        int boardRow = index / 27;
+        int boardCol = (index / 9) % 3;
+        int spotRow = (index / 3) % 3;
+        int spotCol = index % 3;
+
+        Game.Preview(boardRow, boardCol, spotRow, spotCol);
+
         if(previewTimer <= 0)
         {
-            Game.Preview(
-                Random.Range(0, 3),
-                Random.Range(0, 3),
-                Random.Range(0, 3),
-                Random.Range(0, 3)
-            );
+            index++;
             previewTimer = previewTime;
         }
         else
