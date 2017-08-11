@@ -168,7 +168,10 @@ public class InstructionController : GameController
             {
                 // preview random spot
                 List<Spot> spots = Game.AvailableSpots;
-                Game.Preview(spots[Random.Range(0, spots.Count)]);
+                if (spots.Count > 0)
+                {
+                    Game.Preview(spots[Random.Range(0, spots.Count)]);
+                }
 
                 previewTimer = previewTime;
             }
