@@ -4,16 +4,17 @@ using UnityEngine.UI;
 public class InstructionController : GameController
 {
     Instruction[] instructions;
-    int index;
+    int instructionIndex;
     Instruction currentInstruction;
     Text infoText;
+    int index; // for miscellaneous cycles
 
     private void Start()
     {
         DisableAllButtons();
         InitializeInstructions();
-        index = 0;
-        currentInstruction = instructions[index];
+        instructionIndex = 0;
+        currentInstruction = instructions[instructionIndex];
         infoText = GameObject.Find("Info Text").GetComponent<Text>();
         infoText.text = currentInstruction.Info;
     }
@@ -41,6 +42,15 @@ public class InstructionController : GameController
             delegate () { }
         );
 
+        instructions[1] = new Instruction(
+            Game,
+            "On nine local boards",
+            PreviewCycle,
+            delegate () { },
+            delegate () { },
+            delegate () { },
+            delegate () { }
+        );
     }
 
     private void Update()
@@ -63,6 +73,30 @@ public class InstructionController : GameController
                 Random.Range(0, 3),
                 Random.Range(0, 3)
             );
+            previewTimer = previewTime;
+        }
+        else
+        {
+            previewTimer -= Time.deltaTime;
+        }
+    }
+
+    /// <summary>
+    /// Preview each relative spot of each board in order
+    /// Top-left spot of top-left board, top-mid spot of top-mid board, etc.
+    /// To be called as instruction action
+    /// </summary>
+    void PreviewCycle()
+    {
+        index %= 9;
+        int row, col;
+        row = index / 3;
+        col = index % 3;
+        Game.Preview(row, col, row, col);
+
+        if(previewTimer <= 0)
+        {
+            index++;
             previewTimer = previewTime;
         }
         else
