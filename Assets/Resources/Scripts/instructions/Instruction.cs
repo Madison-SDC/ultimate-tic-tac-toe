@@ -44,9 +44,4 @@
         this.backIn = backIn;
         this.backOut = backOut;
     }
-
-    public static void PreviewRandom()
-    {
-        time = 0.5f;
-    }
 }
