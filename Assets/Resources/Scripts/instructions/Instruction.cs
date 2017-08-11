@@ -8,7 +8,6 @@
     string info;
     Action act, advanceIn, advanceOut, backIn, backOut;
     float time, timer;
-    GlobalGame game;
 
     public string Info { get { return info; } }
     public Action Act { get { return act; } }
@@ -27,7 +26,6 @@
     /// <param name="backIn"></param>
     /// <param name="backOut"></param>
     public Instruction(
-        GlobalGame game,
         string info, 
         Action action, 
         Action advanceIn, 
@@ -36,7 +34,6 @@
         Action backOut
     )
     {
-        this.game = game;
         this.info = info;
         act = action;
         this.advanceIn = advanceIn;
