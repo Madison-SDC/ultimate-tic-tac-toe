@@ -45,7 +45,7 @@ public class InstructionController : GameController
         instructions[1] = new Instruction(
             Game,
             "On nine local boards",
-            PreviewCycle,
+            PreviewRelative,
             delegate () { },
             delegate () { },
             delegate () { },
@@ -86,7 +86,7 @@ public class InstructionController : GameController
     /// Top-left spot of top-left board, top-mid spot of top-mid board, etc.
     /// To be called as instruction action
     /// </summary>
-    void PreviewCycle()
+    void PreviewRelative()
     {
         index %= 9;
         int row, col;
