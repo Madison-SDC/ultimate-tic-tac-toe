@@ -33,7 +33,6 @@ public class InstructionController : GameController
         instructions = new Instruction[12];
 
         instructions[0] = new Instruction(
-            Game,
             "Ultimate Tic-Tac-Toe is a game with 81 spots",
             PreviewRandom,
             delegate () { },
@@ -43,7 +42,6 @@ public class InstructionController : GameController
         );
 
         instructions[1] = new Instruction(
-            Game,
             "On nine local boards",
             PreviewRelative,
             delegate () { },
