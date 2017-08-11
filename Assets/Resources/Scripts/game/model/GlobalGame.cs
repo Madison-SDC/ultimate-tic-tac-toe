@@ -181,6 +181,13 @@ public class GlobalGame : Game
         else { availableSpots.Remove(spot); }
     }
 
+    public void Preview(int localRow, int localCol, int spotRow, int spotCol)
+    {
+        Preview(Get(new Location(localRow, localCol)) // local game
+            .Get(new Location(spotRow, spotCol)) // 
+        );
+    }
+
     public void Preview(Spot spot)
     {
 
