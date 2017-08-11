@@ -43,6 +43,7 @@ public class InstructionController : GameController
         currentInstruction.AdvanceIn();
         infoText.text = currentInstruction.Info;
 
+        index = 0;
         previewTimer = previewTime;
         confirmTimer = confirmTime;
     }
@@ -64,7 +65,7 @@ public class InstructionController : GameController
             "Ultimate Tic-Tac-Toe is a game with 81 spots...",
             PreviewAll,
             delegate () { },
-            delegate () { }, // advance out
+            delegate () { },
             delegate () { },
             delegate () { }
         );
@@ -72,7 +73,7 @@ public class InstructionController : GameController
         instructions[1] = new Instruction(
             "...on nine local games.",
             PreviewRelative,
-            delegate () { index = 0; }, // advance in
+            delegate () { },
             delegate () { },
             delegate () { },
             delegate () { }
