@@ -141,13 +141,13 @@ public class GlobalGame : Game
     public event EventHandler<BoolEventArgs> CanResetChanged;
     protected virtual void RaiseCanResetChanged(BoolEventArgs e)
     {
-        if(CanResetChanged != null) { CanResetChanged(this, e); }
+        if (CanResetChanged != null) { CanResetChanged(this, e); }
     }
 
     public event EventHandler<GameEventArgs> TurnChanged;
     protected virtual void RaiseTurnChanged(GameEventArgs e)
     {
-        if(TurnChanged != null) { TurnChanged(this, e); }
+        if (TurnChanged != null) { TurnChanged(this, e); }
     }
 
     void PopulateOwnerArray(LocalGame[,] localGames)
@@ -206,7 +206,7 @@ public class GlobalGame : Game
             spot.Owner = ActivePlayer(); // add a mark to this spot
             Outline(GetGame(spot));
         }
-        
+
         hasNextMove = nextMove != null;
         CanConfirm = hasNextMove;
         CanUndo = !(ActivePlayer() is AI) // can't undo on AI turn
@@ -222,7 +222,7 @@ public class GlobalGame : Game
         Play(spot);
     }
 
-    public void Undo(bool sim=false)
+    public void Undo(bool sim = false)
     {
         if (!CanUndo) { return; }
 
@@ -280,6 +280,21 @@ public class GlobalGame : Game
         RaiseTurnChanged(null);
     }
 
+    public void Play(
+        int localRow,
+        int localCol,
+        int spotRow,
+        int spotCol,
+        bool redo = false,
+        bool simulation = false)
+    {
+        Play(
+            new Location(localRow, localCol),
+            new Location(spotRow, spotCol),
+            redo,
+            simulation);
+    }
+
     public void Play(Spot spot, bool redo = false, bool simulation = false)
     {
         Play(spot.LocalGame.Loc, spot.Loc, redo, simulation);
@@ -290,7 +305,11 @@ public class GlobalGame : Game
     /// </summary>
     /// <param name="spot"></param>
     /// <param name="redo">Whether this move is a redo</param>
-    void Play(Location localGameLoc, Location spotLoc, bool redo = false, bool simulation = false)
+    void Play(
+        Location localGameLoc,
+        Location spotLoc,
+        bool redo = false,
+        bool simulation = false)
     {
         Spot spot = Get(localGameLoc).Get(spotLoc);
 
@@ -374,7 +393,7 @@ public class GlobalGame : Game
     List<LocalGame> ActiveGames(LocalGame localGame)
     {
         List<LocalGame> activeGames = new List<LocalGame>();
-        
+
         if (GameOver())
         {
             // no active games if the global game is over
@@ -408,12 +427,12 @@ public class GlobalGame : Game
     /// <param name="nextActiveGame"></param>
     void Outline(LocalGame nextActiveGame, bool remove = false)
     {
-        List<LocalGame> outlinedGames = base.GameOver()? 
+        List<LocalGame> outlinedGames = base.GameOver() ?
             new List<LocalGame>() : ActiveGames(nextActiveGame);
 
         foreach (LocalGame game in localGames)
         {
-            Color color = !remove && outlinedGames.Contains(game) ? 
+            Color color = !remove && outlinedGames.Contains(game) ?
                 OtherPlayer().Color : Color.clear;
             SetOutlined(game, color);
         }

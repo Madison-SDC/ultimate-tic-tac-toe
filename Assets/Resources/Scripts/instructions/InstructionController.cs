@@ -20,6 +20,7 @@ public class InstructionController : GameController
 
         instructionIndex = -1;
         slider = GameObject.Find("Progress Slider").GetComponent<Slider>();
+        index = 0;
         Next();
     }
 
@@ -43,8 +44,7 @@ public class InstructionController : GameController
         currentInstruction = instructions[instructionIndex];
         currentInstruction.AdvanceIn();
         infoText.text = currentInstruction.Info;
-
-        index = 0;
+        
         previewTimer = previewTime;
         confirmTimer = confirmTime;
     }
@@ -67,32 +67,58 @@ public class InstructionController : GameController
             PreviewAll,
             delegate () { },
             delegate () { },
-            delegate () { previewTime = 0.111f; },
+            delegate () { previewTime = 0.2f; },
             delegate () { }
         );
 
         instructions[1] = new Instruction(
             "...on nine local games.",
             PreviewRelative,
-            delegate () { previewTime = 0.333f; },
+            delegate () { previewTime = 0.5f; },
             delegate () { },
             delegate () { },
             delegate () { }
         );
 
         instructions[2] = new Instruction(
-            "Players take turns playing on any open spot in the global game",
-            PlayRandom,
+            "Playing a given spot sends the next player to the " +
+            "relative local game, outlined in that player's color...",
+            BlinkPreviewTopLeftSpots,
             delegate () { Game.Preview(null); },
             delegate () { },
             delegate () { },
             delegate () { }
+            );
+
+        instructions[3] = new Instruction(
+            "...For example, Player X playing in the top-left spot of " +
+            "any local game sends Player O to the top-left local game",
+            BlinkPreviewTopLeftSpots,
+            delegate () { },
+            delegate () { Game.Play(1, 1, 0, 0); },
+            delegate () { },
+            delegate () { }
         );
+
+        instructions[4] = new Instruction(
+            "Now O must play in the top-left local game, " +
+            "sending X to a new game",
+            PreviewTopLeftSpots,
+            delegate () { },
+            delegate () { },
+            delegate () { },
+            delegate () { }
+        );
+
+
     }
 
     private void Update()
     {
-        currentInstruction.Act();
+        if (currentInstruction != null)
+        {
+            currentInstruction.Act();
+        }
     }
 
     /// <summary>
@@ -109,15 +135,7 @@ public class InstructionController : GameController
 
         Game.Preview(boardRow, boardCol, spotRow, spotCol);
 
-        if (previewTimer <= 0)
-        {
-            index++;
-            previewTimer += previewTime;
-        }
-        else
-        {
-            previewTimer -= Time.deltaTime;
-        }
+        IncrementIndex();
     }
 
     /// <summary>
@@ -128,20 +146,11 @@ public class InstructionController : GameController
     void PreviewRelative()
     {
         index %= 9;
-        int row, col;
-        row = index / 3;
-        col = index % 3;
+        int row = index / 3;
+        int col = index % 3;
         Game.Preview(row, col, row, col);
 
-        if (previewTimer <= 0)
-        {
-            index++;
-            previewTimer += previewTime;
-        }
-        else
-        {
-            previewTimer -= Time.deltaTime;
-        }
+        IncrementIndex();
     }
 
     /// <summary>
@@ -183,6 +192,50 @@ public class InstructionController : GameController
             {
                 previewTimer -= Time.deltaTime;
             }
+        }
+    }
+
+    /// <summary>
+    /// Preview top left spot of each board
+    /// </summary>
+    void BlinkPreviewTopLeftSpots()
+    {
+        index %= 18;
+
+        if (index % 2 == 1)
+        {
+            Game.Preview(null); // preview nothing
+        }
+        else
+        {
+            int row = index / 6;
+            int col = (index / 2) % 3;
+            Game.Preview(row, col, 0, 0); // preview top-left of each board
+        }
+
+        IncrementIndex();
+    }
+
+    void PreviewTopLeftSpots()
+    {
+        index %= 9;
+        int row = index / 3;
+        int col = index % 3;
+        Game.Preview(0, 0, row, col);
+
+        IncrementIndex();
+    }
+
+    void IncrementIndex()
+    {
+        if (previewTimer <= 0)
+        {
+            index++;
+            previewTimer += previewTime;
+        }
+        else
+        {
+            previewTimer -= Time.deltaTime;
         }
     }
 }
