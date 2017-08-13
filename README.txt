@@ -1,4 +1,4 @@
-I've made Ultimate Tic-Tac-Toe! Play the unique strategy game with friends or an AI on one device! Easily reset the entire board, preview your next move, undo the most recent move, and redo any recent moves just in case you made a mistake! Accidentally reset the entire board? Just hit redo a whole bundle of times!
+I've made Ultimate Tic-Tac-Toe! Play the unique strategy game against friends or any of several AIs on one device! Easily reset the entire board, preview your next move, or undo the most recent move for a smooth gameplay experience!
 
 
 Planned features include:
@@ -10,6 +10,11 @@ Planned features include:
 
 
 Changelog:
+
+UT_0.9 (Instructions update, 2017-08-??)
+	Added "Instructions" scene
+		Walkthrough game mechanics and rules
+		Learn how to play and learn win conditions
 
 UT_0.8.2 (Bugfix patch, 2017-07-07)
 	Can no longer undo throughout the whole game, only once
