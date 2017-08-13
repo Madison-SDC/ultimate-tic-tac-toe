@@ -112,7 +112,7 @@ public class InstructionController : GameController
         if (previewTimer <= 0)
         {
             index++;
-            previewTimer = previewTime;
+            previewTimer += previewTime;
         }
         else
         {
@@ -136,7 +136,7 @@ public class InstructionController : GameController
         if (previewTimer <= 0)
         {
             index++;
-            previewTimer = previewTime;
+            previewTimer += previewTime;
         }
         else
         {
@@ -155,7 +155,7 @@ public class InstructionController : GameController
             if (confirmTimer <= 0)
             {
                 Game.Confirm();
-                confirmTimer = confirmTime;
+                confirmTimer += confirmTime;
             }
             else
             {
@@ -172,8 +172,12 @@ public class InstructionController : GameController
                 {
                     Game.Preview(spots[Random.Range(0, spots.Count)]);
                 }
+                else
+                {
+                    previewTimer = float.MaxValue; // no more checks
+                }
 
-                previewTimer = previewTime;
+                previewTimer += previewTime;
             }
             else
             {
