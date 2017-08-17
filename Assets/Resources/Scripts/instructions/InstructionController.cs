@@ -5,22 +5,24 @@ using System.Collections.Generic;
 public class InstructionController : GameController
 {
     Instruction[] instructions;
-    int instructionIndex;
+    List<int[]> scriptedMoves;
+    int miscIndex, instructionIndex, moveIndex;
     Instruction currentInstruction;
     Text infoText;
-    int index; // for miscellaneous cycles
     Slider slider;
 
     private void Start()
     {
         DisableAllButtons();
+        InitializeScriptedMoves();
         InitializeInstructions();
 
         infoText = GameObject.Find("Info Text").GetComponent<Text>();
 
         instructionIndex = -1;
         slider = GameObject.Find("Progress Slider").GetComponent<Slider>();
-        index = 0;
+        miscIndex = 0;
+        moveIndex = 0;
         Next();
     }
 
@@ -44,7 +46,7 @@ public class InstructionController : GameController
         currentInstruction = instructions[instructionIndex];
         currentInstruction.AdvanceIn();
         infoText.text = currentInstruction.Info;
-        
+
         previewTimer = previewTime;
         confirmTimer = confirmTime;
     }
@@ -56,6 +58,35 @@ public class InstructionController : GameController
         {
             button.enabled = false;
         }
+    }
+
+    void InitializeScriptedMoves()
+    {
+        scriptedMoves = new List<int[]>();
+        scriptedMoves.Add(new int[] { 0, 1 });
+        scriptedMoves.Add(new int[] { 0, 0 });
+        scriptedMoves.Add(new int[] { 1, 1 });
+        scriptedMoves.Add(new int[] { 1, 0 });
+        scriptedMoves.Add(new int[] { 0, 0 });
+        scriptedMoves.Add(new int[] { 2, 1 });
+        scriptedMoves.Add(new int[] { 0, 0 });
+        scriptedMoves.Add(new int[] { 1, 0 });
+        scriptedMoves.Add(new int[] { 1, 0 });
+        scriptedMoves.Add(new int[] { 2, 0 });
+        scriptedMoves.Add(new int[] { 0, 0 });
+        scriptedMoves.Add(new int[] { 0, 2 });
+        scriptedMoves.Add(new int[] { 0, 0 });
+        scriptedMoves.Add(new int[] { 0, 0 });
+        scriptedMoves.Add(new int[] { 2, 0 });
+        scriptedMoves.Add(new int[] { 0, 0 });
+        scriptedMoves.Add(new int[] { 1, 2 });
+        scriptedMoves.Add(new int[] { 0, 0 });
+        scriptedMoves.Add(new int[] { 2, 2 });
+        scriptedMoves.Add(new int[] { 2, 2 });
+        scriptedMoves.Add(new int[] { 1, 1 });
+        scriptedMoves.Add(new int[] { 2, 0 });
+        scriptedMoves.Add(new int[] { 2, 2 });
+        scriptedMoves.Add(new int[] { 0, 0 });
     }
 
     void InitializeInstructions()
@@ -91,8 +122,8 @@ public class InstructionController : GameController
             );
 
         instructions[3] = new Instruction(
-            "...For example, Player X playing in the top-left spot of " +
-            "any local game sends Player O to the top-left local game",
+            "For example, X playing in the top-left spot of " +
+            "any local game sends O to the top-left local game.",
             BlinkPreviewTopLeftSpots,
             delegate () { },
             delegate () { Game.Play(1, 1, 0, 0); },
@@ -110,7 +141,14 @@ public class InstructionController : GameController
             delegate () { }
         );
 
-
+        instructions[5] = new Instruction(
+            "Players take turns playing on any open spot.",
+            PlayScriptedMoveOrRandom,
+            delegate () { Game.Preview(null); },
+            delegate () { },
+            delegate () { },
+            delegate () { }
+        );
     }
 
     private void Update()
@@ -127,11 +165,11 @@ public class InstructionController : GameController
     /// </summary>
     void PreviewAll()
     {
-        index %= 81;
-        int boardRow = index / 27;
-        int boardCol = (index / 9) % 3;
-        int spotRow = (index / 3) % 3;
-        int spotCol = index % 3;
+        miscIndex %= 81;
+        int boardRow = miscIndex / 27;
+        int boardCol = (miscIndex / 9) % 3;
+        int spotRow = (miscIndex / 3) % 3;
+        int spotCol = miscIndex % 3;
 
         Game.Preview(boardRow, boardCol, spotRow, spotCol);
 
@@ -145,9 +183,9 @@ public class InstructionController : GameController
     /// </summary>
     void PreviewRelative()
     {
-        index %= 9;
-        int row = index / 3;
-        int col = index % 3;
+        miscIndex %= 9;
+        int row = miscIndex / 3;
+        int col = miscIndex % 3;
         Game.Preview(row, col, row, col);
 
         IncrementIndex();
@@ -157,7 +195,7 @@ public class InstructionController : GameController
     /// Preview and play a random spot, 
     /// just as though two random AIs were playing
     /// </summary>
-    void PlayRandom()
+    void PlayScriptedMoveOrRandom()
     {
         if (Game.HasNextMove)
         {
@@ -175,17 +213,18 @@ public class InstructionController : GameController
         {
             if (previewTimer <= 0)
             {
-                // preview random spot
-                List<Spot> spots = Game.AvailableSpots;
-                if (spots.Count > 0)
+                // preview next scripted move and increment
+                if(0 > moveIndex || moveIndex >= scriptedMoves.Count)
                 {
-                    Game.Preview(spots[Random.Range(0, spots.Count)]);
+                    // play random
                 }
                 else
                 {
-                    previewTimer = float.MaxValue; // no more checks
+                    int[] move = scriptedMoves[moveIndex];
+                    Location loc = Game.ActiveGame.Loc;
+                    Game.Preview(loc.Row, loc.Col, move[0], move[1]);
+                    moveIndex++;
                 }
-
                 previewTimer += previewTime;
             }
             else
@@ -200,16 +239,16 @@ public class InstructionController : GameController
     /// </summary>
     void BlinkPreviewTopLeftSpots()
     {
-        index %= 18;
+        miscIndex %= 18;
 
-        if (index % 2 == 1)
+        if (miscIndex % 2 == 1)
         {
-            Game.Preview(null); // preview nothing
+            Game.Preview(null); // preview nothing to show disappearing outline
         }
         else
         {
-            int row = index / 6;
-            int col = (index / 2) % 3;
+            int row = miscIndex / 6;
+            int col = (miscIndex / 2) % 3;
             Game.Preview(row, col, 0, 0); // preview top-left of each board
         }
 
@@ -218,9 +257,9 @@ public class InstructionController : GameController
 
     void PreviewTopLeftSpots()
     {
-        index %= 9;
-        int row = index / 3;
-        int col = index % 3;
+        miscIndex %= 9;
+        int row = miscIndex / 3;
+        int col = miscIndex % 3;
         Game.Preview(0, 0, row, col);
 
         IncrementIndex();
@@ -230,7 +269,7 @@ public class InstructionController : GameController
     {
         if (previewTimer <= 0)
         {
-            index++;
+            miscIndex++;
             previewTimer += previewTime;
         }
         else
