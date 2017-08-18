@@ -152,7 +152,7 @@ public class InstructionController : GameController
             "Players take turns playing on any open spot.",
             PlayToMilestone,
             delegate () { Game.Preview(null); },
-            delegate () { },
+            NextMilestone,
             delegate () { },
             delegate () { }
         );
@@ -160,9 +160,9 @@ public class InstructionController : GameController
         instructions[6] = new Instruction(
             "Local games are completed with three in a row or a tie, " +
             "just like tic-tac-toe",
+            PlayToMilestone,
             delegate () { },
-            delegate () { },
-            delegate () { },
+            NextMilestone,
             delegate () { },
             delegate () { }
         );
@@ -170,9 +170,9 @@ public class InstructionController : GameController
         instructions[7] = new Instruction(
             "Trying to send a player to a completed board instead " +
             "opens all incomplete boards",
+            PlayToMilestone,
             delegate () { },
-            delegate () { },
-            delegate () { },
+            NextMilestone,
             delegate () { },
             delegate () { }
         );
@@ -257,6 +257,26 @@ public class InstructionController : GameController
                 previewTimer -= Time.deltaTime;
             }
         }
+    }
+
+    /// <summary>
+    /// Instantly advance game state to next milestone and increment milestone index
+    /// </summary>
+    void NextMilestone()
+    {
+        if(milestoneIndex < 0 || milestoneIndex >= milestones.Length)
+        {
+            return; // can't go to the next milestone if there isn't one
+        }
+
+        while(moveIndex <= milestones[milestoneIndex])
+        {
+            int[] move = scriptedMoves[moveIndex];
+            Location loc = Game.ActiveGame.Loc;
+            Game.Play(loc.Row, loc.Col, move[0], move[1]);
+            moveIndex++;
+        }
+        milestoneIndex++;
     }
 
     /// <summary>
