@@ -6,7 +6,8 @@ public class InstructionController : GameController
 {
     Instruction[] instructions;
     List<int[]> scriptedMoves;
-    int miscIndex, instructionIndex, moveIndex;
+    int[] milestones;
+    int miscIndex, instructionIndex, moveIndex, milestoneIndex;
     Instruction currentInstruction;
     Text infoText;
     Slider slider;
@@ -18,11 +19,11 @@ public class InstructionController : GameController
         InitializeInstructions();
 
         infoText = GameObject.Find("Info Text").GetComponent<Text>();
+        slider = GameObject.Find("Progress Slider").GetComponent<Slider>();
 
         instructionIndex = -1;
-        slider = GameObject.Find("Progress Slider").GetComponent<Slider>();
         miscIndex = 0;
-        moveIndex = 0;
+
         Next();
     }
 
@@ -63,30 +64,36 @@ public class InstructionController : GameController
     void InitializeScriptedMoves()
     {
         scriptedMoves = new List<int[]>();
+        // X plays 1 1 0 0 for first move
         scriptedMoves.Add(new int[] { 0, 1 });
         scriptedMoves.Add(new int[] { 0, 0 });
         scriptedMoves.Add(new int[] { 1, 1 });
-        scriptedMoves.Add(new int[] { 1, 0 });
+        scriptedMoves.Add(new int[] { 1, 0 }); // X two in a row C
         scriptedMoves.Add(new int[] { 0, 0 });
-        scriptedMoves.Add(new int[] { 2, 1 });
+        scriptedMoves.Add(new int[] { 2, 1 }); // X blocks TL
         scriptedMoves.Add(new int[] { 0, 0 });
         scriptedMoves.Add(new int[] { 1, 0 });
-        scriptedMoves.Add(new int[] { 1, 0 });
-        scriptedMoves.Add(new int[] { 2, 0 });
+        scriptedMoves.Add(new int[] { 1, 0 }); // O two in a row ML
+        scriptedMoves.Add(new int[] { 2, 0 }); // X blocks ML
         scriptedMoves.Add(new int[] { 0, 0 });
         scriptedMoves.Add(new int[] { 0, 2 });
         scriptedMoves.Add(new int[] { 0, 0 });
-        scriptedMoves.Add(new int[] { 0, 0 });
+        scriptedMoves.Add(new int[] { 0, 0 }); // X two in a row TL
+        scriptedMoves.Add(new int[] { 2, 0 }); // O blocks TL
         scriptedMoves.Add(new int[] { 2, 0 });
-        scriptedMoves.Add(new int[] { 0, 0 });
         scriptedMoves.Add(new int[] { 1, 2 });
         scriptedMoves.Add(new int[] { 0, 0 });
         scriptedMoves.Add(new int[] { 2, 2 });
-        scriptedMoves.Add(new int[] { 2, 2 });
-        scriptedMoves.Add(new int[] { 1, 1 });
-        scriptedMoves.Add(new int[] { 2, 0 });
-        scriptedMoves.Add(new int[] { 2, 2 });
         scriptedMoves.Add(new int[] { 0, 0 });
+        scriptedMoves.Add(new int[] { 1, 2 }); // 20: O end TL in tie
+        scriptedMoves.Add(new int[] { 1, 2 });
+        scriptedMoves.Add(new int[] { 1, 1 });
+        scriptedMoves.Add(new int[] { 2, 0 }); // 23: X win center
+        scriptedMoves.Add(new int[] { 1, 1 }); // O send X to completed board
+        moveIndex = 0;
+
+        milestones = new int[] { 21, 24, 25 };
+        milestoneIndex = 0;
     }
 
     void InitializeInstructions()
@@ -143,8 +150,28 @@ public class InstructionController : GameController
 
         instructions[5] = new Instruction(
             "Players take turns playing on any open spot.",
-            PlayScriptedMoveOrRandom,
+            PlayToMilestone,
             delegate () { Game.Preview(null); },
+            delegate () { },
+            delegate () { },
+            delegate () { }
+        );
+
+        instructions[6] = new Instruction(
+            "Local games are completed with three in a row or a tie, " +
+            "just like tic-tac-toe",
+            delegate () { },
+            delegate () { },
+            delegate () { },
+            delegate () { },
+            delegate () { }
+        );
+
+        instructions[7] = new Instruction(
+            "Trying to send a player to a completed board instead " +
+            "opens all incomplete boards",
+            delegate () { },
+            delegate () { },
             delegate () { },
             delegate () { },
             delegate () { }
@@ -195,13 +222,19 @@ public class InstructionController : GameController
     /// Preview and play a random spot, 
     /// just as though two random AIs were playing
     /// </summary>
-    void PlayScriptedMoveOrRandom()
+    void PlayToMilestone()
     {
+        if (moveIndex == milestones[milestoneIndex])
+        {
+            return;
+        }
+
         if (Game.HasNextMove)
         {
             if (confirmTimer <= 0)
             {
                 Game.Confirm();
+                moveIndex++;
                 confirmTimer += confirmTime;
             }
             else
@@ -213,18 +246,10 @@ public class InstructionController : GameController
         {
             if (previewTimer <= 0)
             {
-                // preview next scripted move and increment
-                if(0 > moveIndex || moveIndex >= scriptedMoves.Count)
-                {
-                    // play random
-                }
-                else
-                {
-                    int[] move = scriptedMoves[moveIndex];
-                    Location loc = Game.ActiveGame.Loc;
-                    Game.Preview(loc.Row, loc.Col, move[0], move[1]);
-                    moveIndex++;
-                }
+                int[] move = scriptedMoves[moveIndex];
+                Location loc = Game.ActiveGame.Loc;
+                Game.Preview(loc.Row, loc.Col, move[0], move[1]);
+
                 previewTimer += previewTime;
             }
             else
