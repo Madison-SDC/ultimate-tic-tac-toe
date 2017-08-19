@@ -6,15 +6,12 @@
     public delegate void Action();
 
     string info;
-    Action act, advanceIn, advanceOut, backIn, backOut;
-    float time, timer;
+    Action act, advanceIn, backIn;
 
     public string Info { get { return info; } }
     public Action Act { get { return act; } }
     public Action AdvanceIn { get { return advanceIn; } }
-    public Action AdvanceOut { get { return advanceOut; } }
     public Action BackIn { get { return backIn; } }
-    public Action BackOut { get { return backOut; } }
 
     /// <summary>
     /// Creates a new instruction
@@ -26,19 +23,15 @@
     /// <param name="backIn"></param>
     /// <param name="backOut"></param>
     public Instruction(
-        string info, 
-        Action action, 
-        Action advanceIn, 
-        Action advanceOut, 
-        Action backIn, 
-        Action backOut
+        string info,
+        Action action,
+        Action advanceIn,
+        Action backIn
     )
     {
         this.info = info;
         act = action;
         this.advanceIn = advanceIn;
-        this.advanceOut = advanceOut;
         this.backIn = backIn;
-        this.backOut = backOut;
     }
 }

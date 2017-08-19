@@ -36,11 +36,7 @@ public class InstructionController : GameController
         {
             return; // cannot go next if there is no next instruction
         }
-
-        if (currentInstruction != null)
-        {
-            currentInstruction.AdvanceOut();
-        }
+        
         instructionIndex++;
         slider.value = instructionIndex;
 
@@ -58,11 +54,7 @@ public class InstructionController : GameController
         {
             return; // cannot go previous if there is no previous instruction
         }
-
-        if (currentInstruction != null)
-        {
-            currentInstruction.BackOut();
-        }
+        
         instructionIndex--;
         slider.value = instructionIndex;
 
@@ -125,18 +117,14 @@ public class InstructionController : GameController
         instructions[0] = new Instruction(
             "Ultimate Tic-Tac-Toe is a game with 81 spots...",
             PreviewAll,
-            delegate () { },
-            delegate () { },
             delegate () { previewTime = 0.2f; },
-            delegate () { }
+            delegate () { previewTime = 0.2f; }
         );
 
         instructions[1] = new Instruction(
             "...on nine local games.",
             PreviewRelative,
             delegate () { previewTime = 0.5f; },
-            delegate () { },
-            delegate () { },
             delegate () { }
         );
 
@@ -145,8 +133,6 @@ public class InstructionController : GameController
             "relative local game, outlined in that player's color...",
             BlinkPreviewTopLeftSpots,
             delegate () { Game.Preview(null); },
-            delegate () { },
-            delegate () { },
             delegate () { }
             );
 
@@ -155,72 +141,62 @@ public class InstructionController : GameController
             "any local game sends O to the top-left local game.",
             BlinkPreviewTopLeftSpots,
             delegate () { },
-            delegate () { Game.Play(1, 1, 0, 0); },
-            delegate () { Reset(); },
-            delegate () { }
+            delegate () { Reset(); }
         );
 
         instructions[4] = new Instruction(
             "Now O must play in the top-left local game, " +
             "sending X to a new game",
             PreviewTopLeftSpots,
-            delegate () { },
-            delegate () { },
+            delegate () 
+            {
+                Game.Preview(null);
+                Game.Play(1, 1, 0, 0);
+            },
             delegate ()
             {
                 Reset();
                 Game.Play(1, 1, 0, 0);
-            },
-            delegate () { }
+            }
         );
 
         instructions[5] = new Instruction(
             "Players take turns playing on any open spot.",
             PlayToMilestone,
-            delegate () { Game.Preview(null); },
-            NextMilestone,
-            PreviousMilestone,
-            delegate () { }
+            delegate() { Game.Preview(null); },
+            PreviousMilestone
         );
 
         instructions[6] = new Instruction(
             "Local games are completed with three in a row or a tie, " +
             "just like tic-tac-toe",
             PlayToMilestone,
-            delegate () { },
             NextMilestone,
-            PreviousMilestone,
-            delegate () { }
+            PreviousMilestone
         );
 
         instructions[7] = new Instruction(
             "Trying to send a player to a completed board instead " +
             "opens all incomplete boards",
             PlayToMilestone,
-            delegate () { },
             NextMilestone,
-            PreviousMilestone,
-            delegate () { }
+            PreviousMilestone
         );
 
         instructions[8] = new Instruction(
             "A player wins the global game by " +
             "winning three local games in a row",
             PlayToMilestone,
-            delegate () { },
             NextMilestone,
-            PreviousMilestone,
-            delegate () { }
-            );
+            PreviousMilestone
+        );
 
         instructions[9] = new Instruction(
             "Last instruction",
             PlayToMilestone,
-            delegate () { },
             NextMilestone,
-            delegate () { },
-            delegate () { }
-            );
+            PreviousMilestone
+        );
     }
 
     private void Update()
