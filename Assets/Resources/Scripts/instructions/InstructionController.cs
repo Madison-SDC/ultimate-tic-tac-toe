@@ -32,7 +32,7 @@ public class InstructionController : GameController
     /// </summary>
     public void Next()
     {
-        if (instructionIndex == instructions.Length - 1)
+        if (instructionIndex >= instructions.Length - 1)
         {
             return; // cannot go next if there is no next instruction
         }
@@ -46,6 +46,28 @@ public class InstructionController : GameController
 
         currentInstruction = instructions[instructionIndex];
         currentInstruction.AdvanceIn();
+        infoText.text = currentInstruction.Info;
+
+        previewTimer = previewTime;
+        confirmTimer = confirmTime;
+    }
+
+    public void Previous()
+    {
+        if (instructionIndex <= 0)
+        {
+            return; // cannot go previous if there is no previous instruction
+        }
+
+        if (currentInstruction != null)
+        {
+            currentInstruction.BackOut();
+        }
+        instructionIndex--;
+        slider.value = instructionIndex;
+
+        currentInstruction = instructions[instructionIndex];
+        currentInstruction.BackIn();
         infoText.text = currentInstruction.Info;
 
         previewTimer = previewTime;
@@ -176,6 +198,25 @@ public class InstructionController : GameController
             delegate () { },
             delegate () { }
         );
+
+        instructions[8] = new Instruction(
+            "A player wins the global game by " +
+            "winning three local games in a row",
+            PlayToMilestone,
+            delegate () { },
+            NextMilestone,
+            delegate () { },
+            delegate () { }
+            );
+
+        instructions[9] = new Instruction(
+            "Last instruction",
+            PlayToMilestone,
+            delegate () { },
+            NextMilestone,
+            delegate () { },
+            delegate () { }
+            );
     }
 
     private void Update()
