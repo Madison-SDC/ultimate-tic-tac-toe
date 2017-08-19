@@ -15,9 +15,6 @@ UT_0.9 (Instructions update, 2017-08-??)
 	Added "Instructions" scene
 		Walkthrough game mechanics and rules
 		Learn how to play and learn win conditions
-	
-	Bugs
-		2: On rare occasions, advancing to "Now O must play..." does not fill spot 1, 1, 0, 0
 
 UT_0.8.2 (Bugfix patch, 2017-07-07)
 	Can no longer undo throughout the whole game, only once

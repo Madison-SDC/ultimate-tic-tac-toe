@@ -36,7 +36,7 @@ public class InstructionController : GameController
         {
             return; // cannot go next if there is no next instruction
         }
-        
+
         instructionIndex++;
         slider.value = instructionIndex;
 
@@ -54,7 +54,7 @@ public class InstructionController : GameController
         {
             return; // cannot go previous if there is no previous instruction
         }
-        
+
         instructionIndex--;
         slider.value = instructionIndex;
 
@@ -148,7 +148,7 @@ public class InstructionController : GameController
             "Now O must play in the top-left local game, " +
             "sending X to a new game",
             PreviewTopLeftSpots,
-            delegate () 
+            delegate ()
             {
                 Game.Preview(null);
                 Game.Play(1, 1, 0, 0);
@@ -163,7 +163,7 @@ public class InstructionController : GameController
         instructions[5] = new Instruction(
             "Players take turns playing on any open spot.",
             PlayToMilestone,
-            delegate() { Game.Preview(null); },
+            delegate () { Game.Preview(null); },
             PreviousMilestone
         );
 
