@@ -26,7 +26,7 @@ public class GameController : MonoBehaviour
         game.Redo();
     }
 
-    public void Reset()
+    public virtual void Reset()
     {
         confirmTimer = confirmTime;
         previewTimer = previewTime;

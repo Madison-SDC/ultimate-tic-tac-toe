@@ -156,7 +156,7 @@ public class InstructionController : GameController
             BlinkPreviewTopLeftSpots,
             delegate () { },
             delegate () { Game.Play(1, 1, 0, 0); },
-            delegate () { },
+            delegate () { Reset(); },
             delegate () { }
         );
 
@@ -166,7 +166,11 @@ public class InstructionController : GameController
             PreviewTopLeftSpots,
             delegate () { },
             delegate () { },
-            delegate () { },
+            delegate ()
+            {
+                Reset();
+                Game.Play(1, 1, 0, 0);
+            },
             delegate () { }
         );
 
@@ -175,7 +179,7 @@ public class InstructionController : GameController
             PlayToMilestone,
             delegate () { Game.Preview(null); },
             NextMilestone,
-            delegate () { },
+            PreviousMilestone,
             delegate () { }
         );
 
@@ -185,7 +189,7 @@ public class InstructionController : GameController
             PlayToMilestone,
             delegate () { },
             NextMilestone,
-            delegate () { },
+            PreviousMilestone,
             delegate () { }
         );
 
@@ -195,7 +199,7 @@ public class InstructionController : GameController
             PlayToMilestone,
             delegate () { },
             NextMilestone,
-            delegate () { },
+            PreviousMilestone,
             delegate () { }
         );
 
@@ -205,7 +209,7 @@ public class InstructionController : GameController
             PlayToMilestone,
             delegate () { },
             NextMilestone,
-            delegate () { },
+            PreviousMilestone,
             delegate () { }
             );
 
@@ -265,7 +269,7 @@ public class InstructionController : GameController
     /// </summary>
     void PlayToMilestone()
     {
-        if (moveIndex == milestones[milestoneIndex])
+        if (moveIndex >= milestones[milestoneIndex])
         {
             return;
         }
@@ -288,7 +292,11 @@ public class InstructionController : GameController
             if (previewTimer <= 0)
             {
                 int[] move = scriptedMoves[moveIndex];
-                Location loc = Game.ActiveGame.Loc;
+                Location loc = new Location(1, 1);
+                if (Game.ActiveGame != null)
+                {
+                    loc = Game.ActiveGame.Loc;
+                }
                 Game.Preview(loc.Row, loc.Col, move[0], move[1]);
 
                 previewTimer += previewTime;
@@ -305,12 +313,19 @@ public class InstructionController : GameController
     /// </summary>
     void NextMilestone()
     {
-        if(milestoneIndex < 0 || milestoneIndex >= milestones.Length)
+        if (milestoneIndex < 0)
         {
-            return; // can't go to the next milestone if there isn't one
+            milestoneIndex = 0; // reset game and do nothing more
+            return;
+        }
+        else if (milestoneIndex >= milestones.Length)
+        {
+            return;
         }
 
-        while(moveIndex <= milestones[milestoneIndex])
+        Game.Preview(null);
+
+        while (moveIndex < milestones[milestoneIndex])
         {
             int[] move = scriptedMoves[moveIndex];
             Location loc = Game.ActiveGame.Loc;
@@ -318,6 +333,21 @@ public class InstructionController : GameController
             moveIndex++;
         }
         milestoneIndex++;
+    }
+
+    public override void Reset()
+    {
+        moveIndex = 0;
+        base.Reset();
+    }
+
+    void PreviousMilestone()
+    {
+        milestoneIndex -= 2; // 
+        Reset(); // cannot undo repeatedly
+        Game.Play(1, 1, 0, 0); // first move
+
+        NextMilestone();
     }
 
     /// <summary>

@@ -329,8 +329,6 @@ public class GlobalGame : Game
         }
     }
 
-
-
     /// <summary>
     /// Inform the artificial intelligences that a move has been made
     /// </summary>
