@@ -23,7 +23,6 @@ public class InstructionController : GameController
 
         instructionIndex = -1;
         miscIndex = 0;
-
         Next();
     }
 
@@ -103,16 +102,23 @@ public class InstructionController : GameController
         scriptedMoves.Add(new int[] { 1, 2 });
         scriptedMoves.Add(new int[] { 1, 1 });
         scriptedMoves.Add(new int[] { 2, 0 }); // 23: X win center
-        scriptedMoves.Add(new int[] { 1, 1 }); // O send X to completed board
+        scriptedMoves.Add(new int[] { 1, 1 }); // 24: O send X to completed board
+        scriptedMoves.Add(new int[] { 1, 0, 1, 1 });
+        scriptedMoves.Add(new int[] { 2, 0, 1, 0 });
+        scriptedMoves.Add(new int[] { 0, 2 });
+        scriptedMoves.Add(new int[] { 1, 0 });
+        scriptedMoves.Add(new int[] { 1, 2, 1, 0 });
+        scriptedMoves.Add(new int[] { 0, 2, 2, 0 });
+        scriptedMoves.Add(new int[] { 1, 2, 2, 0 }); // 31: X wins
         moveIndex = 0;
 
-        milestones = new int[] { 21, 24, 25 };
+        milestones = new int[] { 20, 23, 24, 31 };
         milestoneIndex = 0;
     }
 
     void InitializeInstructions()
     {
-        instructions = new Instruction[12];
+        instructions = new Instruction[11];
 
         instructions[0] = new Instruction(
             "Ultimate Tic-Tac-Toe is a game with 81 spots...",
@@ -163,7 +169,7 @@ public class InstructionController : GameController
         instructions[5] = new Instruction(
             "Players take turns playing on any open spot.",
             PlayToMilestone,
-            delegate () { Game.Preview(null); },
+            delegate () { Reset(); Game.Play(1, 1, 0, 0); },
             PreviousMilestone
         );
 
@@ -186,14 +192,26 @@ public class InstructionController : GameController
         instructions[8] = new Instruction(
             "X can now play in any open spot on any incomplete board",
             PreviewAllOpen,
-            delegate () { },
-            delegate () { Game.Preview(null); }
+            NextMilestone,
+            delegate ()
+            {
+                PreviousMilestone();
+                NextMilestone();
+            }
         );
 
         instructions[9] = new Instruction(
-            "That's all, enjoy!",
+            "Play continues until one player wins three boards in a row " +
+            "or all boards are completed",
+            PlayToMilestone,
+            delegate () { Game.Preview(null); },
+            PreviousMilestone
+        );
+
+        instructions[10] = new Instruction(
+            "X wins! Now try your own game!",
             delegate () { },
-            delegate () { },
+            NextMilestone,
             delegate () { }
         );
     }
@@ -254,10 +272,8 @@ public class InstructionController : GameController
     /// </summary>
     void PlayToMilestone()
     {
-        if (moveIndex >= milestones[milestoneIndex])
-        {
-            return;
-        }
+        // do not play past given milestone
+        if (moveIndex > milestones[milestoneIndex]) { return; }
 
         if (Game.HasNextMove)
         {
@@ -277,12 +293,15 @@ public class InstructionController : GameController
             if (previewTimer <= 0)
             {
                 int[] move = scriptedMoves[moveIndex];
-                Location loc = new Location(1, 1);
-                if (Game.ActiveGame != null)
+                if (CanPlayActiveGame(Game))
                 {
-                    loc = Game.ActiveGame.Loc;
+                    Location loc = Game.ActiveGame.Loc;
+                    Game.Preview(loc.Row, loc.Col, move[0], move[1]);
                 }
-                Game.Preview(loc.Row, loc.Col, move[0], move[1]);
+                else // multiple boards are open, move specifies which to play
+                {
+                    Game.Preview(move[0], move[1], move[2], move[3]);
+                }
 
                 previewTimer += previewTime;
             }
@@ -291,6 +310,19 @@ public class InstructionController : GameController
                 previewTimer -= Time.deltaTime;
             }
         }
+    }
+
+    /// <summary>
+    /// Whether the active game of the global game can be played
+    /// False if active game is null or active game is complete
+    /// True if active game exists and is not complete
+    /// </summary>
+    /// <param name="game"></param>
+    /// <returns></returns>
+    bool CanPlayActiveGame(GlobalGame game)
+    {
+        return game.ActiveGame != null
+            && !game.ActiveGame.GameOver();
     }
 
     /// <summary>
@@ -310,13 +342,23 @@ public class InstructionController : GameController
 
         Game.Preview(null);
 
-        while (moveIndex < milestones[milestoneIndex])
+        // play through next milestone
+        while (moveIndex <= milestones[milestoneIndex])
         {
             int[] move = scriptedMoves[moveIndex];
-            Location loc = Game.ActiveGame.Loc;
-            Game.Play(loc.Row, loc.Col, move[0], move[1]);
+            if (CanPlayActiveGame(Game))
+            {
+                Location loc = Game.ActiveGame.Loc;
+                Game.Play(loc.Row, loc.Col, move[0], move[1]);
+            }
+            else // multiple boards are open, move specifies which to play
+            {
+                Game.Play(move[0], move[1], move[2], move[3]);
+            }
             moveIndex++;
         }
+
+        // only increment if milestone wasn't reached before
         milestoneIndex++;
     }
 
@@ -328,11 +370,13 @@ public class InstructionController : GameController
 
     void PreviousMilestone()
     {
-        milestoneIndex -= 2; // 
+        Debug.Log(milestoneIndex + "before");
+        milestoneIndex -= 2; // go back twice
         Reset(); // cannot undo repeatedly
         Game.Play(1, 1, 0, 0); // first move
 
         NextMilestone();
+        Debug.Log(milestoneIndex + "after");
     }
 
     /// <summary>
