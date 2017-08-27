@@ -184,18 +184,17 @@ public class InstructionController : GameController
         );
 
         instructions[8] = new Instruction(
-            "A player wins the global game by " +
-            "winning three local games in a row",
-            PlayToMilestone,
-            NextMilestone,
-            PreviousMilestone
+            "X can now play in any open spot on any incomplete board",
+            PreviewAllOpen,
+            delegate () { },
+            delegate () { Game.Preview(null); }
         );
 
         instructions[9] = new Instruction(
-            "Last instruction",
-            PlayToMilestone,
-            NextMilestone,
-            PreviousMilestone
+            "That's all, enjoy!",
+            delegate () { },
+            delegate () { },
+            delegate () { }
         );
     }
 
@@ -221,6 +220,16 @@ public class InstructionController : GameController
 
         Game.Preview(boardRow, boardCol, spotRow, spotCol);
 
+        IncrementIndex();
+    }
+
+    /// <summary>
+    /// Cycle through previewing all open spots
+    /// </summary>
+    void PreviewAllOpen()
+    {
+        miscIndex %= Game.AvailableSpots.Count;
+        Game.Preview(Game.AvailableSpots[miscIndex]);
         IncrementIndex();
     }
 
