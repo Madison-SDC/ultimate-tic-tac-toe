@@ -11,7 +11,7 @@ Planned features include:
 
 Changelog:
 
-UT_0.9 (Instructions update, 2017-08-??)
+UT_0.9.0 (Instructions update, 2017-08-27)
 	Added "Instructions" scene
 		Walkthrough game mechanics and rules
 		Learn how to play and learn win conditions
@@ -33,7 +33,7 @@ UT_0.8.1 (Status patch, 2017-06-30)
 			Display whose turn it is (using player names)
 			Display winner or tie when game is over
 
-UT_0.8 (Embrace the overhaul update, 2017-06-21)
+UT_0.8.0 (Embrace the overhaul update, 2017-06-21)
 	All platforms
 		Completely rewrite architecture
 			Now built on an MVC model with event support
@@ -54,7 +54,7 @@ UT_0.8 (Embrace the overhaul update, 2017-06-21)
 	Known bugs:
 		Undo/redo/reset with Monte Carlo AI does not work
 
-UT_0.7 (Gameplay update, 2017-05-06)
+UT_0.7.0 (Gameplay update, 2017-05-06)
 	All platforms
 		Rule change
 			If a local game is over, that board is always disabled
@@ -83,7 +83,7 @@ UT_0.6.1 (Heuristic patch, 2017-04-17)
 			I've changed the working name of Hug to Little Hug. Little because it doesn't think ahead, and its mind is little.
 			Little Hug now considers its moves based on an heuristic that weighs whether each spot is a local corner, side, or center.
 
-UT_0.6 (AI framework update, 2017-04-10)
+UT_0.6.0 (AI framework update, 2017-04-10)
 	All platforms
 		Added Artificial Intelligence player!
 			Its working name is "Hug" (as its symbol is an 'O')
@@ -94,7 +94,7 @@ UT_0.6 (AI framework update, 2017-04-10)
 			Access One Player or Two Player game modes from the new simple menu
 			Access the Menu from the Game using the new "Menu" button
 
-UT_0.5 (Intuitive update, 2017-04-02)
+UT_0.5.0 (Intuitive update, 2017-04-02)
 	All platforms
 		Added redo functionality
 			Replay any confirmed move that you undo
@@ -116,7 +116,7 @@ UT_0.5 (Intuitive update, 2017-04-02)
 		Increased default quality to "fantastic" from "simple"
 		
 
-UT_0.4(Confirm update, 2017-03-28)
+UT_0.4.0 (Confirm update, 2017-03-28)
 	All platforms
 		Added confirmation functionality! 
 			Clicking a spot now previews the next move by highlighting the next active board
@@ -127,7 +127,7 @@ UT_0.4(Confirm update, 2017-03-28)
 		Rearranged UI for increased useability and readability
 		
 
-UT_0.3 (Undo update, 2017-03-25)
+UT_0.3.0 (Undo update, 2017-03-25)
 	All platforms
 		Implemented undo functionality!
 		Recolored completed boards a bit more to make difference between claimed & enabled, claimed & disabled, and unclaimed & enabled clearer
@@ -140,8 +140,7 @@ UT_0.2.1 (2017-03-14)
 		Changed completed board background colors to make enabled board clearer
 		
 
-UT_0.2 (Colors update, 2017-03-14)
-
+UT_0.2.0 (Colors update, 2017-03-14)
 	All platforms
 		Changed background board image to reflect traditional tic-tac-toe, visualize local/global boards easier
 		Empty spaces are now invisible by default
@@ -161,8 +160,7 @@ UT_0.1.1 (Android exclusive)
 	Android
 		Minor fixes (honestly not quite sure what)
 
-UT_0.1 (Initial build, 2017-03-11)
-
+UT_0.1.0 (Initial build, 2017-03-11)
 	All platforms
 		Create game of Ultimate Tic-Tac-Toe with red 'x's and blue 'o's
 		Reset upon right click or click of reset button
